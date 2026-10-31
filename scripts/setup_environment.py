@@ -53,6 +53,8 @@ def setup(root: Path, *, python=sys.executable, version=None, run=subprocess.run
         except FileExistsError:
             pass
     command([interpreter, "-m", "pytest", "-q"])
+    from scripts.check_environment import record_ready
+    record_ready(root)
     print("\nAnima setup complete. Try: run_anima.bat --offline", flush=True)
     print("For live calls, set the model and matching API key in your local .env, then run run_anima.bat.")
     print("The private project runtime pack is installed when present; see SETUP.md for Git LFS and local overrides.")
@@ -61,9 +63,17 @@ def setup(root: Path, *, python=sys.executable, version=None, run=subprocess.run
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sync-media", action="store_true", help="Replace local runtime media with the shared verified bundle; preserves .env/player state")
+    parser.add_argument("--no-update", action="store_true", help="Use local source without attempting a fast-forward Git pull")
     args = parser.parse_args()
+    root = Path(__file__).resolve().parents[1]
+    if not args.no_update:
+        from source_update import update_source
+        update_source(root)
+        return subprocess.run([sys.executable, str(root / "scripts/setup_environment.py"),
+                               "--no-update", *(["--sync-media"] if args.sync_media else [])],
+                              cwd=root, check=False).returncode
     try:
-        setup(Path(__file__).resolve().parents[1], sync_media=args.sync_media)
+        setup(root, sync_media=args.sync_media)
         return 0
     except (SetupFailure, OSError) as error:
         print(f"Setup error: {error}")

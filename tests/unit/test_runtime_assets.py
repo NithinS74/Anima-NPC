@@ -44,7 +44,8 @@ def test_lfs_pointer_is_hydrated_before_extraction(tmp_path):
         commands.append(args)
         if args[:3] == ["git", "lfs", "pull"]: path.write_bytes(actual)
     install_runtime(tmp_path, command)
-    assert commands == [["git","lfs","version"],["git","lfs","pull","--include=assets/runtime/anima-media.zip"]]
+    assert commands == [["git","lfs","version"],["git","lfs","install","--local"],
+                        ["git","lfs","pull","--include=assets/runtime/anima-media.zip"]]
 
 
 @pytest.mark.parametrize("name", ["../.env", "/outside", "fonts/../../.env", "piper\\..\\.env", "C:/outside", ".env"])

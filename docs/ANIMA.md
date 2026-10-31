@@ -4,7 +4,7 @@ Anima is the local conversation companion for testing the game-independent NPC s
 
 ## Start
 
-Run [setup.bat](../setup.bat) after installing Python 3.11 (see [setup](../SETUP.md)), then double-click [run_anima.bat](../run_anima.bat). It uses the existing `.venv`, loads provider settings from local `.env`, and opens `http://127.0.0.1:8765`. The batch defaults to live API calls, which may incur charges. Leave its terminal running; Ctrl+C stops it. Restart after changing provider configuration and refresh the browser after restarting. `run_anima.bat` is the only application launcher; the earlier NPC Lab launcher was removed at the user's request.
+After installing Python 3.11, Git and Git LFS (see [setup](../SETUP.md)), double-click [run_anima.bat](../run_anima.bat). It checks the local installation, runs setup automatically if needed, loads provider settings from local `.env`, and opens `http://127.0.0.1:8765`. The batch uses valid live configuration (may incur charges), otherwise a clearly labelled scripted offline preview. `--live` requires valid settings; `--offline` explicitly selects scripted responses. Leave its terminal running; Ctrl+C stops it. Restart after changing provider configuration and refresh the browser after restarting. `run_anima.bat` is the only application launcher; the earlier NPC Lab launcher was removed at the user's request.
 
 ```powershell
 .\run_anima.bat

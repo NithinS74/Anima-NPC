@@ -39,6 +39,7 @@ def install_runtime(root, command, *, sync=False):
         with archive_path.open("rb") as stream: pointer = stream.read(100).startswith(b"version https://git-lfs.github.com/spec/v1")
     if pointer:
         command(["git", "lfs", "version"])
+        command(["git", "lfs", "install", "--local"])
         command(["git", "lfs", "pull", "--include=assets/runtime/anima-media.zip"])
     if archive_path.is_file() and archive_path.stat().st_size > MAX_TOTAL:
         raise ValueError("runtime archive size limit")

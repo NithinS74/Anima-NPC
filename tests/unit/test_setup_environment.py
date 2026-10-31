@@ -35,6 +35,10 @@ def test_setup_seeds_blank_configuration_and_stops_after_failure(tmp_path):
     root = checkout(tmp_path)
     module.setup(root, version=(3, 11), run=lambda *a, **k: SimpleNamespace(returncode=0))
     assert (root / ".env").read_bytes() == (root / ".env.example").read_bytes()
+    # The subprocess fake above did not actually create a venv interpreter.
+    interpreter = root / ".venv" / ("Scripts/python.exe" if module.sys.platform == "win32" else "bin/python")
+    interpreter.parent.mkdir(parents=True, exist_ok=True)
+    interpreter.touch()
     calls = []
     with pytest.raises(module.SetupFailure):
         module.setup(root, version=(3, 11), run=lambda *a, **k: calls.append(a) or SimpleNamespace(returncode=1))

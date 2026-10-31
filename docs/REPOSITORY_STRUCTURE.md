@@ -38,7 +38,7 @@ NPC/
 |-- configs/                  Public authored policy/persona/runtime settings
 |-- scripts/                  Setup/maintenance/developer entry scripts
 |-- tools/npc_lab/            Separate local manual-test UI/server, imports core
-|-- run_npc_lab.bat           Windows launcher for that test tool
+|-- run_anima.bat             Windows launcher for that test tool
 |-- benchmarks/               Latency, quality and resource evaluation harnesses
 |-- docs/                     TRDs, contracts, decisions, research and reviews
 `-- Knowledge base/kb/        User corpus, separate from public test fixtures
@@ -109,3 +109,5 @@ Anima is the user-facing companion name. Existing `tools/npc_lab/` and persona/c
 `setup.bat` is a thin Python 3.11 discovery wrapper; `scripts/setup_environment.py` owns repeatable project-only setup. Public original scene illustrations live under `tools/npc_lab/web/scenes/`. Offline native-face/font conversion remains tool code under `tools/npc_lab/`, while all extracted models/morphs/fonts and portable third-party tools stay ignored.
 
 The owner-approved `assets/runtime/anima-media.zip` is the narrowly scoped Git LFS runtime bundle for this private project. Its manifest/provenance are ordinary tracked text. `scripts/anima_assets.py` handles bounded verified setup-time extraction into ignored `assets/private/npc_lab/`, preserving explicit local overrides. Conversion scratch, .venv, keys and player state remain excluded.
+
+Automatic launch/bootstrap stays under `scripts/`: `launch_anima.py` coordinates readiness/setup, `check_environment.py` checks the local venv/media, and `source_update.py` owns bounded optional fast-forward updates. These scripts never enter the core turn pipeline.

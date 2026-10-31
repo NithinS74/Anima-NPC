@@ -2,17 +2,15 @@
 
 ## Windows: recommended path for teammates
 
-Install **Python 3.11** (with the Python launcher), Git and **Git LFS**. Sign in with an account that has access to this private repository. Clone the repository, then double-click **[setup.bat](setup.bat)**. No administrator privileges, GPU, Node, Skyrim or API key are needed for basic setup.
+Install **Python 3.11** (with the Python launcher), Git and **Git LFS**. Sign in with an account that has access to this private repository. Clone the repository, then double-click **[run_anima.bat](run_anima.bat)**. It checks the installation and runs setup automatically when needed. No administrator privileges, GPU, Node, Skyrim or API key are needed for basic setup.
 
 ```powershell
-git lfs install
 git clone https://github.com/mohanchandrass/NPC.git
 cd NPC
-.\setup.bat
 .\run_anima.bat --offline
 ```
 
-`setup.bat` finds Python 3.11, creates/reuses the project's `.venv`, installs the single pinned `requirements.txt`, installs the project in editable mode, checks dependencies, creates `.env` from `.env.example` **only if absent**, and runs the full offline Python regression. It stops on a failed step and keeps the result visible. Existing credentials, saved state and game files are preserved. It does not install Python globally or make LLM calls. It hydrates the owner-approved private Git LFS runtime pack when necessary and verifies/extracts it into the app's local asset directory. For automation use `setup.bat --no-pause`; it returns a nonzero code on failure. Rerunning is supported.
+`setup.bat` first attempts a fast-forward-only pull of the current tracking branch, then finds Python 3.11, creates/reuses the project's `.venv`, installs the single pinned `requirements.txt`, installs the project in editable mode, checks dependencies, creates `.env` from `.env.example` **only if absent**, and runs the full offline Python regression. It stops on a failed step and keeps the result visible. Existing credentials, saved state and game files are preserved. It does not install Python globally or make LLM calls. It hydrates the owner-approved private Git LFS runtime pack when necessary and verifies/extracts it into the app's local asset directory. For automation use `setup.bat --no-pause`; it returns a nonzero code on failure. Rerunning is supported. Dirty working trees, detached/no-upstream branches and unavailable network skip the source update with an explanation; setup continues using local source. It never resets, stashes or switches branches. `setup.bat --no-update` explicitly uses local source. Missing packages/media still require network access.
 
 The first launch above is an **offline preview with scripted responses**. The private repository now includes the four posed character models, actual game screenshot backgrounds, Futura fonts, and selected Windows Piper voices in one approximately 280 MiB Git LFS archive. `setup.bat` installs it automatically; teammates do not need Skyrim, Blender, Java or Mantella to use the supplied runtime. API generation still needs a separately configured key. Source-only checkouts without the pack retain the illustrated/no-voice fallback.
 
@@ -27,7 +25,7 @@ NPC_LLM_MODEL=gemini-3.5-flash-lite
 
 This model was tested locally on 2026-10-31; availability/quotas may change. Model selection is configurable, not hardcoded. Never commit `.env`, paste keys into shared chat, or put them in public YAML/browser code. `setup.bat` will not replace an existing `.env`.
 
-Run `run_anima.bat` for live calls (may incur API charges). Keep the terminal open; Ctrl+C stops it. Restart after editing provider settings, then refresh the browser. Default URL: `http://127.0.0.1:8765`. Another instance can use `--port 8767`.
+Run `run_anima.bat` to use valid live configuration (may incur API charges). Without valid provider settings it clearly starts a scripted offline preview; `--live` instead requires valid settings and reports configuration errors. Keep the terminal open; Ctrl+C stops it. Restart after editing provider settings, then refresh the browser. Default URL: `http://127.0.0.1:8765`. Another instance can use `--port 8767`.
 
 For OpenRouter, set `OPENROUTER_API_KEY` and its model ID, then run:
 
@@ -58,8 +56,8 @@ Private files stay under ignored `assets/private/npc_lab/`; portable conversion 
 | Package installation fails | Restore internet access or fix the reported pip/index error, then rerun setup. |
 | Missing model/key on live launch | Fill `.env`, or use `run_anima.bat --offline` for the scripted preview. |
 | Port already in use | Stop the existing Anima terminal or use another `--port`. |
-| Illustrations/no voice/fallback font | Run `git lfs pull` and rerun setup. Source-only development still works without the pack. |
-| Runtime archive is an LFS pointer or fails checksum | Install Git LFS, verify repository access, run `git lfs pull`, then rerun setup. Do not use a downloaded source ZIP. |
+| Illustrations/no voice/fallback font | Run `setup.bat`; it downloads missing LFS media automatically. Source-only development still works without the pack. |
+| Runtime archive is an LFS pointer or fails checksum | Install Git LFS, verify repository access, then rerun `setup.bat`. Do not use a downloaded source ZIP. |
 | API fallback | Inspect the error code and exact input in **Inspect context**; check network, model availability and quota. |
 
 ## Manual commands and contributor checks
@@ -82,4 +80,6 @@ Current implementation is a core context/policy/generation/structural-validation
 
 Runtime installation is idempotent. Previously package-managed files update automatically; separately modified local media is preserved. Neither `.env` nor saved player data is part of the archive. Keep the repository private; upstream asset rights/licences are retained. See [bundle provenance](assets/runtime/README.md) and [immersion review](docs/reviews/2026-10-31-immersion-refinement.md).
 
-To ensure an existing teammate install uses exactly the shared runtime media, run **`setup.bat --sync-media`** after pulling. This intentionally replaces local runtime model/font/voice/scene overrides with verified bundle versions; `.env` and saved player state remain untouched. For automated checks combine `--no-pause --sync-media`. Normal setup preserves local overrides. Matching media does not force identical cloud-model responses or personal relationship state.
+To ensure an existing teammate install uses exactly the shared runtime media, run **`setup.bat --sync-media`** (setup pulls the current tracking branch itself). This intentionally replaces local runtime model/font/voice/scene overrides with verified bundle versions; `.env` and saved player state remain untouched. For automated checks combine `--no-pause --sync-media`. Normal setup preserves local overrides. Matching media does not force identical cloud-model responses or personal relationship state.
+
+Normal launches perform local readiness checks only: pinned package versions, project import, configuration presence, setup fingerprint and installed media presence/size. Missing/outdated installations trigger setup once, including regression. Healthy launches do not run pip, tests or a Git pull. To request source updates explicitly, run setup. Full media hashes are verified during setup rather than on every launch. Same-size local edits are not detected by the fast launch check; use `setup.bat --sync-media` to verify/restore the shared media. Python 3.11, Git, Git LFS and private-repository authentication remain machine prerequisites; the scripts do not install global software.

@@ -11,11 +11,16 @@ if /i "%~1"=="--no-pause" (
   goto parse_options
 )
 if /i "%~1"=="--sync-media" (
-  set "anima_setup_args=--sync-media"
+  set "anima_setup_args=%anima_setup_args% --sync-media"
   shift
   goto parse_options
 )
-echo Usage: setup.bat [--no-pause] [--sync-media]
+if /i "%~1"=="--no-update" (
+  set "anima_setup_args=%anima_setup_args% --no-update"
+  shift
+  goto parse_options
+)
+echo Usage: setup.bat [--no-pause] [--sync-media] [--no-update]
 exit /b 2
 :setup_start
 echo Setting up Anima with Python 3.11 in .venv...

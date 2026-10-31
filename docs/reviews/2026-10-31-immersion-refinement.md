@@ -24,3 +24,5 @@ An actual fresh destination installed all files offline, loaded all four models/
 - Matching runtime file hashes does not force identical LLM output or personal saved relationships. Each developer supplies their own API key/configuration. For a reproducible behavioral comparison use the same provider/model/settings, scenario and a fresh isolated --state-db; offline scripted mode is deterministic.
 
 A final consistency audit added explicit `setup.bat --sync-media`: default setup preserves local work, while sync mode replaces only runtime media overrides with bundle versions and leaves credentials/player state untouched. The managed-update test now covers both behaviors.
+
+Publication check completed: a fresh authenticated GitHub clone at 4173a92 downloaded the actual LFS archive, ran `setup.bat --no-pause --sync-media`, installed all 382 media files and passed all 302 offline tests (9.75 s). No API key or local game/conversion folders were copied into that clone.
