@@ -28,6 +28,7 @@ class ProviderConfig(Contract):
     model: Identifier
     api_key: SecretStr = Field(repr=False)
     response_format: Literal["json_object", "none"] = "json_object"
+    reasoning_effort: Literal["none", "minimal", "low", "medium", "high"] | None = None
 
     @model_validator(mode="after")
     def check_url(self) -> "ProviderConfig":
@@ -57,6 +58,8 @@ class ChatCompletionsProvider:
                    "max_tokens": prompt.max_output_tokens, "stream": False}
         if self.config.response_format == "json_object":
             payload["response_format"] = {"type": "json_object"}
+        if self.config.reasoning_effort is not None:
+            payload["reasoning_effort"] = self.config.reasoning_effort
         try:
             # Absolute timeout additionally bounds trickle/drip responses.
             async with asyncio.timeout(timeout_s):
@@ -73,6 +76,12 @@ class ChatCompletionsProvider:
                             raise ProviderFailure("provider_rate_limited")
                         if response.status_code in {401, 403}:
                             raise ProviderFailure("provider_auth")
+                        if response.status_code == 400:
+                            raise ProviderFailure("provider_bad_request")
+                        if response.status_code == 404:
+                            raise ProviderFailure("provider_not_found")
+                        if response.status_code >= 500:
+                            raise ProviderFailure("provider_unavailable")
                         if response.status_code != 200:
                             raise ProviderFailure("provider_http_error")
                         chunks, size = [], 0

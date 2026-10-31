@@ -120,7 +120,17 @@ def test_mode_timing_and_budget_are_explicit():
     offline = LabService(OfflineProvider()).info()
     live = LabService(OfflineProvider(), live=True, realtime=True).info()
     assert offline["mode"] == "offline fake"
-    assert offline["deadline_ms"] == 10000
+    assert offline["deadline_ms"] == 30000
     assert live["timing_profile"] == "realtime"
     assert live["deadline_ms"] == 3000
     assert live["input_budget_bytes"] == 3072
+
+
+def test_manual_timeout_is_bounded_and_does_not_change_realtime():
+    configured = LabService(OfflineProvider(), development_timeout_s=20)
+    assert configured.info()["deadline_ms"] == 20000
+    assert configured.runner.limits.model_cutoff_ms == 19450
+    assert LabService(OfflineProvider(), realtime=True, development_timeout_s=60).info()["deadline_ms"] == 3000
+    for invalid in (0, 61, True, 1.5):
+        with pytest.raises(ValueError):
+            LabService(OfflineProvider(), development_timeout_s=invalid)

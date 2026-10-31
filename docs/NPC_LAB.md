@@ -43,8 +43,12 @@ Game assets, converted models, voices and executables are local and ignored unde
 
 ## Bounds and verification
 
-Development mode: 10,000 ms response deadline, 9,450 ms model cutoff, at most two calls including repair. `--realtime`: 3,000/2,450 ms. Lab prompt cap: 3,072 UTF-8 bytes; core CLI default remains 2,048. Whole exchanges are omitted when necessary; current input/identity are not silently truncated. Output cap remains 160 tokens. These are configured bounds, not successful model latency percentiles.
+Development mode: 30,000 ms response deadline, 29,450 ms model cutoff, at most two calls including repair. `--realtime`: 3,000/2,450 ms. Lab prompt cap: 3,072 UTF-8 bytes; core CLI default remains 2,048. Whole exchanges are omitted when necessary; current input/identity are not silently truncated. Output cap remains 160 tokens. These are configured bounds, not successful model latency percentiles.
 
 One runner/event loop, no turn queue, at most eight HTTP workers, 16 KB JSON bodies, finite socket timeouts. Loopback Host/Origin and launch-token checks protect POSTs. Fixed media routes, bounded self-contained GLB validation, 30 FPS rendering cap, hidden-tab pause and resource disposal limit optional viewer work. Speech permits one subprocess at a time with timeout/cancellation and validated bounded WAV output. This local standard-library server is not a production public API.
 
 Latest [self-review and evidence](reviews/2026-10-31-social-state-character-stage.md): 254 offline tests passed, four actual models visually inspected, desktop/mobile layout and reload/escalation/audio checks exercised. Two live Gemini memory requests fell back (timeout, HTTP error); the second packed one prior exchange. Successful live model recall, semantic grounding, production delivery and game-resource targets remain unverified. RAG is not implemented.
+
+Manual-testing timing is configurable with `--development-timeout 1..60` (default 30 seconds). `--realtime` always preserves the core three-second limit. After provider/model changes, restart the launcher. Provider timeout, authentication, quota, rejected requests, unavailable models and server failures have distinct safe error codes in the trace.
+
+Provider fallback follow-up: see [diagnosis and fix](plans/I06-provider-fallback-fix.md). The original Gemini model was intermittently slow and returned high-demand 503 errors. A verified newer local model restored validated generation; recall quality remains unproven. Current offline suite: 263 tests pass.

@@ -9,6 +9,18 @@ const presets = {
 let info, profile, pending = null, epoch = 0, records = [], settingsPending = false;
 let stage = null, stageEpoch = 0, audioURL = null, speechFetch = null;
 function feedback(text) { $('feedback').textContent = text; }
+function fallbackExplanation(code) {
+  const explanations = {
+    provider_timeout: 'The API exceeded the current deadline. Manual testing supports --development-timeout 60; realtime mode stays strict.',
+    provider_auth: 'The API rejected access. Check the local key and its model permissions, then restart.',
+    provider_rate_limited: 'The API is rate limited or out of quota. Check provider quota before retrying.',
+    provider_unavailable: 'The provider returned a server error. Try again later.',
+    provider_bad_request: 'The API rejected the request settings. Check model and provider compatibility.',
+    provider_not_found: 'The configured model or endpoint was not found.',
+    provider_transport: 'Could not reach the API. Check the network connection.'
+  };
+  return `Outcome: ${code}. ${explanations[code] || 'Inspect validation and error details in the trace.'} A fallback is not successful generation.`;
+}
 function stopAudio() {
   speechFetch?.abort(); speechFetch = null;
   $('speech-player').pause(); $('speech-player').removeAttribute('src');
@@ -170,7 +182,7 @@ $('chat').addEventListener('submit', async event => {
       try { const acknowledged = await post('/api/displayed', {persona_id: character.id, request_id: id}); if (epoch === turnEpoch) applySavedState(acknowledged, data.social_change); }
       catch { feedback('Reply displayed, but memory acknowledgement failed. Reload state before continuing.'); }
     }
-    feedback(result.error_code ? `Outcome: ${result.error_code}. A fallback is not successful generation.` : 'Inspect the trace to compare intention with the response. Valid structure does not prove realism.');
+      feedback(result.error_code ? fallbackExplanation(result.error_code) : 'Inspect the trace to compare intention with the response. Valid structure does not prove realism.');
     waiting.remove();
     if ($('voice').checked && result.response?.mode === 'speech' && result.response.text) await speak(id, turnEpoch);
   } catch (error) {

@@ -53,7 +53,7 @@ def test_loopback_and_optional_json_format_support():
     assert reply.input_tokens is None
 
 
-@pytest.mark.parametrize("status,code", [(401, "provider_auth"), (429, "provider_rate_limited"), (500, "provider_http_error"), (302, "provider_http_error")])
+@pytest.mark.parametrize("status,code", [(400, "provider_bad_request"), (404, "provider_not_found"), (401, "provider_auth"), (429, "provider_rate_limited"), (500, "provider_unavailable"), (503, "provider_unavailable"), (302, "provider_http_error")])
 def test_provider_errors_are_typed_redacted_and_not_retried(status, code):
     calls = []
     def handler(request):
@@ -82,6 +82,18 @@ def test_network_errors_are_redacted():
         raise httpx.ConnectError("PRIVATE_TEST_KEY", request=request)
     with pytest.raises(ProviderFailure, match="provider_transport"):
         invoke(handler)
+
+
+@pytest.mark.parametrize("effort", [None, "minimal", "low"])
+def test_reasoning_effort_is_explicit_and_optional(effort):
+    def handler(request):
+        payload = json.loads(request.content)
+        if effort is None:
+            assert "reasoning_effort" not in payload
+        else:
+            assert payload["reasoning_effort"] == effort
+        return httpx.Response(200, json=body())
+    invoke(handler, reasoning_effort=effort)
 
 
 def test_total_timeout_bounds_handler_even_without_httpx_inactivity_timeout():

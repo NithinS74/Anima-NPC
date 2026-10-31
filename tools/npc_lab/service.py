@@ -106,14 +106,17 @@ def make_scenario(profile: LabProfile, turn: LabTurn, revision: int, memory=()) 
 
 
 class LabService:
-    def __init__(self, provider, *, live: bool = False, realtime: bool = False, profiles=None, media=None, state_store: SocialStore | None = None):
+    def __init__(self, provider, *, live: bool = False, realtime: bool = False, development_timeout_s: int = 30, profiles=None, media=None, state_store: SocialStore | None = None):
         self.profiles = profiles if profiles is not None else load_profiles()
         self.live = live
         self.realtime = realtime
+        if type(development_timeout_s) is not int or not 1 <= development_timeout_s <= 60:
+            raise ValueError("development timeout must be 1..60 seconds")
         # Lab profiles/controls measured at 2.1 KiB. Keep a declared bound rather
         # than truncating identity/state; core CLI defaults remain unchanged.
         limits = PreviewLimits(max_input_bytes=3072) if realtime else PreviewLimits(
-            response_timeout_ms=10000, model_cutoff_ms=9450, max_input_bytes=3072)
+            response_timeout_ms=development_timeout_s * 1000,
+            model_cutoff_ms=min(59000, development_timeout_s * 1000 - 550), max_input_bytes=3072)
         self.runner = PreviewRunner(provider, limits)
         self.active: tuple[str, asyncio.Event] | None = None
         self.revision = 0

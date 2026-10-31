@@ -60,7 +60,7 @@ class LabServer(ThreadingHTTPServer):
     def call(self, coroutine):
         future = asyncio.run_coroutine_threadsafe(coroutine, self.loop)
         try:
-            return future.result(timeout=12)
+            return future.result(timeout=max(12, self.service.runner.limits.response_timeout_ms / 1000 + 2))
         except concurrent.futures.TimeoutError:
             future.cancel()
             raise TimeoutError from None

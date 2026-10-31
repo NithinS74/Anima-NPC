@@ -42,3 +42,12 @@ def test_environment_overrides_profile_and_generic_key_is_supported():
     })
     assert provider.config.base_url == "http://127.0.0.1:1234/v1"
     assert provider.config.response_format == "none"
+
+
+def test_gemini_reasoning_profile_and_override_are_validated():
+    settings = {"GEMINI_API_KEY": "PRIVATE_KEY", "NPC_LLM_MODEL": "test-model"}
+    path = Path("configs/providers/gemini.yaml")
+    assert load_provider(path, environ=settings).config.reasoning_effort == "minimal"
+    assert load_provider(path, environ={**settings, "NPC_LLM_REASONING_EFFORT": "low"}).config.reasoning_effort == "low"
+    with pytest.raises(ConfigurationFailure):
+        load_provider(path, environ={**settings, "NPC_LLM_REASONING_EFFORT": "invalid"})

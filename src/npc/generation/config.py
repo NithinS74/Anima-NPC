@@ -22,6 +22,7 @@ class ProviderProfile(BaseModel):
     model: str = ""
     api_key_env: str = "NPC_LLM_API_KEY"
     response_format: str = "json_object"
+    reasoning_effort: str | None = None
 
 
 def load_provider(path: Path, *, environ: Mapping[str, str] | None = None) -> ModelProvider:
@@ -41,6 +42,7 @@ def load_provider(path: Path, *, environ: Mapping[str, str] | None = None) -> Mo
         if not model or not key:
             raise ConfigurationFailure("configure NPC_LLM_MODEL and the profile's key environment variable locally")
         config = ProviderConfig(base_url=base_url, model=model, api_key=key,
+                                reasoning_effort=settings.get("NPC_LLM_REASONING_EFFORT") or profile.reasoning_effort,
                                 response_format=settings.get("NPC_LLM_RESPONSE_FORMAT") or profile.response_format)
         return ChatCompletionsProvider(config)
     except ConfigurationFailure:

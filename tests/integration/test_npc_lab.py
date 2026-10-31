@@ -24,6 +24,28 @@ def headers(server):
     return {"Origin": server.origin, "X-Lab-Token": server.token}
 
 
+def test_http_bridge_wait_covers_configured_generation_budget(monkeypatch):
+    import tools.npc_lab.server as module
+    service = LabService(OfflineProvider(), development_timeout_s=30)
+    server = LabServer(service, port=0)
+    waits = []
+    class Future:
+        def result(self, timeout):
+            waits.append(timeout)
+            return "completed"
+    def submit(coroutine, loop):
+        coroutine.close()
+        return Future()
+    monkeypatch.setattr(module.asyncio, "run_coroutine_threadsafe", submit)
+    async def operation(): return "unused"
+    try:
+        assert server.call(operation()) == "completed"
+        assert waits == [32]
+    finally:
+        monkeypatch.undo()
+        server.server_close()
+
+
 def payload(server):
     p = server.service.profiles["mira"]
     return dict(request_id="http-turn", persona_id=p.id, text="How is your work going?",
