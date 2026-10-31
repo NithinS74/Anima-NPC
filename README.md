@@ -30,4 +30,6 @@ Use $develop-npc-component to implement <issue/component>.
 
 If your agent does not discover repository skills, ask it to read `.agents/skills/develop-npc-component/SKILL.md` explicitly. [AGENTS.md](AGENTS.md) routes repository-aware agents to the same workflow. The skill requires meaningful unit tests for each working component and applicable regression checks before readiness; reviews and passing checks must be reported honestly.
 
+Create a separate branch for each task, named `feature/<issue-id>-<short-name>` (for example, `feature/I05-rag-ingestion`). Start from an up-to-date `main`, commit and push your branch, then open a **pull request targeting `main`**. Include the linked issue, changes, review findings and unit/regression test results; request a teammate review. Merge only after review approval and required checks pass. Do not push implementation changes directly to `main`. See the [team workflow](docs/TEAM_WORKFLOW.md) for details.
+
 Repository: https://github.com/mohanchandrass/NPC
