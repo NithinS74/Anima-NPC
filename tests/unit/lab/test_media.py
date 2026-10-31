@@ -41,9 +41,28 @@ def media(tmp_path):
 
 def test_missing_media_is_explicit_and_paths_are_not_exposed(media):
     info = media.describe("mira")
-    assert info == {"voice_available": True, "voice": "femaleeventoned", "model_url": None, "appearance_source": None}
+    assert info == {"voice_available": True, "voice": "femaleeventoned", "model_url": None, "appearance_source": None,
+                    "scene": "mira", "scene_label": "The forge"}
     assert not media.describe("absent")["voice_available"]
     assert str(media.root) not in json.dumps(info)
+
+
+def test_scenes_use_fixed_known_roles_and_unknown_ids_fall_back(media):
+    assert [media.describe(id)["scene"] for id in ("mira", "elin", "daren", "iona")] == ["mira", "elin", "daren", "iona"]
+    assert media.describe("unrecognized")["scene"] == "default"
+
+
+def test_optional_game_fonts_are_bounded_and_never_arbitrary_paths(media):
+    assert not media.game_fonts_ready()
+    folder = media.private / "fonts"; folder.mkdir(parents=True)
+    valid = b"\x00\x01\x00\x00" + struct.pack(">H", 1) + b"\x00" * 22
+    for name in ("FuturaCondensedLight.ttf", "FuturaCondensed.ttf"):
+        (folder / name).write_bytes(valid)
+    assert media.game_fonts_ready()
+    assert media.font_bytes("dialogue") == valid
+    with pytest.raises(MediaFailure): media.font_bytes("../../.env")
+    (folder / "FuturaCondensedLight.ttf").write_bytes(b"invalid font")
+    assert not media.game_fonts_ready()
 
 
 def test_configured_media_cannot_escape_private_asset_root(tmp_path):

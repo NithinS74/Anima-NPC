@@ -15,7 +15,7 @@ def referenced_textures(raw):
     return {BsaArchive.normalize(match.decode()) for match in re.findall(rb"textures[\\/][ -~]*?\.dds", raw, flags=re.I)}
 
 
-def import_models(game_root: Path, blender: Path, addon: Path, profiles):
+def import_models(game_root: Path, blender: Path, addon: Path, profiles, *, facial=False):
     data = game_root / "Data"
     private = ROOT / "assets/private/npc_lab"
     source = private / "source"
@@ -33,6 +33,17 @@ def import_models(game_root: Path, blender: Path, addon: Path, profiles):
     results = json.loads(previous.read_text()) if previous.exists() else {}
     for persona_id in profiles:
         definition = definitions[persona_id]
+        facial_assets = []
+        if facial:
+            sex = definition["facial_type"]
+            if sex not in {"female", "male"}:
+                raise ValueError("invalid facial type")
+            paths = [sex + "head.tri", "eyes" + sex + ".tri",
+                     "mouth/mouthhuman" + ("f" if sex == "female" else "") + ".tri",
+                     "faceparts/" + sex + "headbrows.tri"]
+            for relative in paths:
+                name = "meshes/actors/character/character assets/" + relative
+                index[name].extract(name, source); facial_assets.append(name)
         if len(definition["meshes"]) > 8:
             raise ValueError("too many components")
         textures = set()
@@ -43,10 +54,10 @@ def import_models(game_root: Path, blender: Path, addon: Path, profiles):
             if name in index:
                 index[name].extract(name, source)
         manifest = dict(source=str(source.resolve()), addon_directory=str(addon.resolve()),
-                        meshes=definition["meshes"], appearance=definition["appearance"],
+                        meshes=definition["meshes"], appearance=definition["appearance"], facial_assets=facial_assets,
                         background_source=str((source / background).resolve()),
                         background_output=str((private / "background/skyrim-stone.png").resolve()),
-                        output=str((private / "models" / f"{persona_id}.glb").resolve()))
+                        output=str((private / "models" / f"{persona_id}.pending.glb").resolve()))
         config = manifest_dir / f"{persona_id}.json"
         config.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
         # Importer resolves some shared race/eye defaults not named in the NIF.
@@ -68,8 +79,15 @@ def import_models(game_root: Path, blender: Path, addon: Path, profiles):
         output = Path(manifest["output"])
         if "LAB_EXPORTED" not in result.stdout or not output.is_file() or result.returncode:
             raise ValueError(f"conversion failed for {persona_id}; inspect private conversion log")
+        from tools.npc_lab.media import MAX_MODEL_BYTES, validate_glb_header
+        import struct
+        if not 20 < output.stat().st_size <= MAX_MODEL_BYTES:
+            raise ValueError("converted model exceeds size bounds")
+        raw = output.read_bytes(); length = struct.unpack("<I", raw[12:16])[0]
+        validate_glb_header(raw[:20], len(raw), raw[20:20 + length])
+        output = output.replace(private / "models" / f"{persona_id}.glb")
         results[persona_id] = dict(appearance=definition["appearance"], bytes=output.stat().st_size,
-            sha256=hashlib.file_digest(output.open("rb"), "sha256").hexdigest(), meshes=definition["meshes"])
+            sha256=hashlib.sha256(raw).hexdigest(), meshes=definition["meshes"], native_facial_morphs=facial)
         print(f"Converted {persona_id}: {definition['appearance']} ({output.stat().st_size:,} bytes)", flush=True)
     (private / "conversion/manifest.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
 
@@ -80,9 +98,10 @@ def main():
     parser.add_argument("--blender", type=Path, required=True)
     parser.add_argument("--pynifly-directory", type=Path, required=True)
     parser.add_argument("--profiles", nargs="+", choices=["mira", "elin", "daren", "iona"], default=["mira", "elin", "daren", "iona"])
+    parser.add_argument("--facial", action="store_true", help="Preserve topology-verified native blink/speech/mood morphs")
     args = parser.parse_args()
     try:
-        import_models(args.game_root, args.blender, args.pynifly_directory, args.profiles)
+        import_models(args.game_root, args.blender, args.pynifly_directory, args.profiles, facial=args.facial)
     except (OSError, ValueError, KeyError, subprocess.SubprocessError):
         print("Skyrim import failed; check paths and assets/private/npc_lab/conversion/ logs.")
         return 1

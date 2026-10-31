@@ -23,3 +23,5 @@ Start with the [general TRD](TRD.md), then the [shared contracts](CONTRACTS.md) 
 | User knowledge folder | [Knowledge folder contract](../Knowledge%20base/kb/README.md) |
 
 Keep stable document paths and link instead of copying requirements into multiple places. Module behavior belongs in its TRD; shared wire contracts belong in `CONTRACTS.md`; source placement belongs in `REPOSITORY_STRUCTURE.md`. Research and reviews explicitly distinguish observations from proposals and measured results.
+
+For the easiest teammate install, use [setup.bat](../setup.bat) and [SETUP.md](../SETUP.md). Latest [setup/native-media review](reviews/2026-10-31-setup-native-faces.md) records fresh installation, local original fonts, four role scenes and native facial-expression verification.

@@ -20,6 +20,7 @@ Slug = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9-]{0,31}$", stric
 Voice = Annotated[str, StringConstraints(pattern=r"^[a-z0-9]{1,64}$", strict=True)]
 MAX_MODEL_BYTES = 32 * 1024 * 1024
 MAX_WAV_BYTES = 2 * 1024 * 1024
+SCENES = {"mira": "The forge", "elin": "The inn", "daren": "The village gate", "iona": "The registry"}
 
 
 class MediaSettings(Contract):
@@ -121,7 +122,32 @@ class LabMedia:
     def describe(self, persona_id):
         return dict(voice_available=self.voice_ready(persona_id), voice=self.settings.voices.get(persona_id),
                     model_url=f"/api/models/{persona_id}.glb" if self.model_path(persona_id) else None,
-                    appearance_source=self.settings.appearance_sources.get(persona_id))
+                    appearance_source=self.settings.appearance_sources.get(persona_id),
+                    scene=persona_id if persona_id in SCENES else "default", scene_label=SCENES.get(persona_id, "A place between stories"))
+
+    def font_bytes(self, kind):
+        filenames = {"dialogue": "FuturaCondensedLight.ttf", "interface": "FuturaCondensed.ttf"}
+        if kind not in filenames:
+            raise MediaFailure("font_unavailable")
+        try:
+            path = self._private_path("assets/private/npc_lab/fonts/" + filenames[kind])
+            with path.open("rb") as stream:
+                raw = stream.read(2 * 1024 * 1024 + 1)
+            if not 28 <= len(raw) <= 2 * 1024 * 1024 or raw[:4] not in {b"\x00\x01\x00\x00", b"OTTO"}:
+                raise ValueError("invalid font")
+            count = struct.unpack(">H", raw[4:6])[0]
+            if not 1 <= count <= 128 or 12 + 16 * count > len(raw):
+                raise ValueError("invalid font directory")
+            return raw
+        except (OSError, ValueError):
+            raise MediaFailure("font_unavailable") from None
+
+    def game_fonts_ready(self):
+        try:
+            self.font_bytes("dialogue"); self.font_bytes("interface")
+            return True
+        except MediaFailure:
+            return False
 
     def background_bytes(self):
         path = self.private / "background/skyrim-stone.png"

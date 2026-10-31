@@ -1189,3 +1189,15 @@ pre {
     transition:none!important
   }
 }
+
+/* Private game font is selected only when both validated local fonts exist. */
+@font-face { font-family: AnimaSkyrimDialogue; src: url('/api/fonts/dialogue.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: AnimaSkyrimInterface; src: url('/api/fonts/interface.ttf') format('truetype'); font-display: swap; }
+body.skyrim-font { --ui: AnimaSkyrimDialogue, AnimaUI, sans-serif; --title: AnimaSkyrimInterface, AnimaTitle, serif; }
+.stage-panel[data-scene=mira] { background: linear-gradient(#16121026,#17120c66), url('/scenes/mira.svg') center/cover; }
+.stage-panel[data-scene=elin] { background: linear-gradient(#18110b22,#1d130c55), url('/scenes/elin.svg') center/cover; }
+.stage-panel[data-scene=daren] { background: linear-gradient(#131b2322,#11171e55), url('/scenes/daren.svg') center/cover; }
+.stage-panel[data-scene=iona] { background: linear-gradient(#111a2122,#11182055), url('/scenes/iona.svg') center/cover; }
+.animate-toggle { display: flex; align-items: center; gap: 3px; margin: 0 3px; font-size: 11px; white-space: nowrap; }
+.camera-controls { flex-wrap: wrap; max-width: calc(100% - 28px); }
+body.skyrim-font #stage-caption { font-size: 25px; }

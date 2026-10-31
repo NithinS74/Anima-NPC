@@ -19,7 +19,7 @@
  <div class="scene-toolbar"><span class="scene-dot"></span><span id="location">A place between stories</span><span id="visual-status">ILLUSTRATED CHARACTER</span></div>
  <div class="scene-arch" aria-hidden="true"></div><div class="scene-floor" aria-hidden="true"></div>
  <img id="portrait" alt="Illustrated character"><div id="model-host" hidden></div>
- <div class="camera-controls" role="group" aria-label="Character view"><button id="view-close" aria-pressed="true">Conversation</button><button id="view-wide" aria-pressed="false">Full figure</button><span class="camera-divider"></span><button id="zoom-out" title="Zoom out" aria-label="Zoom out">&#8722;</button><span id="zoom-level" aria-live="polite">100%</span><button id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button></div>
+ <div class="camera-controls" role="group" aria-label="Character view"><button id="view-close" aria-pressed="true">Conversation</button><button id="view-wide" aria-pressed="false">Full figure</button><label class="animate-toggle" title="Native facial shapes; approximate speech timing"><input id="expressions" type="checkbox" checked disabled> Expressions</label><span class="camera-divider"></span><button id="zoom-out" title="Zoom out" aria-label="Zoom out">&#8722;</button><span id="zoom-level" aria-live="polite">100%</span><button id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button></div>
  <div class="stage-bottom"><div class="stage-identity"><span id="stage-role" class="eyebrow"></span><h1 id="stage-name"></h1><span id="stage-state" class="stage-state">Available</span></div>
  <div class="subtitle-box" id="subtitle" aria-label="Current character subtitle"><p id="stage-caption">Every stranger has a story.</p></div>
  <form id="chat"><label class="sr-only" for="message">What do you say?</label><textarea id="message" maxlength="4000" rows="1" placeholder="What do you say?" required></textarea><button id="send" type="submit" title="Speak (Enter)"><span>Speak</span><kbd>&#8629;</kbd></button></form>
@@ -34,7 +34,7 @@
 </section>
 </main>
 <dialog id="inspector" aria-labelledby="inspector-title"><div class="inspector-header"><div><p class="eyebrow">UNDERSTAND THE ENCOUNTER</p><h2 id="inspector-title">Behind the words</h2></div><button id="inspect-close" aria-label="Close inspector">Close &#10005;</button></div>
-<p class="inspector-note">An observable impact map and the actual messages sent to the model. This is not hidden model reasoning. Exports may contain your conversation.</p>
+<p class="inspector-note">An observable impact map and the actual messages sent to the model. This is not hidden model reasoning. Exports may contain your conversation.</p><p id="font-status" class="inspector-note"></p>
 <div class="inspector-tabs" role="group" aria-label="Inspector view"><button data-inspect="impact" aria-pressed="true">Impact map</button><button data-inspect="prompt" aria-pressed="false">LLM input</button><button data-inspect="trace" aria-pressed="false">Full trace</button></div>
 <section id="impact-view"><p id="impact-summary">Speak to a character to see what shaped their response.</p><div id="impact-map"></div></section>
 <section id="prompt-view" hidden><p id="prompt-note">No turn yet.</p><pre id="llm-input">No model input recorded.</pre></section><section id="trace-view" hidden><pre id="trace">No turn yet.</pre></section></dialog>

@@ -4,7 +4,7 @@ Anima is the local conversation companion for testing the game-independent NPC s
 
 ## Start
 
-Complete [setup](../SETUP.md), then double-click [run_anima.bat](../run_anima.bat). It uses the existing `.venv`, loads provider settings from local `.env`, and opens `http://127.0.0.1:8765`. The batch defaults to live API calls, which may incur charges. Leave its terminal running; Ctrl+C stops it. Restart after changing provider configuration and refresh the browser after restarting. The old `run_npc_lab.bat` forwards to the new launcher.
+Run [setup.bat](../setup.bat) after installing Python 3.11 (see [setup](../SETUP.md)), then double-click [run_anima.bat](../run_anima.bat). It uses the existing `.venv`, loads provider settings from local `.env`, and opens `http://127.0.0.1:8765`. The batch defaults to live API calls, which may incur charges. Leave its terminal running; Ctrl+C stops it. Restart after changing provider configuration and refresh the browser after restarting. `run_anima.bat` is the only application launcher; the earlier NPC Lab launcher was removed at the user's request.
 
 ```powershell
 .\run_anima.bat
@@ -20,7 +20,7 @@ Manual-testing mode defaults to 30,000 ms response deadline / 29,450 ms model cu
 
 Choose a character from the left. Conversation framing brings their upper body/face closer; Full figure restores a wider view. Plus/minus changes the camera zoom with safe bounds. Drag the model to rotate. Use **Immerse** (or I while focus is outside a form) to hide side panels; the same header button returns to the normal layout. Journal independently toggles the conversation log. Mobile keeps the character/subtitles/input together, with a compact roster.
 
-The current reply appears bottom-centre above the input, in a game-inspired subtitle treatment. Enter sends; Shift+Enter adds a line. Voice uses the existing installed Mantella Piper integration; replies appear before audio synthesis finishes. Voice can be muted and replayed. No facial lip sync is claimed. Anima's ivory/charcoal/amber palette and locally bundled Cinzel/Barlow Condensed fonts are stylistic choices under retained open-font licences; no proprietary Skyrim font is redistributed.
+The current reply appears bottom-centre above the input, in a game-inspired subtitle treatment. Enter sends; Shift+Enter adds a line. Voice uses the existing installed Mantella Piper integration; replies appear before audio synthesis finishes. Voice can be muted and replayed. Models imported with `--facial` reuse original head/eye/mouth/brow shapes for blinking, simple mood and speech movement. Timing follows playback approximately; it is not phoneme-accurate lip sync. Anima uses original public forge/inn/gate/registry scene art. Bundled Cinzel/Barlow Condensed fonts are open-font fallbacks. When imported locally, the actual Skyrim Futura dialogue/interface fonts take over; the inspector reports which source is active. Private game fonts are not redistributed.
 
 The four public fictional [personas](../fixtures/personas/npc_lab/README.md) remain distinct from their optional game-derived appearances. Local mapping: Mira/Adrianne, Elin/Hulda, Daren/Farkas in a guard kit, Iona/Lydia as a station-persona visual stand-in. See [private media setup](../configs/npc_lab/README.md). Without private assets, original illustrations work; voices are explicitly unavailable. Model/voice assets are not pushed and no game save is changed.
 
@@ -42,9 +42,9 @@ Stable internal paths (`tools/npc_lab`, `configs/npc_lab`, `fixtures/personas/np
 
 This is still a loopback-only companion. Hosting, multi-user accounts, production game input/output, RAG, semantic entailment and complete long-term memory are not implemented by this UI change. Tests demonstrate implemented context effects, not a complete model of human psychology. Live checks found and fixed schema/repair issues, but recall quality still varies. See the [self-review and UI evidence](reviews/2026-10-31-anima-immersion.md).
 
-## Facial animation feasibility
+## Native facial expressions
 
-Installed Skyrim archives contain head/eye `.tri` morph data. [PyNifly](https://github.com/BadDogSkyrim/PyNifly) supports expression TRI morphs; see its [morph documentation](https://baddogskyrim.github.io/BethesdaLibrary/file-formats/morphs-shapekeys/). The current converter bakes static geometry and disables skins, morphs and animation. Applying native expressions to these particular FaceGen heads requires topology-compatible morph transfer, eye/mouth handling, morph-preserving glTF export and expression/speech timing. Finding the files does not establish a working conversion. It is not a plug-in change, so it is deferred under the user's 'only if easy' condition. No procedural head bob is presented as a Skyrim facial animation.
+The follow-up conversion experiment verified matching head/eye topology for every profile and now preserves native Skyrim blink, speech and mood shapes, including matching mouth/brow components. Use `--facial` in the [optional importer](../configs/npc_lab/README.md). The browser uses those real morph targets with simple app-driven timing; the body remains in its rest pose. Expressions can be toggled, honour reduced-motion preferences, pause in hidden tabs, and speech motion returns to neutral when audio stops. This is not a native Skyrim animation-clip player or phoneme lip-sync implementation. See [verification](reviews/2026-10-31-setup-native-faces.md).
 
 ## Repeat the UI checks
 
@@ -63,3 +63,5 @@ node tests/ui/anima-browser.cjs
 ```
 
 The opt-in bot submits dialogue, asserts offline mode, checks camera/subtitles/inspector/immersion/mobile overflow and captures screenshots under ignored `output/screenshots/`. It uses an actual local model where configured. Inspect screenshots as well as the automated assertions. Stop the isolated browser/test server after review. No paid call is part of default regression.
+
+Optional private-media UI verification: `node tests/ui/anima-media-browser.cjs`, using the same isolated offline browser/server setup. Unlike the basic UI check, this requires imported game fonts, native-morph models and local Piper assets. It checks four scenes/models, blink/mood/speech movement, pause/reduced-motion reset and mobile overflow. It makes no LLM API calls. Current setup/media review: [results](reviews/2026-10-31-setup-native-faces.md).

@@ -1,0 +1,55 @@
+import importlib.util
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+
+spec = importlib.util.spec_from_file_location("anima_setup", Path(__file__).parents[2] / "scripts/setup_environment.py")
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+
+
+def checkout(tmp_path):
+    (tmp_path / "requirements.txt").write_text("example==1.0")
+    (tmp_path / "pyproject.toml").write_text("[project]")
+    (tmp_path / ".env.example").write_text("GEMINI_API_KEY=\n")
+    return tmp_path
+
+
+def test_setup_installs_only_in_project_and_preserves_existing_key(tmp_path):
+    root = checkout(tmp_path)
+    (root / ".env").write_text("PRIVATE_EXISTING_KEY")
+    commands = []
+    def run(args, **kwargs):
+        commands.append(args)
+        assert kwargs["cwd"] == root
+        return SimpleNamespace(returncode=0)
+    module.setup(root, python="base-python", version=(3, 11), run=run)
+    assert commands[0] == ["base-python", "-m", "venv", str(root / ".venv")]
+    assert all(str(root / ".venv") in args[0] for args in commands[1:])
+    assert commands[-1][-3:] == ["-m", "pytest", "-q"]
+    assert (root / ".env").read_text() == "PRIVATE_EXISTING_KEY"
+
+
+def test_setup_seeds_blank_configuration_and_stops_after_failure(tmp_path):
+    root = checkout(tmp_path)
+    module.setup(root, version=(3, 11), run=lambda *a, **k: SimpleNamespace(returncode=0))
+    assert (root / ".env").read_bytes() == (root / ".env.example").read_bytes()
+    calls = []
+    with pytest.raises(module.SetupFailure):
+        module.setup(root, version=(3, 11), run=lambda *a, **k: calls.append(a) or SimpleNamespace(returncode=1))
+    assert len(calls) == 1  # aborts on the first failed subprocess; no install/test chain
+
+
+def test_wrong_python_or_incomplete_checkout_never_runs_commands(tmp_path):
+    def forbidden(*a, **k): raise AssertionError("must not execute")
+    with pytest.raises(module.SetupFailure): module.setup(tmp_path, version=(3, 12), run=forbidden)
+    with pytest.raises(module.SetupFailure): module.setup(tmp_path, version=(3, 11), run=forbidden)
+
+
+def test_incomplete_environment_is_preserved_without_running_installers(tmp_path):
+    root = checkout(tmp_path); (root / ".venv").mkdir()
+    def forbidden(*a, **k): raise AssertionError("must not execute")
+    with pytest.raises(module.SetupFailure, match="incomplete"):
+        module.setup(root, version=(3, 11), run=forbidden)
+    assert (root / ".venv").is_dir()

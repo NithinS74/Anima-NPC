@@ -30,7 +30,7 @@ function stopAudio() {
 }
 async function showStage(next) {
   const generation = ++stageEpoch;
-  stage?.clear(); $('model-host').hidden = true; $('portrait').hidden = false;
+  stage?.clear(); $('expressions').disabled = true; $('model-host').hidden = true; $('portrait').hidden = false;
   $('visual-status').textContent = 'ILLUSTRATED CHARACTER'; $('model-hint').textContent = 'No local 3D model imported';
   if (!next.media?.model_url) return;
   try {
@@ -40,15 +40,20 @@ async function showStage(next) {
     const loaded = await stage.load(next.media.model_url);
     if (generation !== stageEpoch || !loaded) return;
     $('portrait').hidden = true; $('visual-status').textContent = 'LOCAL 3D MODEL';
+    stage.bindSpeech($('speech-player')); stage.setMood(next.mood);
+    $('expressions').disabled = !stage.hasExpressions();
+    stage.setExpressions($('expressions').checked);
+    $('expressions').title = stage.hasExpressions() ? 'Native Skyrim blink, speech and mood morphs; approximate timing' : 'This model has no native facial morphs';
     $('model-hint').textContent = next.media.appearance_source || 'Drag to rotate · 30 FPS cap';
     $('model-hint').title = 'Actual game-derived appearance assembly · static pose · drag to rotate';
   } catch {
     if (generation !== stageEpoch) return;
-    stage?.clear(); $('model-host').hidden = true; $('portrait').hidden = false;
+    stage?.clear(); $('expressions').disabled = true; $('model-host').hidden = true; $('portrait').hidden = false;
     $('visual-status').textContent = 'PORTRAIT FALLBACK'; $('model-hint').textContent = 'Local model could not be rendered';
   }
 }
 function clearLog() {
+  stage?.setMood('neutral');
   stopAudio(); $('stage-caption').textContent = 'Every stranger has a story.';
   $('llm-input').textContent = 'No model input recorded.'; $('prompt-note').textContent = 'No turn yet.';
   $('impact-map').replaceChildren(); $('impact-summary').textContent = 'Speak to a character to see what shaped their response.';
@@ -79,7 +84,7 @@ function bubble(speaker, text, type = '', metadata = '') {
 function relationship() { return Object.fromEntries(scores.map(name => [name, Number($(name).value)])); }
 function updateScores(values) { scores.forEach((name, index) => { $(name).value = values[index]; $(name + '-value').textContent = values[index]; }); }
 function applySavedState(state, changes = null) {
-  Object.assign(profile, state); updateScores(scores.map(name => state.relationship[name])); $('mood').value = state.mood;
+  Object.assign(profile, state); stage?.setMood(state.mood); updateScores(scores.map(name => state.relationship[name])); $('mood').value = state.mood;
   if (changes) scores.forEach(name => { const delta = changes.delta[name]; if (delta) $(name + '-value').textContent += ` (${delta > 0 ? '+' : ''}${delta})`; });
 }
 function restoreHistory(next) {
@@ -112,6 +117,7 @@ async function refreshSavedState() {
 function selectProfile(next) {
   profile = next; clearLog();
   $('name').textContent = next.persona.name; $('occupation').textContent = next.persona.occupation.toUpperCase();
+  document.querySelector('.stage-panel').dataset.scene = next.media?.scene || next.id;
   $('tagline').textContent = next.tagline; $('location').textContent = next.location;
   $('goal').textContent = next.current_goal; $('testing-notes').textContent = next.testing_notes;
   $('portrait').src = '/portraits/' + next.id + '.svg'; $('portrait').alt = 'Original illustrated portrait of ' + next.persona.name;
@@ -173,6 +179,7 @@ $('chat').addEventListener('submit', async event => {
     if (data.saved_state) applySavedState(data.saved_state, data.social_change);
     bubble(character.persona.name, result.response?.text || (result.response?.mode === 'end' ? '[Ends the interaction]' : '[No speech]'), result.status === 'error_fallback' ? 'system' : '', meta);
     $('stage-caption').textContent = result.response?.text || (result.response?.mode === 'end' ? 'They end the conversation.' : 'They remain silent.');
+    stage?.setMood(result.plan.affect);
     showInspection(data);
     $('stage-state').textContent = ({engage:'Listening',brief:'A few words, then',boundary:'A boundary drawn',disengage:'Conversation ended',withdraw:'Keeping their distance'})[data.context.social_appraisal.willingness] || 'Listening';
     const appraisal = data.context.social_appraisal;
@@ -227,6 +234,8 @@ async function init() {
   });
   try {
     const response = await fetch('/api/info'); if (!response.ok) throw new Error('unavailable'); info = await response.json();
+    document.body.classList.toggle('skyrim-font', !!info.skyrim_fonts_available);
+    $('font-status').textContent = info.skyrim_fonts_available ? 'Typography: actual Skyrim Futura dialogue/interface fonts, imported locally.' : 'Typography: open-font fallback (not the original Skyrim font).';
     $('mode').textContent = info.mode === 'live' ? 'CONNECTED · may incur charges' : 'OFFLINE PREVIEW · no model';
     $('timing').textContent = `${info.timing_profile.toUpperCase()} · ${info.deadline_ms / 1000}s deadline · ${info.input_budget_bytes} input bytes`;
     $('memory-notice').textContent = info.persistent_state ? 'Relationships persist · recent displayed replies become conversation memory.' : 'Single-turn test · this server has no persistent store.';
@@ -298,3 +307,5 @@ document.addEventListener('keydown', event => {
   if (event.target.closest?.('input,textarea,select,dialog') || event.ctrlKey || event.altKey || event.metaKey) return;
   if (event.key.toLowerCase() === 'i') { event.preventDefault(); toggleImmersion(); }
 });
+
+$('expressions').addEventListener('change', () => stage?.setExpressions($('expressions').checked));

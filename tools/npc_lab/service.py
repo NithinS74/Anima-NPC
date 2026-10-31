@@ -152,6 +152,7 @@ class LabService:
                     deadline_ms=self.runner.limits.response_timeout_ms,
                     input_budget_bytes=self.runner.limits.max_input_bytes,
                     background_url=self.media.background_url() if self.media else None,
+                    skyrim_fonts_available=self.media.game_fonts_ready() if self.media else False,
                     profiles=[self.profile_info(p) for p in self.profiles.values()],
                     persistent_state=self.state_store is not None,
                     memory="Relationships persist; recent displayed dialogue is untrusted memory." if self.state_store else

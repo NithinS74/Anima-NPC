@@ -2,6 +2,7 @@
 import * as THREE from './vendor/three.module.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { framing } from './camera.mjs';
+import { facialWeights } from './facial.mjs';
 
 export function createStage(host) {
   const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
@@ -16,6 +17,20 @@ export function createStage(host) {
   let model = null, mixer = null, controller = null, epoch = 0, last = 0, frame, drag = null, dirty = true;
   const clock = new THREE.Clock();
   let view = 'close', zoom = 1;
+  let faceMeshes = [], expressions = true, mood = 'neutral', speech = null;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  function applyFace(weights) {
+    for (const mesh of faceMeshes) for (const [name, value] of Object.entries(weights)) {
+      const index = mesh.morphTargetDictionary[name];
+      if (index !== undefined && Math.abs(mesh.morphTargetInfluences[index] - value) > .0001) {
+        mesh.morphTargetInfluences[index] = value; dirty = true;
+      }
+    }
+  }
+  function resetFace() { applyFace(facialWeights(0, {enabled:false})); }
+  function onVisibility() { if (document.hidden) resetFace(); dirty = true; }
+  document.addEventListener('visibilitychange', onVisibility);
+  reducedMotion.addEventListener('change', resetFace);
   function positionCamera() {
     const pose = framing(view, zoom);
     camera.position.set(0, pose.y, pose.distance); camera.lookAt(0, pose.y, 0); dirty = true;
@@ -41,6 +56,9 @@ export function createStage(host) {
     frame = requestAnimationFrame(tick);
     if (document.hidden || now - last < 1000 / 30) return;
     last = now;
+    if (faceMeshes.length) applyFace(facialWeights(now / 1000, {enabled:expressions,
+      reducedMotion:reducedMotion.matches, mood, speaking:!!speech && !speech.paused && !speech.ended,
+      speechTime:speech?.currentTime || 0}));
     if (mixer) { mixer.update(Math.min(clock.getDelta(), 0.1)); dirty = true; }
     if (dirty) { renderer.render(scene, camera); dirty = false; }
   }
@@ -52,6 +70,7 @@ export function createStage(host) {
   return {
     async load(url) {
       const generation = ++epoch; controller?.abort(); controller = new AbortController();
+      resetFace(); faceMeshes = [];
       if (model) { mixer?.stopAllAction(); mixer = null; group.remove(model); dispose(model); model = null; }
       const response = await fetch(url, { signal: controller.signal });
       if (!response.ok) throw new Error('model_unavailable');
@@ -65,6 +84,9 @@ export function createStage(host) {
       gltf.scene.traverse(child => { if (child.isMesh) triangles += (child.geometry.index?.count || child.geometry.attributes.position?.count || 0) / 3; });
       if (triangles > 500000) { dispose(gltf.scene); throw new Error('model_geometry_limit'); }
       model = gltf.scene;
+      faceMeshes = [];
+      model.traverse(child => { if (child.isMesh && child.morphTargetDictionary && child.morphTargetInfluences)
+        faceMeshes.push(child); });
       const bounds = new THREE.Box3().setFromObject(model), size = bounds.getSize(new THREE.Vector3()), center = bounds.getCenter(new THREE.Vector3());
       const extent = Math.max(size.x, size.y, size.z);
       if (!Number.isFinite(extent) || extent <= 0) { dispose(model); model = null; throw new Error('empty_model'); }
@@ -81,10 +103,21 @@ export function createStage(host) {
       const pose = framing(nextView, nextZoom); view = pose.view; zoom = pose.zoom;
       return positionCamera();
     },
+    hasExpressions() { return faceMeshes.some(mesh => 'BlinkLeft' in mesh.morphTargetDictionary); },
+    expressionState() {
+      const weights = {};
+      for (const mesh of faceMeshes) for (const [name, index] of Object.entries(mesh.morphTargetDictionary))
+        weights[name] = Math.max(weights[name] || 0, mesh.morphTargetInfluences[index]);
+      return {enabled:expressions, parts:faceMeshes.length, mood, weights};
+    },
+    setExpressions(enabled) { expressions = !!enabled; if (!expressions) resetFace(); },
+    setMood(value) { mood = value; },
+    bindSpeech(element) { speech = element; },
     clear() {
-      epoch++; controller?.abort(); mixer?.stopAllAction(); mixer = null;
+      epoch++; controller?.abort(); mixer?.stopAllAction(); mixer = null; resetFace(); faceMeshes = []; mood = 'neutral';
       if (model) { group.remove(model); dispose(model); model = null; } dirty = true;
     },
-    dispose() { this.clear(); observer.disconnect(); cancelAnimationFrame(frame); renderer.dispose(); renderer.domElement.remove(); }
+    dispose() { this.clear(); observer.disconnect(); document.removeEventListener('visibilitychange', onVisibility);
+      reducedMotion.removeEventListener('change', resetFace); cancelAnimationFrame(frame); renderer.dispose(); renderer.domElement.remove(); }
   };
 }

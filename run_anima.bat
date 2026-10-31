@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 if not exist ".venv\Scripts\python.exe" (
-  echo Project venv missing. Follow SETUP.md first.
+  echo Project venv missing. Run setup.bat first; see SETUP.md.
   pause
   exit /b 1
 )

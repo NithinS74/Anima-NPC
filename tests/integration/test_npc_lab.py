@@ -24,6 +24,17 @@ def headers(server):
     return {"Origin": server.origin, "X-Lab-Token": server.token}
 
 
+def test_role_scenes_are_distinct_and_fonts_are_optional_fixed_routes(lab):
+    _, client = lab
+    scenes = [client.get(f"/scenes/{id}.svg") for id in ("mira", "elin", "daren", "iona")]
+    assert all(response.status_code == 200 and response.headers["Content-Type"].startswith("image/svg+xml") for response in scenes)
+    assert len({response.content for response in scenes}) == 4
+    assert client.get("/scenes/unknown.svg").status_code == 404
+    assert client.get("/api/fonts/dialogue.ttf").status_code == 404
+    assert client.get("/api/fonts/interface.ttf").status_code == 404
+    assert client.get("/api/fonts/arbitrary.ttf").status_code == 404
+
+
 def test_http_bridge_wait_covers_configured_generation_budget(monkeypatch):
     import tools.npc_lab.server as module
     service = LabService(OfflineProvider(), development_timeout_s=30)

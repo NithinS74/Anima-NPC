@@ -19,8 +19,10 @@ ASSETS = {"/": ("index.html", "text/html"), "/app.js": ("app.js", "text/javascri
           "/style.css": ("style.css", "text/css")}
 for character in ("mira", "elin", "daren", "iona"):
     ASSETS[f"/portraits/{character}.svg"] = (f"portraits/{character}.svg", "image/svg+xml")
+    ASSETS[f"/scenes/{character}.svg"] = (f"scenes/{character}.svg", "image/svg+xml")
 ASSETS["/stage.js"] = ("stage.js", "text/javascript")
 ASSETS["/camera.mjs"] = ("camera.mjs", "text/javascript")
+ASSETS["/facial.mjs"] = ("facial.mjs", "text/javascript")
 for font in ("BarlowCondensed-Regular.ttf", "Cinzel.ttf"):
     ASSETS[f"/fonts/{font}"] = (f"fonts/{font}", "font/ttf")
 for module in ("three.module.js", "three.core.js", "GLTFLoader.js", "BufferGeometryUtils.js", "SkeletonUtils.js"):
@@ -133,6 +135,13 @@ class LabHandler(BaseHTTPRequestHandler):
                 self.send(200, self.server.service.info())
             except StoreFailure:
                 self.send(503, {"error": "state_unavailable"})
+        elif self.path in {"/api/fonts/dialogue.ttf", "/api/fonts/interface.ttf"}:
+            try:
+                if self.server.service.media is None:
+                    raise MediaFailure("font_unavailable")
+                self.send(200, self.server.service.media.font_bytes(self.path.split("/")[-1].removesuffix(".ttf")), "font/ttf")
+            except MediaFailure:
+                self.send(404, {"error": "font_unavailable"})
         elif self.path == "/api/background/skyrim.png":
             try:
                 if self.server.service.media is None:

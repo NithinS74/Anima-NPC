@@ -11,6 +11,9 @@ from pathlib import Path
 
 def main():
     import bpy
+    from mathutils import Vector
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from tools.npc_lab.face_import import NATIVE_MORPHS, matching_topology, morph_offsets
     manifest = json.loads(Path(sys.argv[sys.argv.index("--") + 1]).read_text(encoding="utf-8"))
     source = Path(manifest["source"])
     sys.path.insert(0, manifest["addon_directory"])
@@ -23,6 +26,30 @@ def main():
         bpy.context.view_layer.objects.active = None
         bpy.ops.import_scene.pynifly(filepath=str(source / name), import_collisions=False,
                                    import_animations=False, import_tris=False, import_shapekeys=False)
+    native_parts = []
+    if manifest.get("facial_assets"):
+        from io_scene_nifly.tri.trifile import TriFile
+        for relative in manifest["facial_assets"]:
+            with (source / relative).open("rb") as stream:
+                tri = TriFile.from_file(stream)
+            for obj in list(bpy.data.objects):
+                if obj.type != "MESH" or not matching_topology(len(obj.data.vertices),
+                        [tuple(p.vertices) for p in obj.data.polygons], tri.vertices, tri.faces):
+                    continue
+                if obj.data.shape_keys is not None:
+                    raise ValueError("ambiguous facial morph source")
+                basis = obj.shape_key_add(name="Basis")
+                for name in NATIVE_MORPHS:
+                    if name not in tri.morphs:
+                        continue
+                    offsets = morph_offsets(tri.vertices, tri.morphs[name])
+                    key = obj.shape_key_add(name=name)
+                    for point, base, delta in zip(key.data, basis.data, offsets):
+                        point.co = base.co + Vector(delta)
+                    key.value = 0
+                native_parts.append(dict(mesh=obj.name, source=relative, targets=len(obj.data.shape_keys.key_blocks) - 1))
+        if not any("head.tri" in p["source"] for p in native_parts) or not any("eyes" in p["source"] for p in native_parts):
+            raise ValueError("native head/eye topology did not match")
     # Simplify game shader groups to a portable glTF base-color material. Keep
     # actual game diffuse/face-tint images; no web texture/network dependencies.
     for material in list(bpy.data.materials):
@@ -57,8 +84,8 @@ def main():
                 material.node_tree.links.new(image.outputs["Alpha"], shader.inputs["Alpha"])
         else:
             shader.inputs["Base Color"].default_value = (0.3, 0.27, 0.22, 1)
-    # Freeze evaluated geometry into one static assembled character. This is
-    # presentation, not an animation/retargeting or game-state implementation.
+    # Bake the assembled bind pose, retaining verified native facial deltas.
+    # No game skeleton/idle animation is imported or retargeted.
     depsgraph = bpy.context.evaluated_depsgraph_get()
     originals = list(bpy.data.objects)
     baked = []
@@ -73,6 +100,21 @@ def main():
                 mesh.materials.append(material)
         fresh = bpy.data.objects.new("Skyrim_" + obj.name, mesh)
         bpy.context.collection.objects.link(fresh); baked.append(fresh)
+        if obj.data.shape_keys:
+            fresh.shape_key_add(name="Basis")
+            for original_key in list(obj.data.shape_keys.key_blocks)[1:]:
+                original_key.value = 1
+                bpy.context.view_layer.update()
+                changed = bpy.data.meshes.new_from_object(obj.evaluated_get(depsgraph), depsgraph=depsgraph)
+                if len(changed.vertices) != len(mesh.vertices):
+                    raise ValueError("evaluated morph changed topology")
+                key = fresh.shape_key_add(name=original_key.name)
+                for point, vertex in zip(key.data, changed.vertices):
+                    point.co = obj.matrix_world @ vertex.co
+                bpy.data.meshes.remove(changed)
+                original_key.value = 0
+                bpy.context.view_layer.update()
+            fresh["anima_native_morphs"] = [key.name for key in list(fresh.data.shape_keys.key_blocks)[1:]]
     for obj in originals:
         bpy.data.objects.remove(obj, do_unlink=True)
     bpy.ops.object.select_all(action="DESELECT")
@@ -81,7 +123,8 @@ def main():
     bpy.context.view_layer.objects.active = baked[0]
     output = Path(manifest["output"]); output.parent.mkdir(parents=True, exist_ok=True)
     bpy.ops.export_scene.gltf(filepath=str(output), export_format="GLB", use_selection=True,
-                              export_animations=False, export_skins=False, export_morph=False,
+                              export_animations=False, export_skins=False, export_morph=bool(native_parts),
+                              export_morph_normal=False, export_extras=True,
                               export_image_format="AUTO", export_yup=True)
     backdrop = Path(manifest.get("background_source", ""))
     if backdrop.is_file():
@@ -92,6 +135,7 @@ def main():
         target = Path(manifest["background_output"]); target.parent.mkdir(parents=True, exist_ok=True)
         image.filepath_raw = str(target); image.file_format = "PNG"; image.save()
     print("LAB_EXPORTED", str(output), output.stat().st_size, flush=True)
+    print("ANIMA_NATIVE_MORPHS", json.dumps(native_parts), flush=True)
 
 
 if __name__ == "__main__":

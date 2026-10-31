@@ -1,18 +1,43 @@
 {
   "mira": {
     "appearance": "Adrianne Avenicci / blacksmith outfit",
-    "meshes": ["meshes/actors/character/facegendata/facegeom/skyrim.esm/00013bb9.nif", "meshes/clothes/blacksmith/f/torso_1.nif", "meshes/clothes/blacksmith/f/shoes_1.nif", "meshes/actors/character/character assets/femalehands_1.nif"]
+    "meshes": [
+      "meshes/actors/character/facegendata/facegeom/skyrim.esm/00013bb9.nif",
+      "meshes/clothes/blacksmith/f/torso_1.nif",
+      "meshes/clothes/blacksmith/f/shoes_1.nif",
+      "meshes/actors/character/character assets/femalehands_1.nif"
+    ],
+    "facial_type": "female"
   },
   "elin": {
     "appearance": "Hulda / barkeeper outfit",
-    "meshes": ["meshes/actors/character/facegendata/facegeom/skyrim.esm/00013ba3.nif", "meshes/clothes/barkeeper/f/torso_1.nif", "meshes/clothes/barkeeper/f/shoes_1.nif", "meshes/actors/character/character assets/femalehands_1.nif"]
+    "meshes": [
+      "meshes/actors/character/facegendata/facegeom/skyrim.esm/00013ba3.nif",
+      "meshes/clothes/barkeeper/f/torso_1.nif",
+      "meshes/clothes/barkeeper/f/shoes_1.nif",
+      "meshes/actors/character/character assets/femalehands_1.nif"
+    ],
+    "facial_type": "female"
   },
   "daren": {
     "appearance": "Farkas face / Skyrim guard kit",
-    "meshes": ["meshes/actors/character/facegendata/facegeom/skyrim.esm/0001a692.nif", "meshes/armor/stormcloaks/cuirassm_1.nif", "meshes/armor/stormcloaks/bootsm_1.nif", "meshes/armor/stormcloaks/glovesm_1.nif", "meshes/armor/stormcloaks/helmm_1.nif"]
+    "meshes": [
+      "meshes/actors/character/facegendata/facegeom/skyrim.esm/0001a692.nif",
+      "meshes/armor/stormcloaks/cuirassm_1.nif",
+      "meshes/armor/stormcloaks/bootsm_1.nif",
+      "meshes/armor/stormcloaks/glovesm_1.nif",
+      "meshes/armor/stormcloaks/helmm_1.nif"
+    ],
+    "facial_type": "male"
   },
   "iona": {
     "appearance": "Lydia / iron outfit (visual stand-in for the station persona)",
-    "meshes": ["meshes/actors/character/facegendata/facegeom/skyrim.esm/000a2c8e.nif", "meshes/armor/iron/f/cuirasslight_1.nif", "meshes/armor/iron/f/boots_1.nif", "meshes/armor/iron/f/gauntlets_1.nif"]
+    "meshes": [
+      "meshes/actors/character/facegendata/facegeom/skyrim.esm/000a2c8e.nif",
+      "meshes/armor/iron/f/cuirasslight_1.nif",
+      "meshes/armor/iron/f/boots_1.nif",
+      "meshes/armor/iron/f/gauntlets_1.nif"
+    ],
+    "facial_type": "female"
   }
 }
