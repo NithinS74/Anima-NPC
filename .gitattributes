@@ -1,3 +1,9 @@
 
 # Preserve exact vendored bytes for the checked integrity manifest on Windows.
 tools/npc_lab/web/vendor/* -text
+
+# Keep bundled font bytes and their integrity metadata stable.
+tools/npc_lab/web/fonts/* -text
+
+# Retain upstream licence bytes, including their original whitespace.
+tools/npc_lab/web/fonts/*-OFL.txt -whitespace

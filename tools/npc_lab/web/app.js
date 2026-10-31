@@ -8,6 +8,7 @@ const presets = {
 };
 let info, profile, pending = null, epoch = 0, records = [], settingsPending = false;
 let stage = null, stageEpoch = 0, audioURL = null, speechFetch = null;
+let cameraView = "close", cameraZoom = 1;
 function feedback(text) { $('feedback').textContent = text; }
 function fallbackExplanation(code) {
   const explanations = {
@@ -30,11 +31,12 @@ function stopAudio() {
 async function showStage(next) {
   const generation = ++stageEpoch;
   stage?.clear(); $('model-host').hidden = true; $('portrait').hidden = false;
-  $('visual-status').textContent = 'ILLUSTRATED PORTRAIT'; $('model-hint').textContent = 'No local 3D model imported';
+  $('visual-status').textContent = 'ILLUSTRATED CHARACTER'; $('model-hint').textContent = 'No local 3D model imported';
   if (!next.media?.model_url) return;
   try {
     if (!stage) { const module = await import('/stage.js'); if (generation !== stageEpoch) return; stage = module.createStage($('model-host')); }
     $('model-host').hidden = false; $('visual-status').textContent = 'LOADING LOCAL 3D';
+    stage.setView(cameraView, cameraZoom);
     const loaded = await stage.load(next.media.model_url);
     if (generation !== stageEpoch || !loaded) return;
     $('portrait').hidden = true; $('visual-status').textContent = 'LOCAL 3D MODEL';
@@ -47,16 +49,18 @@ async function showStage(next) {
   }
 }
 function clearLog() {
-  stopAudio(); $('stage-caption').textContent = 'Choose your words.';
+  stopAudio(); $('stage-caption').textContent = 'Every stranger has a story.';
+  $('llm-input').textContent = 'No model input recorded.'; $('prompt-note').textContent = 'No turn yet.';
+  $('impact-map').replaceChildren(); $('impact-summary').textContent = 'Speak to a character to see what shaped their response.';
   $('audio-status').textContent = profile?.media?.voice_available ? 'Mantella Piper voice ready' : 'Voice not connected';
   epoch++; records = []; $('messages').replaceChildren();
   const empty = document.createElement('div'); empty.className = 'empty';
   const quote = document.createElement('span'), heading = document.createElement('h3'), hint = document.createElement('p');
-  quote.textContent = '“'; heading.textContent = 'Give them a reason to respond.'; hint.textContent = 'Try a question below, or start your own.';
+  quote.textContent = '“'; heading.textContent = 'Give them a reason to respond.'; hint.textContent = 'Choose your words. Their response depends on who you are to them.';
   empty.append(quote, heading, hint); $('messages').append(empty);
   $('trace').textContent = 'No turn yet.';
   $('reaction').hidden = true;
-  feedback(info?.persistent_state ? 'View cleared. Saved relationship and acknowledged memory are retained.' : 'Each message is an independent test turn.');
+  feedback(info?.persistent_state ? 'Your standing and past encounters are remembered.' : 'Each message is an independent test turn.');
 }
 function setBusy(busy) {
   $('send').disabled = busy;
@@ -82,7 +86,7 @@ function restoreHistory(next) {
   if (!next.history?.length) return;
   for (const memory of next.history) {
     bubble('You · remembered', memory.player_text, 'player');
-    bubble(next.persona.name, memory.npc_text || `[${memory.mode}]`, '', 'Previously displayed · remembered dialogue, not world truth');
+    bubble(next.persona.name, memory.npc_text || `[${memory.mode}]`, '', 'From an earlier encounter');
   }
 }
 async function persistConditions() {
@@ -114,14 +118,15 @@ function selectProfile(next) {
   $('stage-name').textContent = next.persona.name; $('stage-role').textContent = next.persona.occupation.toUpperCase();
   $('stage-state').textContent = 'Available';
   $('voice').disabled = !next.media?.voice_available; $('voice').checked = !!next.media?.voice_available;
-  $('audio-status').textContent = next.media?.voice_available ? `Piper · ${next.media.voice}` : 'Voice not installed';
+  $('audio-status').textContent = next.media?.voice_available ? 'Voice ready' : 'Voice not installed';
+  $('audio-status').title = next.media?.voice || 'No local voice asset';
   showStage(next);
   $('tags').replaceChildren(...next.persona.speech_style.map(text => { const el = document.createElement('span'); el.textContent = text; return el; }));
   $('boundaries').replaceChildren(...next.persona.boundaries.map(text => { const el = document.createElement('li'); el.textContent = text; return el; }));
   $('preset').value = 'default'; updateScores(scores.map(name => next.relationship[name]));
   $('mood').value = next.mood; $('state').value = 'available'; $('weapon').checked = false;
   $('state').querySelector('[value=closed]').disabled = !next.persona.service_role;
-  document.querySelectorAll('.roster-item').forEach(el => el.classList.toggle('selected', el.dataset.id === next.id));
+  document.querySelectorAll('.roster-item').forEach(el => { const selected = el.dataset.id === next.id; el.classList.toggle('selected', selected); el.setAttribute('aria-pressed', String(selected)); });
   $('starters').replaceChildren(...next.starters.map(text => {
     const button = document.createElement('button'); button.type = 'button'; button.textContent = text;
     button.addEventListener('click', () => { $('message').value = text; $('message').focus(); }); return button;
@@ -164,11 +169,12 @@ $('chat').addEventListener('submit', async event => {
   try {
     const data = await post('/api/turn', request);
     if (epoch !== turnEpoch || pending !== id) return;
-    const result = data.result, meta = `${result.status} · ${result.model_calls} calls · ${Math.round(result.elapsed_ms)} ms · ${result.model || 'authored / no completed model'}`;
+    const result = data.result, meta = result.status === 'error_fallback' ? 'Connection or response check failed; this is a fallback.' : '';
     if (data.saved_state) applySavedState(data.saved_state, data.social_change);
     bubble(character.persona.name, result.response?.text || (result.response?.mode === 'end' ? '[Ends the interaction]' : '[No speech]'), result.status === 'error_fallback' ? 'system' : '', meta);
-    $('stage-caption').textContent = result.response?.text || '[No speech]';
-    $('stage-state').textContent = result.plan.intent.replaceAll('_', ' ');
+    $('stage-caption').textContent = result.response?.text || (result.response?.mode === 'end' ? 'They end the conversation.' : 'They remain silent.');
+    showInspection(data);
+    $('stage-state').textContent = ({engage:'Listening',brief:'A few words, then',boundary:'A boundary drawn',disengage:'Conversation ended',withdraw:'Keeping their distance'})[data.context.social_appraisal.willingness] || 'Listening';
     const appraisal = data.context.social_appraisal;
     if (appraisal) {
       $('reaction').hidden = false;
@@ -182,11 +188,11 @@ $('chat').addEventListener('submit', async event => {
       try { const acknowledged = await post('/api/displayed', {persona_id: character.id, request_id: id}); if (epoch === turnEpoch) applySavedState(acknowledged, data.social_change); }
       catch { feedback('Reply displayed, but memory acknowledgement failed. Reload state before continuing.'); }
     }
-      feedback(result.error_code ? fallbackExplanation(result.error_code) : 'Inspect the trace to compare intention with the response. Valid structure does not prove realism.');
+      feedback(result.error_code ? fallbackExplanation(result.error_code) : (info.mode === 'live' ? 'The next words are yours.' : 'Offline preview: responses are scripted.'));
     waiting.remove();
     if ($('voice').checked && result.response?.mode === 'speech' && result.response.text) await speak(id, turnEpoch);
   } catch (error) {
-    if (epoch === turnEpoch) { bubble('Lab', `Request failed: ${error.message}`, 'system'); feedback('Check the launcher terminal and local provider settings.'); }
+    if (epoch === turnEpoch) { bubble('Anima', `Request failed: ${error.message}`, 'system'); feedback('Check the Anima launcher terminal and local provider settings.'); }
   } finally {
     waiting.remove(); if (pending === id) { pending = null; setBusy(false); }
   }
@@ -209,7 +215,7 @@ $('speech-player').addEventListener('ended', () => { $('audio-status').classList
 window.addEventListener('pagehide', () => { stopAudio(); stage?.dispose(); });
 $('export').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify({ mode: info?.mode, persistent_state: info?.persistent_state, turns: records }, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = 'npc-lab-session.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = 'anima-conversation.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 async function init() {
   scores.forEach(name => {
@@ -221,7 +227,7 @@ async function init() {
   });
   try {
     const response = await fetch('/api/info'); if (!response.ok) throw new Error('unavailable'); info = await response.json();
-    $('mode').textContent = info.mode === 'live' ? 'LIVE API · may incur charges' : 'OFFLINE FAKE · no model';
+    $('mode').textContent = info.mode === 'live' ? 'CONNECTED · may incur charges' : 'OFFLINE PREVIEW · no model';
     $('timing').textContent = `${info.timing_profile.toUpperCase()} · ${info.deadline_ms / 1000}s deadline · ${info.input_budget_bytes} input bytes`;
     $('memory-notice').textContent = info.persistent_state ? 'Relationships persist · recent displayed replies become conversation memory.' : 'Single-turn test · this server has no persistent store.';
     document.querySelector('.stage-panel').classList.toggle('game-background', !!info.background_url);
@@ -233,6 +239,62 @@ async function init() {
       button.addEventListener('click', () => selectProfile(next)); $('roster').append(button);
     });
     selectProfile(info.profiles.find(p => p.id === 'mira') || info.profiles[0]);
-  } catch { feedback('Could not load the lab. Keep the launcher running and reload this page.'); $('send').disabled = true; }
+  } catch { feedback('Could not connect to Anima. Keep the launcher running and reload this page.'); $('send').disabled = true; }
 }
 init();
+
+function showInspection(data) {
+  const calls = data.llm_input?.calls || [];
+  $('prompt-note').textContent = calls.length ? `${calls.length} actual model call(s). Initial and repair inputs are shown separately. Keys and headers are excluded.` : 'No LLM call was made. This response used a deterministic policy route.';
+  $('llm-input').textContent = calls.length ? JSON.stringify(calls, null, 2) : 'No messages were sent to a language model.';
+  const context = data.context, plan = data.result.plan;
+  $('impact-summary').textContent = `${context.persona.name}: ${context.social_appraisal.stimulus.replaceAll('_', ' ')} > ${context.social_appraisal.willingness} > ${plan.route} (${plan.intent.replaceAll('_', ' ')}).`;
+  const cards = [];
+  function card(title, text, source) {
+    const item = document.createElement('article'); item.className = 'impact-card';
+    const heading = document.createElement('h3'); heading.textContent = title;
+    const body = document.createElement('p'); body.textContent = text;
+    const origin = document.createElement('small'); origin.textContent = source;
+    item.append(heading, body, origin); cards.push(item);
+  }
+  card('Standing & disposition', `${context.recognition}; ${context.trust_stance} trust; ${context.social_appraisal.tone} tone. ${context.persona.occupation}, ${context.persona.social_role}.`, 'Persona + saved directed relationship');
+  card('State & willingness', `${context.availability}; mood: ${context.mood}; perceived threat: ${context.threat}. Current goal: ${context.current_goal || 'unknown'}.`, 'Eligible observations + fresh NPC state');
+  for (const impact of context.influences) card(impact.rule.replaceAll('_', ' '), impact.effect, `${impact.dimension} <- ${impact.source_ids.join(', ')}`);
+  for (const dependency of context.dependencies) card(`Resolved ${dependency.field}`, `${dependency.value ?? 'unknown'} (${dependency.reason})`, dependency.source_ids.join(', ') || 'No eligible evidence');
+  card('Response contract', `${plan.max_words} words / ${plan.max_sentences} sentences; route ${plan.route}; affect ${plan.affect}. History used: ${data.result.history_used}, omitted: ${data.result.history_omitted}.`, plan.reason_codes.join(', '));
+  card('Knowledge boundary', `${context.perceived_facts.length} eligible observations; ${context.exclusions.length} excluded. History and player claims remain untrusted.`, 'These rules describe implemented appraisal, not proven human psychology.');
+  $('impact-map').replaceChildren(...cards);
+}
+function updateCamera() {
+  cameraZoom = Math.max(.65, Math.min(1.55, cameraZoom));
+  stage?.setView(cameraView, cameraZoom);
+  $('portrait').style.setProperty('--portrait-zoom', String(cameraZoom * (cameraView === 'close' ? 1 : .8)));
+  $('zoom-level').textContent = `${Math.round(cameraZoom * 100)}%`;
+  $('view-close').setAttribute('aria-pressed', String(cameraView === 'close'));
+  $('view-wide').setAttribute('aria-pressed', String(cameraView === 'wide'));
+  $('zoom-out').disabled = cameraZoom <= .65; $('zoom-in').disabled = cameraZoom >= 1.55;
+}
+$('view-close').addEventListener('click', () => { cameraView = 'close'; cameraZoom = 1; updateCamera(); });
+$('view-wide').addEventListener('click', () => { cameraView = 'wide'; cameraZoom = 1; updateCamera(); });
+$('zoom-in').addEventListener('click', () => { cameraZoom += .1; updateCamera(); });
+$('zoom-out').addEventListener('click', () => { cameraZoom -= .1; updateCamera(); });
+function toggleImmersion() {
+  const immersive = document.body.classList.toggle('immersive');
+  $('immersive').setAttribute('aria-pressed', String(immersive));
+  $('immersive').firstChild.textContent = immersive ? 'Return ' : 'Immerse ';
+}
+$('immersive').addEventListener('click', toggleImmersion);
+$('journal-toggle').addEventListener('click', () => {
+  const hidden = document.body.classList.toggle('journal-hidden');
+  $('journal-toggle').setAttribute('aria-pressed', String(!hidden));
+});
+$('inspect-open').addEventListener('click', () => $('inspector').showModal());
+$('inspect-close').addEventListener('click', () => $('inspector').close());
+for (const button of document.querySelectorAll('[data-inspect]')) button.addEventListener('click', () => {
+  for (const tab of document.querySelectorAll('[data-inspect]')) tab.setAttribute('aria-pressed', String(tab === button));
+  for (const id of ['impact', 'prompt', 'trace']) $(id + '-view').hidden = id !== button.dataset.inspect;
+});
+document.addEventListener('keydown', event => {
+  if (event.target.closest?.('input,textarea,select,dialog') || event.ctrlKey || event.altKey || event.metaKey) return;
+  if (event.key.toLowerCase() === 'i') { event.preventDefault(); toggleImmersion(); }
+});

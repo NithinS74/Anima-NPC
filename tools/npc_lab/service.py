@@ -13,6 +13,7 @@ from npc.context import build_situation
 from npc.contracts.context import Contract, ContextScenario, Identifier, Persona, Relationship
 from npc.runtime.preview import PreviewLimits, PreviewRunner
 from npc.state.social_store import SocialStore
+from tools.npc_lab.diagnostics import InspectableProvider, capture_inputs
 
 ROOT = Path(__file__).resolve().parents[2]
 PROFILE_DIR = ROOT / "fixtures/personas/npc_lab"
@@ -117,7 +118,7 @@ class LabService:
         limits = PreviewLimits(max_input_bytes=3072) if realtime else PreviewLimits(
             response_timeout_ms=development_timeout_s * 1000,
             model_cutoff_ms=min(59000, development_timeout_s * 1000 - 550), max_input_bytes=3072)
-        self.runner = PreviewRunner(provider, limits)
+        self.runner = PreviewRunner(InspectableProvider(provider), limits)
         self.active: tuple[str, asyncio.Event] | None = None
         self.revision = 0
         self.media = media
@@ -184,8 +185,11 @@ class LabService:
         self.active_profile = turn.persona_id
         try:
             situation = build_situation(scenario.turn, scenario.snapshot, scenario.now)
-            result = await self.runner.run(scenario, cancellation=cancellation)
-            payload = {"result": result.model_dump(mode="json"), "context": situation.model_dump(mode="json")}
+            with capture_inputs() as calls:
+                result = await self.runner.run(scenario, cancellation=cancellation)
+            payload = {"result": result.model_dump(mode="json"), "context": situation.model_dump(mode="json"),
+                       "llm_input": {"calls": calls, "note": "Exact provider-bound messages; no keys or headers."
+                                     if calls else "No LLM call was made for this turn."}}
             if state:
                 payload.update(social_change=audit, saved_state=self.public_state(state))
                 if result.status != "cancelled":

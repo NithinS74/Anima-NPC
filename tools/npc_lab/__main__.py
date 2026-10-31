@@ -12,7 +12,7 @@ from npc.state.social_store import SocialStore, StoreFailure
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Separate local NPC manual-test lab")
+    parser = argparse.ArgumentParser(description="Anima local NPC companion application")
     parser.add_argument("--live", action="store_true", help="Enable API calls using local provider settings")
     parser.add_argument("--offline", action="store_false", dest="live", help="Override the launcher to use the fake provider")
     parser.set_defaults(live=False)
@@ -36,9 +36,9 @@ def main():
         print("Could not open persistent lab state. Check data/npc_lab/ and available disk space.")
         return 2
     except (OSError, ValueError):
-        print("Could not start lab. Check persona files and whether the port is already in use.")
+        print("Could not start Anima. Check persona files and whether the port is already in use.")
         return 2
-    print(f"NPC lab: {server.origin} | {'LIVE API (may incur charges)' if args.live else 'OFFLINE FAKE'}")
+    print(f"Anima: {server.origin} | {'LIVE API (may incur charges)' if args.live else 'OFFLINE FAKE'}")
     print("Persistent social state and acknowledged conversation history. Ctrl+C stops the lab.")
     if args.open:
         webbrowser.open(server.origin)

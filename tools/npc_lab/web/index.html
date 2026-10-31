@@ -1,34 +1,41 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="lab-token" content="__LAB_TOKEN__">
-<title>NPC Lab &middot; Character room</title><link rel="icon" href="/portraits/mira.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+<meta name="theme-color" content="#171512"><meta name="description" content="Anima - every conversation leaves its mark.">
+<title>Anima &middot; Every conversation leaves its mark</title><link rel="icon" href="/portraits/mira.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
 </head><body>
-<header><a class="brand" href="/">NPC<span> / LAB</span></a><span class="header-title">THE CHARACTER ROOM</span><div class="header-right"><span id="mode" class="pill">Connecting&hellip;</span><button id="export" class="subtle">Export session &#8599;</button></div></header>
+<header><a class="brand" href="/" aria-label="Anima home"><span class="brand-mark" aria-hidden="true">&#10023;</span> ANIMA</a><span class="header-title">EVERY CONVERSATION LEAVES ITS MARK</span><div class="header-right"><span id="mode" class="pill">Connecting&hellip;</span><button id="immersive" aria-pressed="false" title="Hide side panels for an immersive conversation">Immerse <kbd>I</kbd></button><button id="journal-toggle" aria-pressed="true" aria-controls="journal">Journal</button><button id="inspect-open" aria-controls="inspector">Inspect context</button></div></header>
 <main class="app-shell">
-<aside class="sidebar">
- <div class="section-label"><span>CHARACTERS</span><span>04</span></div><nav id="roster" aria-label="Choose an NPC"></nav>
- <section class="character-copy"><p id="occupation" class="eyebrow"></p><h2 id="name"></h2><p id="tagline" class="muted"></p><div id="tags" class="tags"></div><details class="profile-detail"><summary>Motives & boundaries</summary><p id="goal"></p><ul id="boundaries"></ul><p id="testing-notes" class="muted"></p></details></section>
- <section class="parameters"><div class="section-label"><span>TEST CONDITIONS</span><span>&#8599;</span></div>
- <label for="preset">Relationship</label><select id="preset"><option value="default">Current saved relationship</option><option value="stranger">Neutral stranger</option><option value="friend">Trusted friend</option><option value="distrusted">Familiar, distrusted</option><option value="disliked">Disliked stranger</option></select><div id="sliders"></div>
- <div class="two"><div><label for="state">Availability</label><select id="state"><option value="available">Available</option><option value="busy">Busy</option><option value="closed">Closed</option><option value="combat">In combat</option></select></div><div><label for="mood">Mood</label><select id="mood"><option>neutral</option><option>calm</option><option>tired</option><option>angry</option><option>fearful</option></select></div></div><label class="check"><input id="weapon" type="checkbox"> Player weapon drawn</label>
- </section><p class="sidebar-note">An isolated test room.<br>No game save is changed.</p>
+<aside class="sidebar" aria-label="Characters and conditions">
+ <div class="section-label"><span>SOULS YOU MAY KNOW</span><span>IV</span></div><nav id="roster" aria-label="Choose a character"></nav>
+ <section class="character-copy"><p id="occupation" class="eyebrow"></p><h2 id="name"></h2><p id="tagline" class="muted"></p><div id="tags" class="tags"></div><details class="profile-detail"><summary>What drives them</summary><p id="goal"></p><ul id="boundaries"></ul><p id="testing-notes" class="muted"></p></details></section>
+ <details class="conditions"><summary>Shape the encounter <span>Conditions &amp; standing</span></summary><section class="parameters">
+ <label for="preset">Your standing</label><select id="preset"><option value="default">Current saved relationship</option><option value="stranger">Neutral stranger</option><option value="friend">Trusted friend</option><option value="distrusted">Familiar, distrusted</option><option value="disliked">Disliked stranger</option></select><div id="sliders"></div>
+ <div class="two"><div><label for="state">Their situation</label><select id="state"><option value="available">Available</option><option value="busy">Busy</option><option value="closed">Closed</option><option value="combat">In combat</option></select></div><div><label for="mood">Their mood</label><select id="mood"><option>neutral</option><option>calm</option><option>tired</option><option>angry</option><option>fearful</option></select></div></div><label class="check"><input id="weapon" type="checkbox"> Your weapon is drawn</label>
+ <p class="small-note">These are explicit scenario overrides. Conversations change your standing automatically.</p>
+ </section></details><p class="sidebar-note">A conversation is remembered.<br>A game save is never changed here.</p>
 </aside>
 <section class="stage-panel" aria-label="Character stage">
- <div class="scene-toolbar"><span class="scene-dot"></span><span id="location">Character stage</span><span id="visual-status">ILLUSTRATED PORTRAIT</span></div>
+ <div class="scene-toolbar"><span class="scene-dot"></span><span id="location">A place between stories</span><span id="visual-status">ILLUSTRATED CHARACTER</span></div>
  <div class="scene-arch" aria-hidden="true"></div><div class="scene-floor" aria-hidden="true"></div>
- <img id="portrait" alt="Illustrated test character"><div id="model-host" hidden></div>
- <div class="stage-top"><p class="eyebrow">CONTEXT SHAPES CHARACTER</p><p class="stage-instruction">Same words.<br>Different person.</p></div>
- <div class="stage-bottom"><div class="stage-identity"><span id="stage-role" class="eyebrow"></span><h1 id="stage-name"></h1><span id="stage-state" class="stage-state">Available</span></div><p id="stage-caption">Choose your words.</p> <form id="chat"><label class="sr-only" for="message">Your message</label><textarea id="message" maxlength="4000" rows="2" placeholder="What do you say?" required></textarea><button id="send" type="submit" title="Send message">&#8599;<span class="sr-only">Send</span></button></form> <p id="feedback" class="footnote" role="status">Loading characters&hellip;</p><div class="stage-foot"><span id="audio-status">Voice not connected</span><span id="model-hint">Local GLB import supported</span></div></div>
+ <img id="portrait" alt="Illustrated character"><div id="model-host" hidden></div>
+ <div class="camera-controls" role="group" aria-label="Character view"><button id="view-close" aria-pressed="true">Conversation</button><button id="view-wide" aria-pressed="false">Full figure</button><span class="camera-divider"></span><button id="zoom-out" title="Zoom out" aria-label="Zoom out">&#8722;</button><span id="zoom-level" aria-live="polite">100%</span><button id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button></div>
+ <div class="stage-bottom"><div class="stage-identity"><span id="stage-role" class="eyebrow"></span><h1 id="stage-name"></h1><span id="stage-state" class="stage-state">Available</span></div>
+ <div class="subtitle-box" id="subtitle" aria-label="Current character subtitle"><p id="stage-caption">Every stranger has a story.</p></div>
+ <form id="chat"><label class="sr-only" for="message">What do you say?</label><textarea id="message" maxlength="4000" rows="1" placeholder="What do you say?" required></textarea><button id="send" type="submit" title="Speak (Enter)"><span>Speak</span><kbd>&#8629;</kbd></button></form>
+ <div class="encounter-meta"><span id="encounter-hint">Enter to speak &middot; Shift + Enter for a new line</span><label class="voice-toggle"><input id="voice" type="checkbox" disabled> Voice</label><button id="replay" class="subtle" disabled title="Replay their voice">&#9655; Replay</button></div>
+ <p id="feedback" class="footnote" role="status">Finding your companions&hellip;</p><div class="stage-foot"><span id="audio-status">Voice not connected</span><span id="model-hint">Illustrated appearance</span></div></div>
 </section>
-<section class="conversation" aria-label="Conversation">
- <div class="conversation-head"><div><p class="eyebrow">YOUR CONVERSATION</p><h2>Conversation &amp; reaction.</h2></div><button id="reset" class="icon-button" title="Reset and cancel pending output">&#8635;<span class="sr-only">Reset and cancel</span></button></div>
- <div class="session-meta"><span id="timing"></span><label class="voice-toggle"><input id="voice" type="checkbox" disabled> Speak replies</label><button id="replay" class="subtle" disabled title="Replay generated voice">▷</button></div>
- <p id="memory-notice" class="notice">Loading conversation state&hellip;</p>
+<section id="journal" class="conversation" aria-label="Conversation journal">
+ <div class="conversation-head"><div><p class="eyebrow">WORDS LEAVE TRACES</p><h2>Your journal</h2></div><button id="reset" class="icon-button" title="Clear view and cancel pending output" aria-label="Clear view and cancel">&#8635;</button></div>
+ <div class="session-meta"><span id="timing"></span><button id="export" class="subtle">Export</button></div><p id="memory-notice" class="notice">Loading remembered encounters&hellip;</p>
  <div id="reaction" class="reaction" hidden><p id="reaction-path"></p><p id="reaction-change"></p></div>
- <div id="messages" role="log" aria-live="polite"></div><div id="starters" class="starters"></div>
-
-
- <details class="trace"><summary>Behind the response <span>Context / plan / validation</span></summary><pre id="trace">No turn yet.</pre></details>
+ <div id="messages" role="log" aria-live="polite"></div><div class="starter-heading">A place to begin</div><div id="starters" class="starters"></div>
 </section>
-</main><audio id="speech-player" preload="none"></audio>
-</body></html>
+</main>
+<dialog id="inspector" aria-labelledby="inspector-title"><div class="inspector-header"><div><p class="eyebrow">UNDERSTAND THE ENCOUNTER</p><h2 id="inspector-title">Behind the words</h2></div><button id="inspect-close" aria-label="Close inspector">Close &#10005;</button></div>
+<p class="inspector-note">An observable impact map and the actual messages sent to the model. This is not hidden model reasoning. Exports may contain your conversation.</p>
+<div class="inspector-tabs" role="group" aria-label="Inspector view"><button data-inspect="impact" aria-pressed="true">Impact map</button><button data-inspect="prompt" aria-pressed="false">LLM input</button><button data-inspect="trace" aria-pressed="false">Full trace</button></div>
+<section id="impact-view"><p id="impact-summary">Speak to a character to see what shaped their response.</p><div id="impact-map"></div></section>
+<section id="prompt-view" hidden><p id="prompt-note">No turn yet.</p><pre id="llm-input">No model input recorded.</pre></section><section id="trace-view" hidden><pre id="trace">No turn yet.</pre></section></dialog>
+<audio id="speech-player" preload="none"></audio></body></html>

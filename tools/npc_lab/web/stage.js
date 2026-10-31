@@ -1,6 +1,7 @@
 // Optional local GLB presentation. This module never builds NPC context.
 import * as THREE from './vendor/three.module.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
+import { framing } from './camera.mjs';
 
 export function createStage(host) {
   const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
@@ -8,12 +9,18 @@ export function createStage(host) {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   host.append(renderer.domElement);
   const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(36, 1, 0.01, 100);
-  scene.add(new THREE.HemisphereLight(0xe9e6d4, 0x38484a, 2.4));
+  scene.add(new THREE.HemisphereLight(0xf2ede2, 0x352c26, 2.1));
   const key = new THREE.DirectionalLight(0xffe3b4, 3.5); key.position.set(2, 4, 3); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xb0d3d6, 2); rim.position.set(-3, 1, -2); scene.add(rim);
+  const rim = new THREE.DirectionalLight(0xc3cedb, 1.3); rim.position.set(-3, 1, -2); scene.add(rim);
   const group = new THREE.Group(); scene.add(group);
   let model = null, mixer = null, controller = null, epoch = 0, last = 0, frame, drag = null, dirty = true;
   const clock = new THREE.Clock();
+  let view = 'close', zoom = 1;
+  function positionCamera() {
+    const pose = framing(view, zoom);
+    camera.position.set(0, pose.y, pose.distance); camera.lookAt(0, pose.y, 0); dirty = true;
+    return pose;
+  }
   function dispose(object) {
     object?.traverse(child => {
       child.geometry?.dispose();
@@ -64,11 +71,15 @@ export function createStage(host) {
       const scale = 2.8 / extent;
       model.scale.setScalar(scale); model.position.copy(center).multiplyScalar(-scale);
       group.add(model); group.rotation.y = Math.PI;
-      camera.position.set(0, 0.2, 5.5); camera.lookAt(0, 0, 0);
+      positionCamera();
       if (gltf.animations.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         mixer = new THREE.AnimationMixer(model); mixer.clipAction(gltf.animations[0]).play(); clock.getDelta();
       }
       resize(); dirty = true; return true;
+    },
+    setView(nextView, nextZoom = zoom) {
+      const pose = framing(nextView, nextZoom); view = pose.view; zoom = pose.zoom;
+      return positionCamera();
     },
     clear() {
       epoch++; controller?.abort(); mixer?.stopAllAction(); mixer = null;

@@ -103,3 +103,5 @@ The table above records the original structure-only self-review. The first execu
 ## Implemented social-state and lab media slice
 
 See [social state](SOCIAL_STATE.md) for typed `DialogueMemory`/`SocialAppraisal`, persona temperament, revision-checked SQLite relationships and bounded acknowledged recent history. This is partial state implementation, not the full delivery/outbox proposal. Reusable policy/storage stay in `src/npc/behavior/` and `src/npc/state/`; standalone HTTP, static models, voice and offline asset conversion stay in `tools/npc_lab/`. Public recipes live in `configs/npc_lab/`; all converted game assets/tools/weights remain ignored. Unit/integration cases live under the corresponding `tests/` owners.
+
+Anima is the user-facing companion name. Existing `tools/npc_lab/` and persona/config/storage paths are retained deliberately for compatibility, not a second implementation. `run_anima.bat` is primary; the old launcher forwards. Optional dependency-free Node camera tests and UI bot live in `tests/ui/`; default Python CI still needs no browser/GPU/game assets.

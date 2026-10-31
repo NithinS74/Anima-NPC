@@ -1,4 +1,4 @@
-# NPC
+# Anima
 
 A game-independent orchestration system for believable NPC interactions. The system decides whether an NPC engages, what they know, and how they respond before asking a replaceable language model to express the response.
 
@@ -31,7 +31,7 @@ Try the [offline context preview](docs/CONTEXT_BUILDER.md) after [setup](SETUP.m
 
 The context command explains response influences. The runtime command exercises generation/validation using a fake provider by default. See the [generation guide](docs/GENERATION_VALIDATION.md) for **OpenRouter/Gemini configuration and live commands**. An initial [persistent social-state slice](docs/SOCIAL_STATE.md) is implemented; RAG and production game delivery remain planned. Skyrim/Mantella remains a best-effort reference adapter.
 
-For **manual testing in a chat box**, double-click [run_npc_lab.bat](run_npc_lab.bat). It opens the separate localhost [NPC lab](docs/NPC_LAB.md) using live Gemini configuration from `.env`; pass `--offline` for the fake. Four [authored personas](fixtures/personas/npc_lab/README.md), persistent relationship reactions, bounded displayed-conversation memory, trace inspection and export are included. Characters sit on the left; the central model has the text box below. Optional local Skyrim models, a game backdrop and copied Mantella voices are available through [media setup](configs/npc_lab/README.md); private game assets/voices are not pushed. The basic illustrated UI works without Skyrim and stays separate from core deployment. See the [latest self-review](docs/reviews/2026-10-31-social-state-character-stage.md): 254 offline tests pass; live recall remains unverified after provider failures.
+For **manual testing in a chat box**, double-click [run_anima.bat](run_anima.bat). It opens the separate localhost [Anima companion](docs/ANIMA.md) using live Gemini configuration from `.env`; pass `--offline` for the fake. Four [authored personas](fixtures/personas/npc_lab/README.md), persistent relationship reactions, bounded displayed-conversation memory, trace inspection and export are included. Characters sit on the left; the central model has the text box below. Optional local Skyrim models, a game backdrop and copied Mantella voices are available through [media setup](configs/npc_lab/README.md); private game assets/voices are not pushed. The basic illustrated UI works without Skyrim and stays separate from core deployment. See the [latest self-review](docs/reviews/2026-10-31-social-state-character-stage.md): 254 offline tests pass; live recall remains unverified after provider failures.
 
 For every component, follow **plan -> review plan -> implement with unit tests -> review change -> run regression**. Read the [development skill](.agents/skills/develop-npc-component/SKILL.md) yourself or ask your agent:
 
@@ -44,3 +44,5 @@ If your agent does not discover repository skills, ask it to read `.agents/skill
 Create a separate branch for each task, named `feature/<issue-id>-<short-name>` (for example, `feature/I05-rag-ingestion`). Start from an up-to-date `main`, commit and push your branch, then open a **pull request targeting `main`**. Include the linked issue, changes, review findings and unit/regression test results; request a teammate review. Merge only after review approval and required checks pass. Do not push implementation changes directly to `main`. See the [team workflow](docs/TEAM_WORKFLOW.md) for details.
 
 Repository: https://github.com/mohanchandrass/NPC
+
+Anima includes close/full-figure camera views and zoom, centred subtitles, an immersive view, and **Inspect context** for the impact map and exact provider-bound inputs (including repairs). The [latest self-review](docs/reviews/2026-10-31-anima-immersion.md) records UI-bot, regression and live findings. Native facial animation and hosting remain future scope; the next integration milestone is real game input/output, not another UI orchestration engine.

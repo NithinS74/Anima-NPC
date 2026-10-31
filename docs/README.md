@@ -15,7 +15,7 @@ Start with the [general TRD](TRD.md), then the [shared contracts](CONTRACTS.md) 
 | Design review conclusions | [Reviewed baseline](reviews/2026-10-31-design-review.md), [reviewer skill](../.agents/skills/review-npc-design/SKILL.md) |
 | Context implementation review and fixes | [Independent implementation review](reviews/2026-10-31-context-implementation-review.md) |
 | Does the current slice demonstrate believable behavior? | [Behavior-quality audit and remaining gaps](reviews/2026-10-31-behavior-quality-audit.md) |
-| Talk to test personas in a separate browser interface | [Manual NPC lab](NPC_LAB.md), [profiles](../fixtures/personas/npc_lab/README.md), [implementation review](reviews/2026-10-31-manual-npc-lab.md) |
+| Talk to test personas in a separate browser interface | [Anima companion](ANIMA.md), [profiles](../fixtures/personas/npc_lab/README.md), [implementation review](reviews/2026-10-31-manual-npc-lab.md) |
 | Persistent relationships and bounded dialogue memory | [Social-state guide](SOCIAL_STATE.md), [latest self-review](reviews/2026-10-31-social-state-character-stage.md) |
 | Local character models and Mantella voices | [Media configuration/setup](../configs/npc_lab/README.md) |
 | Skyrim input extraction | [Mantella audit](research/MANTELLA.md) |

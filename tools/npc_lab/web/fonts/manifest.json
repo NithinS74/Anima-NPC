@@ -1,0 +1,18 @@
+{
+  "BarlowCondensed-Regular.ttf": {
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowcondensed/BarlowCondensed-Regular.ttf",
+    "sha256": "583cec5da3b84bc4dc7c9c72e2a565c94d34e431518b19d7e250b7830ad5f996"
+  },
+  "BarlowCondensed-OFL.txt": {
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowcondensed/OFL.txt",
+    "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f"
+  },
+  "Cinzel.ttf": {
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/cinzel/Cinzel[wght].ttf",
+    "sha256": "f4d83d34d1f6c741193e4acf4b3dff9531e5a67b6aa65228d00a7db72a4e0f34"
+  },
+  "Cinzel-OFL.txt": {
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/cinzel/OFL.txt",
+    "sha256": "f2b3029aba64c378bf0963b62945eee15e564fe4330b934c8f2eb058282b5e83"
+  }
+}

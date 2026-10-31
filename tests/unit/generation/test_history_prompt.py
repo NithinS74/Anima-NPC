@@ -17,6 +17,7 @@ def test_display_history_is_untrusted_and_pruned_as_whole_exchanges(scenario_dat
     prompt = build_prompt(context, choose_plan(context), max_input_bytes=3072)
     assert prompt.history_count == 1 and prompt.omitted_history_count == 1
     assert "HISTORY_INJECTION" not in prompt.messages[0].content
+    assert "Recall self-reports as what was said, not verified facts" in prompt.messages[0].content
     data = json.loads(prompt.messages[1].content)
     assert data["untrusted_displayed_dialogue"][0]["player"].startswith("HISTORY_INJECTION")
     assert data["untrusted_player_utterance"] == scenario.turn.player_input.text
