@@ -1,0 +1,6 @@
+# Public transport settings only. Choose a model locally; never put keys here.
+provider: chat_completions
+base_url: https://openrouter.ai/api/v1
+model: ""
+api_key_env: OPENROUTER_API_KEY
+response_format: json_object

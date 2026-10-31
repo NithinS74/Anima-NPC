@@ -1,6 +1,8 @@
 # M04 - Context builder and dependency resolution
 
-Status: proposed | Requirement: SYS-03 | Owner/reviewer: unassigned
+Status: `build_situation` first slice implemented; `assemble` still proposed | Requirement: SYS-03 | Review: independent agent review/re-review passed; teammate PR approval pending
+
+See [working context-builder guide](../CONTEXT_BUILDER.md), [source](../../src/npc/context/builder.py) and [implementation plan](../plans/I04-context-builder.md). This does not mark all of M04 complete.
 
 ## Responsibility and two-stage boundary
 

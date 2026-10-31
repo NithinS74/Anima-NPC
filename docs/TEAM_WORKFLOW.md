@@ -1,6 +1,6 @@
 # Team workflow
 
-This repository began empty. It contains a reviewed design baseline, not a running engine. Select implementation packages together before assigning work. The first commit/push contains planning/setup/skill files; issue drafts remain local until explicitly published.
+This repository began empty. It now contains a reviewed design baseline and the first [context-construction slice](CONTEXT_BUILDER.md), not a complete NPC engine. Select implementation packages together before assigning work; issue drafts remain local until explicitly published.
 
 ## Contract-first collaboration
 

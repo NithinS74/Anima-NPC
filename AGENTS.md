@@ -9,3 +9,5 @@ Read the relevant module TRD, shared contracts and [team workflow](docs/TEAM_WOR
 Before adding files, consult [repository structure](docs/REPOSITORY_STRUCTURE.md) for module ownership and test/data placement. Keep runtime logic in `src/npc/`, game protocols in `adapters/`, tests in `tests/`, and reusable public data in `fixtures/`. Replace a `.gitkeep` when the directory gains real tracked contents; do not turn scaffold directories into dummy implementations or empty tests.
 
 Documentation-only changes need relevant link/example/skill validation rather than invented component tests. Never report unrun checks or an empty test suite as passing regression. Preserve unrelated teammate changes.
+
+The user-requested manual browser lab is deliberately separate under `tools/npc_lab/`, with public profiles under `fixtures/personas/npc_lab/`. It imports the existing core pipeline; keep lab HTTP/assets/test overrides out of `src/npc/`. See [lab boundaries](docs/NPC_LAB.md). Do not confuse its display-only chat history with implemented core memory.

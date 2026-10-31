@@ -1,0 +1,6 @@
+# Gemini's chat-completions compatibility endpoint, not its native SDK API.
+provider: chat_completions
+base_url: https://generativelanguage.googleapis.com/v1beta/openai
+model: ""
+api_key_env: GEMINI_API_KEY
+response_format: json_object

@@ -1,0 +1,2 @@
+# Deterministic test/demo response; no LLM, credentials or network.
+provider: offline

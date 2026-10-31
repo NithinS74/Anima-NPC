@@ -1,5 +1,5 @@
 # Single pinned API-first core/development environment. Windows/Python 3.11 tested.
-# Tests/document review are included. No runtime engine implemented yet.
+# Tests/document review/build tools are included; context-builder slice implemented.
 # Chroma/CPU embedding packages will be selected and added in I05; no GPU stack.
 annotated-doc==0.0.5
 annotated-types==0.8.0
@@ -30,3 +30,5 @@ rpds-py==2026.9.1
 starlette==1.10.0
 typing-inspection==0.4.4
 typing_extensions==4.16.0
+setuptools==84.2.1
+wheel==0.45.1

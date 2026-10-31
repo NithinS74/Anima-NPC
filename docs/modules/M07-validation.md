@@ -2,6 +2,8 @@
 
 Status: proposed | Requirement: SYS-09 | Owner/reviewer: unassigned
 
+Implementation note: the [scenario preview](../GENERATION_VALIDATION.md) implements strict structural checks, revision/epoch rejection, basic scaffolding detection and at most one fresh repair under the shared cutoff. This does not establish semantic entailment, complete disclosure enforcement or atomic persistent staging/delivery. The requirements below remain the target for the full module.
+
 ## Responsibility
 
 `validate(candidate, context, plan, current_revision) -> ValidationResult` returns accepted/rejected, violations, repaired candidate if any, and final fallback reason. M09 owns the shared deadline and total call count; M07 requests repair rather than initiating an unbounded loop.

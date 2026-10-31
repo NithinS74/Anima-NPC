@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=65", "wheel>=0.45,<1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "npc-orchestration"
+version = "0.1.0"
+description = "Game-independent NPC context and dialogue orchestration"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2.9,<3", "httpx>=0.27,<1", "python-dotenv>=1,<2", "PyYAML>=6,<7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["npc*"]
+namespaces = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers"

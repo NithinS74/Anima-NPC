@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="lab-token" content="__LAB_TOKEN__">
+  <title>NPC Lab · Conversation bench</title>
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="/">NPC<span> / LAB</span></a><span class="eyebrow">MANUAL CONVERSATION BENCH</span><span id="mode" class="pill">Connecting…</span></header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">CHARACTER, CONTEXT, CONSEQUENCE</p><h1>Who are you talking to?</h1><p class="muted">Hold the words constant. Change the relationship. See what survives.</p></div><button id="export" class="subtle">Export session ↓</button></div>
+    <nav id="roster" aria-label="Choose an NPC"></nav>
+    <div class="workspace">
+      <aside class="character panel"><div class="portrait-wrap"><img id="portrait" alt="Illustrated test character"><span class="portrait-label">ORIGINAL TEST CHARACTER · 2D</span></div><div class="character-copy"><p id="occupation" class="eyebrow"></p><h2 id="name"></h2><p id="tagline"></p><p id="location" class="muted"></p><div id="tags" class="tags"></div><hr><p class="eyebrow">CURRENT MOTIVE</p><p id="goal"></p><p class="eyebrow">BOUNDARIES</p><ul id="boundaries"></ul></div></aside>
+      <section class="conversation panel" aria-label="Conversation">
+        <div class="conversation-head"><div><h2>Conversation</h2><p id="timing" class="muted"></p></div><button id="reset" class="subtle">Reset / cancel</button></div>
+        <p class="notice">Single-turn test: the log is visual only. Earlier messages are not sent as memory.</p>
+        <div id="messages" role="log" aria-live="polite"><div class="empty"><span>“</span><h3>Give them a reason to respond.</h3><p>Try a question below, or start your own.</p></div></div>
+        <div id="starters" class="starters"></div>
+        <form id="chat"><label class="sr-only" for="message">Your message</label><textarea id="message" maxlength="4000" rows="2" placeholder="Say something to the character…" required></textarea><button id="send" type="submit">Send ↗</button></form>
+        <p id="feedback" class="footnote" role="status">Loading profiles…</p>
+      </section>
+      <aside class="parameters panel"><div class="parameter-head"><p class="eyebrow">TEST CONDITIONS</p><h2>The same words.<br>A different context.</h2></div>
+        <label for="preset">Relationship preset</label><select id="preset"><option value="default">Character default</option><option value="stranger">Neutral stranger</option><option value="friend">Trusted friend</option><option value="distrusted">Familiar, distrusted</option><option value="disliked">Disliked stranger</option></select>
+        <div id="sliders"></div>
+        <div class="two"><div><label for="state">Availability</label><select id="state"><option value="available">Available</option><option value="busy">Busy</option><option value="closed">Closed</option><option value="combat">In combat</option></select></div><div><label for="mood">Mood</label><select id="mood"><option>neutral</option><option>calm</option><option>tired</option><option>angry</option><option>fearful</option></select></div></div>
+        <label class="check"><input id="weapon" type="checkbox"> Player has a drawn weapon</label>
+        <hr><p class="eyebrow">WHAT TO LOOK FOR</p><p id="testing-notes" class="muted"></p><p class="footnote">Settings reset the visible log. They never change a game save or automatically earn favourability.</p>
+      </aside>
+    </div>
+    <details class="trace panel"><summary>Inspect the last turn <span>Plan · context influences · validation · usage</span></summary><pre id="trace">No turn yet.</pre></details>
+    <footer>Independent test tool. Shared NPC pipeline. No Skyrim required. <span>Believable speech is a human judgment; schema validity is not a quality score.</span></footer>
+  </main>
+</body></html>

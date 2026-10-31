@@ -2,6 +2,8 @@
 
 Status: proposed | Requirement: SYS-04 | Owner/reviewer: unassigned
 
+Implementation note: a [scenario-preview subset](../GENERATION_VALIDATION.md) now supplies deterministic combat/threat/busy/closed/greeting routes and conservative generation limits in `src/npc/behavior/policy.py`. Full disclosure policy, cooldowns, repetition handling and the complete decision/template catalog remain planned. The requirements below describe the target module.
+
 ## Responsibility and interface
 
 `decide(situation, state, policy_config) -> InteractionPlan` selects whether to respond, communication intent, affect, disclosure level, length and permissible cues. The plan is independent of the model provider. It consumes facts already resolved by context builder and does not query Chroma directly.

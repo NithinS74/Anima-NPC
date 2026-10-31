@@ -1,0 +1,30 @@
+{
+  "now": "2026-10-31T10:00:01Z",
+  "turn": {
+    "schema_version": "0.1",
+    "scope": {"game_id": "demo", "world_id": "village", "save_branch_id": "save-a"},
+    "request_id": "r-smith-2", "session_id": "session-1",
+    "npc_id": "smith-4", "player_id": "player-1", "sequence": 2,
+    "expected_dialogue_revision": 8,
+    "captured_at": "2026-10-31T10:00:00Z", "simulation_time_s": 68400,
+    "player_input": {"text": "How is your work going today?", "source": "text", "confidence": 1.0},
+    "facts": [
+      {"id": "busy-2", "path": "npc.busy", "value": false, "source": "demo-adapter", "source_kind": "telemetry", "subject_id": "smith-4", "captured_at": "2026-10-31T10:00:00Z", "simulation_time_s": 68400, "ttl_ms": 5000, "confidence": 1.0, "perceivers": ["smith-4"]},
+      {"id": "shop-2", "path": "shop.open", "value": true, "source": "demo-adapter", "source_kind": "telemetry", "subject_id": "smith-4", "captured_at": "2026-10-31T10:00:00Z", "simulation_time_s": 68400, "ttl_ms": 5000, "confidence": 1.0, "perceivers": ["smith-4"]}
+    ]
+  },
+  "snapshot": {
+    "schema_version": "0.1",
+    "scope": {"game_id": "demo", "world_id": "village", "save_branch_id": "save-a"},
+    "npc_id": "smith-4", "player_id": "player-1",
+    "storage_revision": 10, "dialogue_revision": 8, "turn_epoch": 2,
+    "persona": {
+      "name": "Mira", "occupation": "blacksmith", "social_role": "local tradesperson",
+      "speech_style": ["dry", "direct"], "goals": ["earn a living", "finish work"],
+      "boundaries": ["do not discuss private customers"], "service_role": true,
+      "warmth": 0.5, "caution": 0.7
+    },
+    "relationship": {"favourability": 35, "trust": -30, "familiarity": 70, "fear": 0, "irritation": 20},
+    "npc_state": {"observed_at": "2026-10-31T10:00:00Z", "ttl_ms": 5000, "mood": "tired", "current_goal": "finish an order at the forge"}
+  }
+}

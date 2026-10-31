@@ -50,7 +50,7 @@ Run focused component tests while iterating. Before declaring a code change read
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-Discover the repository's actual commands/configuration; do not invent successful checks. When the first executable component is introduced, establish runnable unit tests and the regression command as part of that slice. `pytest` collecting no tests is not a passing regression suite. This repository currently has planning/setup files; do not fabricate runtime tests for documentation.
+Discover the repository's actual commands/configuration; do not invent successful checks. Every executable slice needs runnable unit tests and regression coverage. `pytest` collecting no tests is not a passing regression suite. Read the README for current implementation status; do not fabricate runtime tests for documentation or coverage of unimplemented modules.
 
 For dependency changes run `pip check` and test affected integrations. For resource-sensitive changes measure the relevant latency/call count, bounded work and contention checks; broad performance targets remain unproven until measured. Re-run after substantive review fixes. Default regression excludes opt-in paid/live game tests; report those separately as run or not run.
 

@@ -2,7 +2,7 @@
 
 A game-independent orchestration system for believable NPC interactions. The system decides whether an NPC engages, what they know, and how they respond before asking a replaceable language model to express the response.
 
-**Status:** reviewed design baseline v0.2 with source/test directory scaffolding. No runtime has been implemented or benchmarked. API-first evaluation is the initial path; local inference is a later option.
+**Status:** context building and a generation/validation scenario preview are implemented and tested offline. The preview adds deterministic engagement rules, replaceable API generation, strict output checks and bounded repair. A [live Gemini sample](docs/reviews/2026-10-31-behavior-quality-audit.md) confirmed integration but exposed grounding, social-policy and latency gaps; realism is not signed off. OpenRouter remains untested live. The full game pipeline is not yet implemented; local inference is a later option.
 
 Start with [setup](SETUP.md), the [general TRD](docs/TRD.md) and the [implementation backlog](docs/BACKLOG.md). The [documentation index](docs/README.md) links contracts, module TRDs, research and reviews.
 
@@ -13,14 +13,25 @@ Start with [setup](SETUP.md), the [general TRD](docs/TRD.md) and the [implementa
 | `fixtures/` | Shared public worlds, scenarios and labelled evaluation data |
 | `configs/` | Public authored settings; credentials stay in local `.env` |
 | `scripts/` | Thin setup/maintenance/developer entry points |
+| `tools/npc_lab/` | Separate local browser interface for manual NPC tests |
 | `benchmarks/` | Quality, latency and game-resource measurement harnesses |
 | `docs/` | Requirements, decisions, workflow, research and reviews |
 | `.agents/skills/` | Development and design-review workflows |
 | `Knowledge base/kb/` | User corpus; check privacy/licensing before tracking files |
 
-See the [repository structure guide](docs/REPOSITORY_STRUCTURE.md) for the complete tree, module-to-folder mapping and placement rules. Empty scaffold directories contain `.gitkeep`; they are not working components. Local environments, scratch files and runtime output are ignored.
+See the [repository structure guide](docs/REPOSITORY_STRUCTURE.md) for the tree and module ownership. Remaining empty directories contain `.gitkeep`; they are not working components. Local environments, scratch files and runtime output are ignored.
 
-The first implementation milestone is a replay-based turn through the full core pipeline. Skyrim/Mantella is a reference adapter and best-effort demo. Other game adapters, production animation and fine-tuning follow after the core is evaluated.
+Try the [offline context preview](docs/CONTEXT_BUILDER.md) after [setup](SETUP.md):
+
+```powershell
+.\.venv\Scripts\python.exe -m npc.context fixtures/scenarios/smith_closing.json
+.\.venv\Scripts\python.exe -m npc.runtime fixtures/scenarios/smith_available.json
+.\.venv\Scripts\python.exe -m pytest
+```
+
+The context command explains response influences. The runtime command exercises generation/validation using a fake provider by default. See the [generation guide](docs/GENERATION_VALIDATION.md) for **OpenRouter/Gemini configuration and live commands**. RAG, persistent state and game delivery remain planned. Skyrim/Mantella remains a best-effort reference adapter.
+
+For **manual testing in a chat box**, double-click [run_npc_lab.bat](run_npc_lab.bat). It opens the separate localhost [NPC lab](docs/NPC_LAB.md) using live Gemini configuration from `.env`; pass `--offline` for the fake. Four [authored personas](fixtures/personas/npc_lab/README.md), original portraits, relationship/state controls, trace inspection and session export are included. Each message is an independent turn; the visible chat log is not conversation memory. The UI has no dependency on Skyrim or the core package's deployment.
 
 For every component, follow **plan -> review plan -> implement with unit tests -> review change -> run regression**. Read the [development skill](.agents/skills/develop-npc-component/SKILL.md) yourself or ask your agent:
 

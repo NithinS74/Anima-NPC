@@ -1,6 +1,6 @@
 # Repository structure and code placement
 
-This is the agreed source layout for the modular monolith. Directories are scaffolded with `.gitkeep` so Git preserves them; they do not contain working runtime components yet. Add real code incrementally under the development skill, removing a directory's `.gitkeep` when its first tracked file is added. Package initializers/build configuration belong to the first executable slice, not placeholder implementations.
+This is the agreed source layout for the modular monolith. Context construction, prototype behavior, prompt/provider, validation and preview runtime have code/tests; other empty directories retain `.gitkeep`. Add code incrementally under the development skill, removing the placeholder when the directory gains tracked files. `pyproject.toml` configures the source package and test discovery; `requirements.txt` remains the single pinned environment file. Current scope is in [context builder](CONTEXT_BUILDER.md) and [generation/validation](GENERATION_VALIDATION.md). Public API profiles live in `configs/providers/`.
 
 ```text
 NPC/
@@ -37,6 +37,8 @@ NPC/
 |   `-- evaluation/           Held-out labelled prompts and expected evidence
 |-- configs/                  Public authored policy/persona/runtime settings
 |-- scripts/                  Setup/maintenance/developer entry scripts
+|-- tools/npc_lab/            Separate local manual-test UI/server, imports core
+|-- run_npc_lab.bat           Windows launcher for that test tool
 |-- benchmarks/               Latency, quality and resource evaluation harnesses
 |-- docs/                     TRDs, contracts, decisions, research and reviews
 `-- Knowledge base/kb/        User corpus, separate from public test fixtures
@@ -73,6 +75,8 @@ Only the test category directories are created initially. Add mirrored component
 - `scripts` contains thin operational entry points calling package code; do not duplicate the orchestrator or retriever there. Keep benchmark scenarios/data reusable and results separate from code.
 - Test-console UI stays thin and calls the same backend contracts as adapters. No second orchestration engine or frontend framework is implied. If a real separate frontend becomes necessary, review that change before adding another project/build tree.
 
+User-requested standalone lab: `tools/npc_lab/` owns its local HTTP bridge and static assets; `fixtures/personas/npc_lab/` owns public test personas. It composes the existing `PreviewRunner` without core imports of UI code or a second pipeline. This is a deliberate reviewed placement exception to the earlier future `runtime/web/` console suggestion, keeping test UI out of core deployment. See [NPC lab](NPC_LAB.md); the production M09 HTTP API remains separate work.
+
 ## Tracked versus local/generated
 
 Track source, tests, small public fixtures, validated public config and documentation. Local `.venv/`, `.tools/`, `tmp/`, `data/`, `models/`, `logs/`, `captures/`, `recordings/` and `output/` are already ignored. Use `output/benchmarks/` for raw experiment results; place curated redacted conclusions in `docs/reviews/` when worth sharing. Do not delete teammates' local data to make the tree look tidy.
@@ -94,4 +98,4 @@ Review performed using the development/design-review skills; this is a self-revi
 | Premature infrastructure | No microservices, placeholder APIs, build framework, dummy tests or new dependencies |
 | Implementation readiness | Go for I00/fake slice; directory existence is not code or test coverage |
 
-Structure validation checks expected directories, ignored-path conflicts and document links. Runtime unit/regression tests must be introduced with the first executable component; none are claimed for this directory-only scaffold.
+The table above records the original structure-only self-review. The first executable context slice has now introduced contract/unit/integration tests; see its [guide](CONTEXT_BUILDER.md) for current results. Remaining scaffold folders are not implementations or coverage claims.

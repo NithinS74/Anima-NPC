@@ -2,6 +2,8 @@
 
 Status: proposed | Requirements: SYS-07, SYS-08 | Owner/reviewer: unassigned
 
+Implementation note: the [scenario preview](../GENERATION_VALIDATION.md) has compact prompt construction, a generic HTTPX chat-completions transport, offline fake and public OpenRouter/Gemini profiles. It uses an explicitly conservative byte budget, not exact provider tokenization. Live provider behavior and retrieved/history packing remain unverified/unimplemented respectively. The interfaces below describe the target module; current typed preview contracts are in `src/npc/contracts/dialogue.py`.
+
 ## Responsibility and interface
 
 `build_prompt(context, plan, provider_limits) -> PromptPackage`; `generate(package, deadline, cancellation) -> CandidateResponse`; `repair(package, candidate, violations, deadline) -> CandidateResponse`.

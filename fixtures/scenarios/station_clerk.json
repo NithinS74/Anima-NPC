@@ -1,0 +1,29 @@
+{
+  "now": "2026-10-31T10:00:01Z",
+  "turn": {
+    "schema_version": "0.1",
+    "scope": {"game_id": "demo-space", "world_id": "orbital-station", "save_branch_id": "save-b"},
+    "request_id": "r-clerk-1", "session_id": "session-2",
+    "npc_id": "clerk-2", "player_id": "visitor-8", "sequence": 1,
+    "expected_dialogue_revision": 2,
+    "captured_at": "2026-10-31T10:00:00Z", "simulation_time_s": 1200,
+    "player_input": {"text": "Where do I register my cargo?", "source": "text", "confidence": 1.0},
+    "facts": [
+      {"id": "clerk-available", "path": "npc.busy", "value": false, "source": "station-adapter", "source_kind": "telemetry", "subject_id": "clerk-2", "captured_at": "2026-10-31T10:00:00Z", "simulation_time_s": 1200, "ttl_ms": 5000, "confidence": 1.0, "perceivers": ["clerk-2"]},
+      {"id": "location-1", "path": "world.location", "value": "cargo reception", "source": "station-adapter", "source_kind": "telemetry", "captured_at": "2026-10-31T10:00:00Z", "simulation_time_s": 1200, "ttl_ms": 5000, "confidence": 1.0, "perceivers": ["clerk-2"]}
+    ]
+  },
+  "snapshot": {
+    "schema_version": "0.1",
+    "scope": {"game_id": "demo-space", "world_id": "orbital-station", "save_branch_id": "save-b"},
+    "npc_id": "clerk-2", "player_id": "visitor-8",
+    "storage_revision": 2, "dialogue_revision": 2, "turn_epoch": 0,
+    "persona": {
+      "name": "Iona", "occupation": "cargo registrar", "social_role": "station official",
+      "speech_style": ["formal", "concise"], "goals": ["keep the cargo queue moving"],
+      "boundaries": ["never reveal restricted cargo manifests"], "service_role": true,
+      "warmth": 0.7, "caution": 0.4
+    },
+    "relationship": {"favourability": 0, "trust": 0, "familiarity": 0, "fear": 0, "irritation": 0}
+  }
+}

@@ -1,12 +1,14 @@
 # Shared contracts v0.1
 
-Status: proposed interface specification. Examples are design fixtures, not an implemented API or executable schema. M00 in the backlog converts these into Pydantic/JSON Schema definitions and shared tests before module implementation.
+Status: broader pipeline interface proposal, with executable context contracts in [contracts/context.py](../src/npc/contracts/context.py) and a preview dialogue subset in [contracts/dialogue.py](../src/npc/contracts/dialogue.py). Validated examples are the [scenarios](../fixtures/scenarios/); behavior is documented in [context builder](CONTEXT_BUILDER.md) and [generation/validation](GENERATION_VALIDATION.md). I00 is only partially complete; unrelated pipeline objects below remain proposals.
 
 ## Common conventions
 
 All boundary objects carry `schema_version: "0.1"` and correlation identifiers. IDs are opaque strings; never use NPC names as identity. Scope is `{game_id, world_id, save_branch_id}`. Simulation time and UTC capture time are separate. Latency/deadlines use a monotonic server clock. Do not transfer monotonic timestamps across processes; transfer remaining timeout/UTC expiry and translate at ingress.
 
-Unknown values use null/absence explicitly; patch omission means unchanged. Reject incompatible major schema versions; minor additions live in named `extensions` or negotiated fields. Strict model-response objects reject unknown keys. Core may tolerate unknown adapter extensions without promoting them into prompt context.
+Unknown values use null/absence explicitly; patch omission means unchanged in future patch transport. The initial context schema accepts exactly `0.1` and rejects unknown keys; no unvalidated extension values enter the situation. Future minor additions/extensions require explicit negotiation/tests, not automatic acceptance. Strict model-response bodies now exist as `ResponseBody`; they deliberately contain only mode/text/cue/evidence IDs, with correlation/state held by the trusted runner rather than authored by the model.
+
+Preview-specific types are `InteractionPlan` (prototype policy subset), `PromptPackage` (messages, conservative input byte estimate and output-token cap), `ProviderReply` (raw text/finish reason/model/usage), `CurrentState`, `ValidationResult` and developer-only `TurnPreview`. `TurnPreview` includes diagnostics and is not the proposed public/delivered `TurnResult`. It has no persistence, outbox or acknowledgement semantics. Preview end/silence bodies require empty text. The inventory below describes the broader target, including fields not implemented by these types yet.
 
 ## Boundary object inventory
 
@@ -44,9 +46,8 @@ Unknown values use null/absence explicitly; patch omission means unchanged. Reje
   "simulation_time_s": 68400,
   "player_input": {"text": "Hello again. Got a moment?", "source": "text", "confidence": 1.0},
   "facts": [
-    {"id": "f-shop", "path": "shop.open", "value": false, "source": "demo-adapter", "captured_at": "2026-10-31T04:30:00Z", "simulation_time_s": 68400, "ttl_ms": 5000, "confidence": 1.0, "perceivers": ["smith-instance-4"]}
-  ],
-  "extensions": {}
+    {"id": "f-shop", "path": "shop.open", "value": false, "source": "demo-adapter", "source_kind": "telemetry", "subject_id": "smith-instance-4", "captured_at": "2026-10-31T04:30:00Z", "simulation_time_s": 68400, "ttl_ms": 5000, "confidence": 1.0, "perceivers": ["smith-instance-4"]}
+  ]
 }
 ```
 

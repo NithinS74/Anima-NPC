@@ -30,4 +30,4 @@ When enabled, cap rendering at 30 FPS, limit pixel ratio/texture sizes and pause
 
 ## Implementation status
 
-This request investigates feasibility and updates the plan. No website/viewer has been built, no model downloaded, no game asset copied and no new frontend/GPU dependency added. The console work is I09; optional avatar prototype is I16.
+Subsequent implementation: the [separate manual NPC lab](../NPC_LAB.md) now provides a local browser chat box, parameter controls and four original SVG portraits, reusing the core preview runner. User-requested isolation places the UI/server in `tools/npc_lab/` rather than core `runtime/web/`. It is single-turn with display-only chat history. No 3D model was downloaded, no game asset copied and no frontend/GPU dependency added. The optional 3D avatar prototype remains I16.

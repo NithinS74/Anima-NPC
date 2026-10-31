@@ -2,6 +2,10 @@
 
 Status: proposed | Requirement: SYS-11 | Owner/reviewer: unassigned
 
+Implementation note: `src/npc/runtime/preview.py` and `python -m npc.runtime` provide a [response-ready scenario harness](../GENERATION_VALIDATION.md) with call/cutoff/admission/cancellation bounds. Persistent ownership, idempotency, staging/delivery, HTTP/browser console and evaluation harnesses below remain planned.
+
+A separate [manual browser lab](../NPC_LAB.md) now lives in `tools/npc_lab/` at the user's request, reusing the preview runner. Its local test endpoints/controls are not the proposed production HTTP/delivery contracts below, and its chat log is display-only. Full persistent conversation/state/delivery remains planned.
+
 ## Responsibility
 
 Compose M01-M08 using their interfaces. Provide a replay/test console, request lifecycle and local debug trace. Core integration must not require Skyrim, audio devices, CV inference or paid API calls in CI. UI is a development console, not a new website product.
