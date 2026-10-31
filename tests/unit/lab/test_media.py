@@ -42,7 +42,7 @@ def media(tmp_path):
 def test_missing_media_is_explicit_and_paths_are_not_exposed(media):
     info = media.describe("mira")
     assert info == {"voice_available": True, "voice": "femaleeventoned", "model_url": None, "appearance_source": None,
-                    "scene": "mira", "scene_label": "The forge"}
+                    "scene": "mira", "scene_label": "The forge", "scene_url": "/scenes/mira.svg"}
     assert not media.describe("absent")["voice_available"]
     assert str(media.root) not in json.dumps(info)
 
@@ -50,6 +50,17 @@ def test_missing_media_is_explicit_and_paths_are_not_exposed(media):
 def test_scenes_use_fixed_known_roles_and_unknown_ids_fall_back(media):
     assert [media.describe(id)["scene"] for id in ("mira", "elin", "daren", "iona")] == ["mira", "elin", "daren", "iona"]
     assert media.describe("unrecognized")["scene"] == "default"
+
+
+def test_real_game_scene_is_bounded_and_preferred_to_illustration(media):
+    image = b"\xff\xd8\xff\xc0\x00\x0b\x08\x02\x58\x03\x20\x01\x01\x11\x00\xff\xd9"
+    folder = media.private / "scenes"; folder.mkdir(parents=True)
+    (folder / "mira.jpg").write_bytes(image)
+    assert media.scene_bytes("mira") == image
+    assert media.describe("mira")["scene_url"] == "/api/scenes/mira.jpg"
+    with pytest.raises(MediaFailure): media.scene_bytes("../../.env")
+    (folder / "mira.jpg").write_bytes(b"not a screenshot")
+    assert media.scene_url("mira") == "/scenes/mira.svg"
 
 
 def test_optional_game_fonts_are_bounded_and_never_arbitrary_paths(media):

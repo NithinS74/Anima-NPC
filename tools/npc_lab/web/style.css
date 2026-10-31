@@ -669,7 +669,7 @@ textarea::placeholder {
   border-left:1px solid #b59b5a3d
 }
 .starters button:before {
-  content:"›";
+  content: "\203a";
   color:var(--accent);
   margin-right:8px
 }
@@ -1201,3 +1201,39 @@ body.skyrim-font { --ui: AnimaSkyrimDialogue, AnimaUI, sans-serif; --title: Anim
 .animate-toggle { display: flex; align-items: center; gap: 3px; margin: 0 3px; font-size: 11px; white-space: nowrap; }
 .camera-controls { flex-wrap: wrap; max-width: calc(100% - 28px); }
 body.skyrim-font #stage-caption { font-size: 25px; }
+
+/* Immersion review: readable dialogue and controls without a layout redesign. */
+body { font-size: 18px; }
+.roster-item strong { font-size: 18px; }
+.roster-item small { font-size: 14px; }
+.character-copy p { font-size: 16px; }
+.eyebrow, .section-label { font-size: 12px; }
+.parameters label, .slider-label, .check { font-size: 15px; }
+.parameters select { font-size: 16px; }
+.camera-controls button, .animate-toggle { font-size: 14px; min-height: 32px; }
+#zoom-level { font-size: 13px; }
+.stage-state { font-size: 14px; }
+body.skyrim-font #stage-caption, #stage-caption { font-size: 28px; }
+.bubble { font-size: 18px; }
+.speaker, .bubble small { font-size: 12px; }
+.starters button { font-size: 16px; }
+.notice { font-size: 14px; }
+#timing, .footnote { font-size: 12px; }
+#feedback { font-size: 12px; }
+.stage-foot { font-size: 11px; }
+textarea { font-size: 20px; }
+.impact-card p { font-size: 17px; }
+@media(max-width:570px) {
+  .roster-item strong { font-size: 16px; }
+  body.skyrim-font #stage-caption, #stage-caption { font-size: 26px; }
+  .header-right button { font-size: 13px; min-height: 36px; }
+  .stage-foot { font-size: 10px; }
+  .voice-toggle, .subtle { font-size: 13px; }
+}
+
+.stage-panel[data-scene] { background: linear-gradient(#10141944,#10121399), var(--game-scene) center/cover; }
+
+.profile-detail summary, .conditions summary { font-size:16px; }
+.tags span { font-size:13px; }
+.stage-foot { font-size:12px; }
+@media(max-width:570px) { .stage-foot { font-size:11px; } }

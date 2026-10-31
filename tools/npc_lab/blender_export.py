@@ -11,9 +11,10 @@ from pathlib import Path
 
 def main():
     import bpy
-    from mathutils import Vector
+    from mathutils import Matrix, Vector
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
     from tools.npc_lab.face_import import NATIVE_MORPHS, matching_topology, morph_offsets
+    from tools.npc_lab.body_pose import relaxed_arm_direction
     manifest = json.loads(Path(sys.argv[sys.argv.index("--") + 1]).read_text(encoding="utf-8"))
     source = Path(manifest["source"])
     sys.path.insert(0, manifest["addon_directory"])
@@ -26,6 +27,30 @@ def main():
         bpy.context.view_layer.objects.active = None
         bpy.ops.import_scene.pynifly(filepath=str(source / name), import_collisions=False,
                                    import_animations=False, import_tris=False, import_shapekeys=False)
+    posed_arms = []
+    if manifest.get("relaxed_pose"):
+        for rig in list(bpy.data.objects):
+            if rig.type != "ARMATURE":
+                continue
+            for suffix in ("L", "R"):
+                upper = rig.pose.bones.get("NPC UpperArm." + suffix)
+                lower = rig.pose.bones.get("NPC Forearm." + suffix)
+                if upper is None or lower is None:
+                    continue
+                pivot = upper.matrix.translation.copy()
+                current = lower.matrix.translation - pivot
+                if current.length < 1:
+                    raise ValueError("invalid shoulder/elbow rig")
+                side = 1 if current.x >= 0 else -1
+                target = rig.matrix_world.to_quaternion().inverted() @ Vector(relaxed_arm_direction(side))
+                rotation = current.normalized().rotation_difference(target.normalized())
+                if rotation.angle > 0.9:
+                    raise ValueError("unsafe arm pose adjustment")
+                upper.matrix = Matrix.Translation(pivot) @ rotation.to_matrix().to_4x4() @ Matrix.Translation(-pivot) @ upper.matrix
+                bpy.context.view_layer.update()
+                posed_arms.append(dict(rig=rig.name, side=suffix, degrees=rotation.angle * 180 / 3.141592653589793))
+        if len(posed_arms) < 2:
+            raise ValueError("no compatible arm rig for relaxed pose")
     native_parts = []
     if manifest.get("facial_assets"):
         from io_scene_nifly.tri.trifile import TriFile
@@ -136,6 +161,7 @@ def main():
         image.filepath_raw = str(target); image.file_format = "PNG"; image.save()
     print("LAB_EXPORTED", str(output), output.stat().st_size, flush=True)
     print("ANIMA_NATIVE_MORPHS", json.dumps(native_parts), flush=True)
+    print("ANIMA_RELAXED_POSE", json.dumps(posed_arms), flush=True)
 
 
 if __name__ == "__main__":

@@ -118,6 +118,7 @@ function selectProfile(next) {
   profile = next; clearLog();
   $('name').textContent = next.persona.name; $('occupation').textContent = next.persona.occupation.toUpperCase();
   document.querySelector('.stage-panel').dataset.scene = next.media?.scene || next.id;
+  document.querySelector('.stage-panel').style.setProperty('--game-scene', `url("${next.media?.scene_url || '/scenes/' + next.id + '.svg'}")`);
   $('tagline').textContent = next.tagline; $('location').textContent = next.location;
   $('goal').textContent = next.current_goal; $('testing-notes').textContent = next.testing_notes;
   $('portrait').src = '/portraits/' + next.id + '.svg'; $('portrait').alt = 'Original illustrated portrait of ' + next.persona.name;

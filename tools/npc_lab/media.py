@@ -23,6 +23,27 @@ MAX_WAV_BYTES = 2 * 1024 * 1024
 SCENES = {"mira": "The forge", "elin": "The inn", "daren": "The village gate", "iona": "The registry"}
 
 
+def validate_scene_jpeg(raw):
+    if not 16 < len(raw) <= 8 * 1024 * 1024 or raw[:2] != b"\xff\xd8" or raw[-2:] != b"\xff\xd9":
+        raise ValueError("invalid scene JPEG")
+    position = 2
+    while position + 4 < min(len(raw), 2 * 1024 * 1024):
+        if raw[position] != 255: raise ValueError("invalid JPEG marker")
+        while position < len(raw) and raw[position] == 255: position += 1
+        if position + 3 >= len(raw): raise ValueError("truncated JPEG marker")
+        marker = raw[position]; position += 1
+        if marker in {0xDA, 0xD9}: break
+        size = int.from_bytes(raw[position:position+2], "big")
+        if size < 2 or position + size > len(raw): raise ValueError("invalid JPEG segment")
+        if marker in {0xC0, 0xC1, 0xC2} and size >= 8:
+            height = int.from_bytes(raw[position+3:position+5], "big")
+            width = int.from_bytes(raw[position+5:position+7], "big")
+            if not 64 <= width <= 4096 or not 64 <= height <= 4096: raise ValueError("scene dimensions")
+            return
+        position += size
+    raise ValueError("JPEG dimensions unavailable")
+
+
 class MediaSettings(Contract):
     piper_directory: str
     voices: Annotated[dict[Slug, Voice], Field(max_length=16)]
@@ -123,7 +144,26 @@ class LabMedia:
         return dict(voice_available=self.voice_ready(persona_id), voice=self.settings.voices.get(persona_id),
                     model_url=f"/api/models/{persona_id}.glb" if self.model_path(persona_id) else None,
                     appearance_source=self.settings.appearance_sources.get(persona_id),
-                    scene=persona_id if persona_id in SCENES else "default", scene_label=SCENES.get(persona_id, "A place between stories"))
+                    scene=persona_id if persona_id in SCENES else "default", scene_label=SCENES.get(persona_id, "A place between stories"),
+                    scene_url=self.scene_url(persona_id))
+
+    def scene_bytes(self, persona_id):
+        if persona_id not in SCENES: raise MediaFailure("scene_unavailable")
+        try:
+            path = self._private_path("assets/private/npc_lab/scenes/" + persona_id + ".jpg")
+            with path.open("rb") as stream:
+                raw = stream.read(8 * 1024 * 1024 + 1)
+            validate_scene_jpeg(raw)
+            return raw
+        except (OSError, ValueError, IndexError):
+            raise MediaFailure("scene_unavailable") from None
+
+    def scene_url(self, persona_id):
+        try:
+            self.scene_bytes(persona_id)
+            return f"/api/scenes/{persona_id}.jpg"
+        except MediaFailure:
+            return f"/scenes/{persona_id}.svg" if persona_id in SCENES else None
 
     def font_bytes(self, kind):
         filenames = {"dialogue": "FuturaCondensedLight.ttf", "interface": "FuturaCondensed.ttf"}

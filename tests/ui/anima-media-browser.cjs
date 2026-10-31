@@ -18,6 +18,9 @@ const assert = require('node:assert/strict');
  for(const name of ['mira','elin','daren','iona']){
   await run(`document.querySelector('[data-id=${name}]').click()`);await wait(`profile.id==='${name}'&&document.getElementById('visual-status').textContent==='LOCAL 3D MODEL'&&!document.getElementById('expressions').disabled`);
   assert.equal(await run("document.querySelector('.stage-panel').dataset.scene"),name);
+  assert.ok(await run(`getComputedStyle(document.querySelector('.stage-panel')).backgroundImage.includes('/api/scenes/${name}.jpg')`));
+  assert.ok(await run("parseFloat(getComputedStyle(document.getElementById('stage-caption')).fontSize)>=26"));
+  assert.ok(await run("parseFloat(getComputedStyle(document.querySelector('.roster-item strong')).fontSize)>=16"));
   const state=await run('stage.expressionState()');assert.ok(state.parts>=2);assert.ok('Aah' in state.weights);assert.ok('BlinkLeft' in state.weights);
   console.log(name,'native parts',state.parts,'scene selected');await shot('anima-native-'+name);
  }

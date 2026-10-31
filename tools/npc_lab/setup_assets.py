@@ -36,7 +36,7 @@ def main():
         media = LabMedia()
         copy_piper(args.mantella_root / "piper", media.piper, media.settings.voices.values())
         print("Copied installed Piper and four selected voices into ignored assets/private/npc_lab/piper/.")
-        print("Original installation unchanged. Do not publish these local assets/model weights.")
+        print("Original installation unchanged. Raw assets stay ignored; the owner-approved private runtime pack is separate.")
     except (OSError, ValueError):
         print("Asset copy failed; check the installed Piper folder, selected voice files and available disk space.")
         return 1

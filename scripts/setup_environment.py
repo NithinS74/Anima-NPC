@@ -1,8 +1,10 @@
 """Repeatable project-only setup, runnable with the standard library alone."""
 
 import shutil
+import argparse
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 
@@ -10,7 +12,7 @@ class SetupFailure(RuntimeError):
     pass
 
 
-def setup(root: Path, *, python=sys.executable, version=None, run=subprocess.run):
+def setup(root: Path, *, python=sys.executable, version=None, run=subprocess.run, sync_media=False):
     version = sys.version_info[:2] if version is None else version
     if tuple(version) != (3, 11):
         raise SetupFailure("Python 3.11 is required for the verified environment.")
@@ -34,6 +36,14 @@ def setup(root: Path, *, python=sys.executable, version=None, run=subprocess.run
     command([interpreter, "-m", "pip", "install", "-r", root / "requirements.txt"])
     command([interpreter, "-m", "pip", "install", "-e", ".", "--no-deps", "--no-build-isolation"])
     command([interpreter, "-m", "pip", "check"])
+    # Keep the app's existing private asset paths; the Git repository holds one
+    # LFS archive, not loose extraction sources or an environment-specific venv.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from scripts.anima_assets import install_runtime
+    try:
+        install_runtime(root, command, sync=sync_media)
+    except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
+        raise SetupFailure(str(error)) from None
     template, destination = root / ".env.example", root / ".env"
     if not destination.exists():
         # Exclusive creation also prevents a second setup from overwriting keys.
@@ -45,15 +55,15 @@ def setup(root: Path, *, python=sys.executable, version=None, run=subprocess.run
     command([interpreter, "-m", "pytest", "-q"])
     print("\nAnima setup complete. Try: run_anima.bat --offline", flush=True)
     print("For live calls, set the model and matching API key in your local .env, then run run_anima.bat.")
-    print("Optional Skyrim models, fonts and Mantella voices are private local assets; see SETUP.md.")
+    print("The private project runtime pack is installed when present; see SETUP.md for Git LFS and local overrides.")
 
 
 def main():
-    if len(sys.argv) != 1:
-        print("Usage: setup.bat (no arguments)")
-        return 2
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--sync-media", action="store_true", help="Replace local runtime media with the shared verified bundle; preserves .env/player state")
+    args = parser.parse_args()
     try:
-        setup(Path(__file__).resolve().parents[1])
+        setup(Path(__file__).resolve().parents[1], sync_media=args.sync_media)
         return 0
     except (SetupFailure, OSError) as error:
         print(f"Setup error: {error}")

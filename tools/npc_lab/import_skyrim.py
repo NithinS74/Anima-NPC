@@ -15,7 +15,7 @@ def referenced_textures(raw):
     return {BsaArchive.normalize(match.decode()) for match in re.findall(rb"textures[\\/][ -~]*?\.dds", raw, flags=re.I)}
 
 
-def import_models(game_root: Path, blender: Path, addon: Path, profiles, *, facial=False):
+def import_models(game_root: Path, blender: Path, addon: Path, profiles, *, facial=False, relaxed=False):
     data = game_root / "Data"
     private = ROOT / "assets/private/npc_lab"
     source = private / "source"
@@ -54,7 +54,7 @@ def import_models(game_root: Path, blender: Path, addon: Path, profiles, *, faci
             if name in index:
                 index[name].extract(name, source)
         manifest = dict(source=str(source.resolve()), addon_directory=str(addon.resolve()),
-                        meshes=definition["meshes"], appearance=definition["appearance"], facial_assets=facial_assets,
+                        meshes=definition["meshes"], appearance=definition["appearance"], facial_assets=facial_assets, relaxed_pose=relaxed,
                         background_source=str((source / background).resolve()),
                         background_output=str((private / "background/skyrim-stone.png").resolve()),
                         output=str((private / "models" / f"{persona_id}.pending.glb").resolve()))
@@ -87,7 +87,7 @@ def import_models(game_root: Path, blender: Path, addon: Path, profiles, *, faci
         validate_glb_header(raw[:20], len(raw), raw[20:20 + length])
         output = output.replace(private / "models" / f"{persona_id}.glb")
         results[persona_id] = dict(appearance=definition["appearance"], bytes=output.stat().st_size,
-            sha256=hashlib.sha256(raw).hexdigest(), meshes=definition["meshes"], native_facial_morphs=facial)
+            sha256=hashlib.sha256(raw).hexdigest(), meshes=definition["meshes"], native_facial_morphs=facial, relaxed_pose=relaxed)
         print(f"Converted {persona_id}: {definition['appearance']} ({output.stat().st_size:,} bytes)", flush=True)
     (private / "conversion/manifest.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
 
@@ -99,9 +99,10 @@ def main():
     parser.add_argument("--pynifly-directory", type=Path, required=True)
     parser.add_argument("--profiles", nargs="+", choices=["mira", "elin", "daren", "iona"], default=["mira", "elin", "daren", "iona"])
     parser.add_argument("--facial", action="store_true", help="Preserve topology-verified native blink/speech/mood morphs")
+    parser.add_argument("--relaxed", action="store_true", help="Bake a conservative arms-down pose using the native rig")
     args = parser.parse_args()
     try:
-        import_models(args.game_root, args.blender, args.pynifly_directory, args.profiles, facial=args.facial)
+        import_models(args.game_root, args.blender, args.pynifly_directory, args.profiles, facial=args.facial, relaxed=args.relaxed)
     except (OSError, ValueError, KeyError, subprocess.SubprocessError):
         print("Skyrim import failed; check paths and assets/private/npc_lab/conversion/ logs.")
         return 1

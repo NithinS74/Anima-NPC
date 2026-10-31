@@ -7,3 +7,6 @@ tools/npc_lab/web/fonts/* -text
 
 # Retain upstream licence bytes, including their original whitespace.
 tools/npc_lab/web/fonts/*-OFL.txt -whitespace
+
+# Private project runtime media is one LFS object; provenance stays readable.
+assets/runtime/anima-media.zip filter=lfs diff=lfs merge=lfs -text

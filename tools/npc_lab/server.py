@@ -135,6 +135,12 @@ class LabHandler(BaseHTTPRequestHandler):
                 self.send(200, self.server.service.info())
             except StoreFailure:
                 self.send(503, {"error": "state_unavailable"})
+        elif self.path.startswith("/api/scenes/") and self.path.endswith(".jpg"):
+            try:
+                if self.server.service.media is None: raise MediaFailure("scene_unavailable")
+                self.send(200, self.server.service.media.scene_bytes(self.path.split("/")[-1].removesuffix(".jpg")), "image/jpeg")
+            except MediaFailure:
+                self.send(404, {"error": "scene_unavailable"})
         elif self.path in {"/api/fonts/dialogue.ttf", "/api/fonts/interface.ttf"}:
             try:
                 if self.server.service.media is None:
