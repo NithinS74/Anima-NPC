@@ -1,0 +1,15 @@
+{
+  "package": "three",
+  "version": "0.187.0",
+  "source": "https://registry.npmjs.org/three/-/three-0.187.0.tgz",
+  "integrity": "sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==",
+  "changes": "Loader/utility imports rewritten to local Three.js and local utility files; implementation unchanged. One upstream indentation whitespace issue normalized.",
+  "files": {
+    "three.core.js": "f2292eeef3332bf736b6be376d8dd8748f6f412ed484cbd58f529b2b7a6cc368",
+    "three.module.js": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341",
+    "GLTFLoader.js": "7bbda9f3af9b5acbd89a33cfc0aeb020f34d2d31a72829c79c0b354f9502c8e5",
+    "BufferGeometryUtils.js": "319782169ed48af21fcaa251d839ecb8e58f14174aacbf68b74a437f3d6a3a98",
+    "LICENSE": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+    "SkeletonUtils.js": "eedd768765d6553f8082953ab3882e2c86dacc2eb7d180a312d1d52e86bb35c5"
+  }
+}

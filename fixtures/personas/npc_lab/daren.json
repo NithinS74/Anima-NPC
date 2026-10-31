@@ -22,7 +22,10 @@
     ],
     "service_role": false,
     "warmth": 0.2,
-    "caution": 0.9
+    "caution": 0.9,
+    "patience": 0.3,
+    "assertiveness": 0.85,
+    "swearing": "when_provoked"
   },
   "relationship": {
     "favourability": -10,

@@ -142,3 +142,7 @@ Ack statuses: `accepted`, `started`, `completed`, `interrupted`, `failed`; core 
 ## Ownership rules
 
 M02 owns persistent mutations; M03 owns social decisions; M04 owns NPC knowledge eligibility and context selection; M05 enforces retrieval filters without NPC-specific business rules; M06 owns serialization/provider details; M07 owns acceptance; M08 owns transport/cues; M09 owns deadline, idempotency and scheduling. M10 supplies uncertain observations only.
+
+## Implemented social-state and lab media slice
+
+See [social state](SOCIAL_STATE.md) for typed `DialogueMemory`/`SocialAppraisal`, persona temperament, revision-checked SQLite relationships and bounded acknowledged recent history. This is partial state implementation, not the full delivery/outbox proposal. Reusable policy/storage stay in `src/npc/behavior/` and `src/npc/state/`; standalone HTTP, static models, voice and offline asset conversion stay in `tools/npc_lab/`. Public recipes live in `configs/npc_lab/`; all converted game assets/tools/weights remain ignored. Unit/integration cases live under the corresponding `tests/` owners.

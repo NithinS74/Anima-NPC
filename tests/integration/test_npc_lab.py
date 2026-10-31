@@ -37,6 +37,7 @@ def test_static_allowlist_and_bootstrap_do_not_expose_files(lab):
         assert response.status_code == 200
         assert response.headers["X-Content-Type-Options"] == "nosniff"
         assert "frame-ancestors 'none'" in response.headers["Content-Security-Policy"]
+        assert "connect-src 'self' blob:" in response.headers["Content-Security-Policy"]
     html = client.get("/").text
     assert '__LAB_TOKEN__' not in html
     assert server.token in html
@@ -96,3 +97,37 @@ def test_cancel_without_active_request(lab):
 def test_unknown_post_route(lab):
     server, client = lab
     assert client.post("/api/provider-config", json={}, headers=headers(server)).status_code == 404
+
+
+def test_voice_accepts_only_validated_recorded_turn_ids(lab):
+    server, client = lab
+    original = server.service.media
+    class FakeMedia:
+        async def synthesize(self, request_id, persona_id, text):
+            assert text == "Work keeps me occupied, as usual."
+            return b"fake audio bytes for HTTP framing test"
+    server.service.media = FakeMedia()
+    try:
+        assert client.post("/api/speech", json={"request_id":"unrecorded"}, headers=headers(server)).status_code == 400
+        assert client.post("/api/speech", json={"request_id":"http-turn", "text":"arbitrary injected speech"}, headers=headers(server)).status_code == 400
+        client.post("/api/turn", json=payload(server), headers=headers(server)).raise_for_status()
+        response = client.post("/api/speech", json={"request_id":"http-turn"}, headers=headers(server))
+        assert response.status_code == 200
+        assert response.headers["Content-Type"] == "audio/wav"
+        assert response.content == b"fake audio bytes for HTTP framing test"
+        assert "X-Synthesis-Ms" in response.headers
+    finally:
+        server.service.media = original
+
+
+def test_missing_model_route_and_invalid_model_id_are_not_file_access(lab):
+    _, client = lab
+    for path in ["/api/models/mira.glb", "/api/models/../../.env.glb", "/api/models/unknown.glb"]:
+        assert client.get(path).status_code == 404
+
+
+def test_repeated_early_body_rejections_return_http_errors_not_socket_resets(lab):
+    server, client = lab
+    for _ in range(12):
+        response = client.post("/api/turn", json=payload(server), headers=headers(server) | {"X-Lab-Token":"wrong"})
+        assert response.status_code == 403

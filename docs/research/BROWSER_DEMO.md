@@ -31,3 +31,7 @@ When enabled, cap rendering at 30 FPS, limit pixel ratio/texture sizes and pause
 ## Implementation status
 
 Subsequent implementation: the [separate manual NPC lab](../NPC_LAB.md) now provides a local browser chat box, parameter controls and four original SVG portraits, reusing the core preview runner. User-requested isolation places the UI/server in `tools/npc_lab/` rather than core `runtime/web/`. It is single-turn with display-only chat history. No 3D model was downloaded, no game asset copied and no frontend/GPU dependency added. The optional 3D avatar prototype remains I16.
+
+## Subsequent implemented lab extension
+
+The [character room](../NPC_LAB.md) now renders selectively converted local Skyrim meshes/textures with a game stone backdrop and uses copied installed Mantella Piper voices through an independently authored interactive-protocol adapter. The original installations are unchanged; private assets are ignored. See [setup/source versions](../../configs/npc_lab/README.md) and [verification](../reviews/2026-10-31-social-state-character-stage.md). Static poses have no idle animation or lip sync. This extends the earlier feasibility observation; it does not implement live game input/output integration.

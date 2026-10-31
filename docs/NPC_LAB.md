@@ -1,54 +1,50 @@
 # Manual NPC lab
 
-A standalone localhost interface for testing the existing NPC pipeline with four authored personas. UI/server code lives in `tools/npc_lab/`, public profiles in `fixtures/personas/npc_lab/`. The core package does not import or depend on this tool. No game installation is needed.
+A separate localhost test room composing the existing core pipeline. Left: characters and test conditions. Centre: actual locally converted Skyrim models, game stone backdrop, and the text box directly below. Right: conversation, speech replay and inspectable reaction trace. UI, rendering and speech integration stay in `tools/npc_lab/`; core code never imports this tool.
 
-## Start and stop
+## Start
 
-After the project [setup](../SETUP.md), double-click **[run_npc_lab.bat](../run_npc_lab.bat)**. It finds the repo from its own path, uses `.venv`, opens your browser and starts the server at `http://127.0.0.1:8765`. Leave its terminal running. Press Ctrl+C in that terminal to stop it. A second copy cannot bind the same port; close the first or pass `--port 8767`.
-
-The batch launcher defaults to **live Gemini**, reading `GEMINI_API_KEY` and `NPC_LLM_MODEL` from the existing local `.env`. Live messages send persona/player context to the configured API and can incur charges. No keys go to browser JavaScript. To use OpenRouter, supply its configured profile instead. The server reads the profile at startup; restart after changing model/key/profile files.
+Complete [setup](../SETUP.md), then double-click [run_npc_lab.bat](../run_npc_lab.bat). The launcher uses the project `.venv`, opens `http://127.0.0.1:8765` and defaults to live Gemini using local `.env`. Leave its terminal running; Ctrl+C stops it. Restart after changing provider settings. Keys stay in the backend. Live calls can incur charges.
 
 ```powershell
 .\run_npc_lab.bat
 .\run_npc_lab.bat --offline
 .\run_npc_lab.bat --realtime
 .\run_npc_lab.bat --config configs/providers/openrouter.yaml
+.\run_npc_lab.bat --state-db output/npc_lab/experiment.sqlite3
 ```
 
-The module itself defaults to a deterministic fake, useful for offline UI testing:
+The module entry point defaults to offline: `.\.venv\Scripts\python.exe -m tools.npc_lab --offline --open`. No frontend build, Node install, game installation or model downloads are needed for the basic illustrated lab. Optional 3D rendering uses browser GPU resources; it is not a measured alongside-game performance result.
 
-```powershell
-.\.venv\Scripts\python.exe -m tools.npc_lab --offline --open
-.\.venv\Scripts\python.exe -m tools.npc_lab --live --open --config configs/providers/gemini.yaml
-```
+## Conversations and parameters
 
-No extra requirements file, Node installation, frontend build, model download or GPU dependency is needed to use the lab. If the venv/config is missing, the launcher reports it instead of installing packages or inventing credentials.
+Select a persona, type below the central character, and send. Relationships and mood now change from heard input and survive reload/restart in `data/npc_lab/state.sqlite3`. Each NPC has separate state for the lab player. The browser acknowledges displayed replies; the most recent eight exchanges are eligible as untrusted prompt memory, subject to the byte budget. Trace fields report history used/omitted. See [social-state rules](SOCIAL_STATE.md).
 
-## Use it
+Sliders and presets are explicit, revision-checked debug overrides. Availability and drawn weapon are per-turn test conditions. They never change a game save. Clear/reset cancels pending work and clears the visible log; it **does not erase saved relationships or memory**. Use a separate `--state-db` for a fresh experiment. Export downloads bounded visible traces, which can contain your input; review before sharing.
 
-1. Select Mira (dry smith), Elin (warm innkeeper), Daren (reserved guard) or Iona (formal registrar).
-2. Choose a relationship preset or change favourability, trust, familiarity, fear and irritation individually. Set mood, availability and whether the player has a drawn weapon. Closed service is unavailable for the guard, who has no service role.
-3. Click a suggested question to fill the chat box, then Send. Enter sends; Shift+Enter adds a line. Ask the same question under different conditions to compare behavior.
-4. Inspect the last-turn trace: resolved context, influences/exclusions, chosen plan, actual status/model, calls, usage and validation. `error_fallback` is distinct from `model_success`; the offline fake is explicitly labelled.
-5. Use Reset/cancel to discard the visible test and request cancellation of an active turn. Controls lock while a turn is pending. Settings/profile changes clear the log so unrelated conditions are not mixed.
-6. Export session downloads the current bounded trace as JSON. Export may contain everything you typed; review before sharing. The server does not automatically persist conversation logs.
+Inspect the reaction path (stimulus, willingness, tone and route), score deltas, resolved context, validation, model calls and timings. This is an observable policy trace, not hidden model reasoning. The fake provider is labelled. Valid JSON does not establish truth or realism.
 
-**This is a single-turn lab.** Earlier messages appear in the browser log but are not supplied as conversation memory. Parameter changes never earn trust or alter a live game save. The UI retains at most 60 displayed messages and 30 exportable turn records. Reset clears these local records. There is no core memory implementation hidden inside this tool.
+## Actual models and voices
 
-## Profiles and visuals
+The local installation was selectively read and converted; no game files were modified. The stage uses real Skyrim mesh/texture data with these explicit appearance mappings:
 
-Profiles are structured JSON; see the [persona folder guide](../fixtures/personas/npc_lab/README.md). Identity, authored goals/style/boundaries and current motive go through existing canonical contracts. UI descriptions/testing notes are metadata, not extra secret knowledge or an alternative prompt engine. Restart after adding/editing profiles. Existing built-in portrait paths are a fixed whitelist; a new illustrated persona also needs an explicit portrait route.
+| Persona | Appearance |
+|---|---|
+| Mira | Adrianne Avenicci, blacksmith outfit |
+| Elin | Hulda, barkeeper outfit |
+| Daren | Farkas face, assembled Skyrim guard kit |
+| Iona | Lydia, iron outfit; visual stand-in for the station persona |
 
-Character images are original small SVG illustrations in `tools/npc_lab/web/portraits/`, with no animation/GPU render loop. A read-only check of the supplied Skyrim `Data` folder found `.bsa` archives and game plugins. No game mesh was extracted, copied or converted, and no Skyrim file was changed. This version is a 2D portrait console, not a 3D Skyrim viewer. Asset conversion remains separate optional work.
+These are static assembled rest poses, with simplified portable materials/body-weight assembly. They do not reproduce the current modded game appearance exactly. No idle animation or lip sync is implemented. Appearance does not grant Skyrim memories or lore to the fictional personas.
 
-## Budgets and limits
+Copied Mantella Piper voices are selected per profile. Text is displayed before synthesis; automatic speech and replay use only validated server-recorded responses. Voice is local, separate from LLM generation, and explicitly unavailable if assets are missing. No OS voice substitutes for Mantella. Measured local browser probes synthesized short replies in approximately 0.8-1.0 seconds; cold starts can take longer.
 
-Default quality-testing mode uses a **10-second development deadline**, 9,450 ms model cutoff and at most two calls including repair. `--realtime` uses the core's 3,000/2,450 ms timing. Both use a declared lab-specific **3,072-byte prompt cap**, because complete profiles plus controls measured 2,065–2,166 bytes before repairs. The core CLI's 2,048-byte default is unchanged. Output cap remains 160 tokens. Long inputs may still exceed the prompt cap and fall back; they are not silently truncated. The UI shows mode, timing and budget.
+Game assets, converted models, voices and executables are local and ignored under `assets/private/npc_lab/` and `.tools/`. They are **not pushed**. Teammates without those assets get original illustrated portraits and no voice. See [media setup](../configs/npc_lab/README.md) for reproducible commands and source versions.
 
-One reused runner and one persistent event loop retain the core admission/cancellation bounds. The single-user lab rejects overlapping turns rather than queueing them. HTTP workers are capped at eight and JSON bodies at 16 KB, with finite socket/call timeouts. Only fixed static routes are served. Loopback Host, same-origin POST and per-launch token checks guard the API. This standard-library server is a local developer tool, not a public service or the proposed production M09 API. Do not expose it on a LAN or deploy it as a game server.
+## Bounds and verification
 
-The [behavior audit](reviews/2026-10-31-behavior-quality-audit.md) still applies: valid JSON is not proof of truth/persona quality. RAG, history, voluntary social silence, richer authored relationship behavior and game delivery remain core work. These profiles make differences easier to inspect; they do not certify that the model will obey every boundary.
+Development mode: 10,000 ms response deadline, 9,450 ms model cutoff, at most two calls including repair. `--realtime`: 3,000/2,450 ms. Lab prompt cap: 3,072 UTF-8 bytes; core CLI default remains 2,048. Whole exchanges are omitted when necessary; current input/identity are not silently truncated. Output cap remains 160 tokens. These are configured bounds, not successful model latency percentiles.
 
-## Verification
+One runner/event loop, no turn queue, at most eight HTTP workers, 16 KB JSON bodies, finite socket timeouts. Loopback Host/Origin and launch-token checks protect POSTs. Fixed media routes, bounded self-contained GLB validation, 30 FPS rendering cap, hidden-tab pause and resource disposal limit optional viewer work. Speech permits one subprocess at a time with timeout/cancellation and validated bounded WAV output. This local standard-library server is not a production public API.
 
-See the [implementation review](reviews/2026-10-31-manual-npc-lab.md). Offline regression: **196 tests passed**. Browser checks covered portrait loading, a fake chat turn, preset/profile reset and desktop/mobile layouts. A live Gemini request through the lab endpoint completed successfully; its plausible but unsupplied ambience details remain a recorded grounding limitation, not a successful semantic validation claim.
+Latest [self-review and evidence](reviews/2026-10-31-social-state-character-stage.md): 254 offline tests passed, four actual models visually inspected, desktop/mobile layout and reload/escalation/audio checks exercised. Two live Gemini memory requests fell back (timeout, HTTP error); the second packed one prior exchange. Successful live model recall, semantic grounding, production delivery and game-resource targets remain unverified. RAG is not implemented.

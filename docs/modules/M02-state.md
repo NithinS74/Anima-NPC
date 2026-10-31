@@ -23,3 +23,5 @@ Use transactions and optimistic revisions, one writer path initially, bounded lo
 ## Acceptance / handoff
 
 Restart persistence, two worlds/two players isolation, duplicate assistance, conflicting revisions, explicit branch/reset, combat between validation and staging, concurrent sessions for one NPC, benign telemetry during generation, expired/reordered acknowledgements and interrupted speech must pass. Supply migrations, authored personas, event weights and a fake repository. No LLM is needed for relationship updates or initial bounded history.
+
+Implementation update: the [social-state slice](../SOCIAL_STATE.md) adds deterministic appraisal, persona temperament, SQLite directed relationships and bounded acknowledged dialogue history. The [separate lab](../NPC_LAB.md) exercises these contracts; production game delivery, full M02 semantics and semantic grounding are still future work.

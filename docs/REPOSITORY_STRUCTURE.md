@@ -99,3 +99,7 @@ Review performed using the development/design-review skills; this is a self-revi
 | Implementation readiness | Go for I00/fake slice; directory existence is not code or test coverage |
 
 The table above records the original structure-only self-review. The first executable context slice has now introduced contract/unit/integration tests; see its [guide](CONTEXT_BUILDER.md) for current results. Remaining scaffold folders are not implementations or coverage claims.
+
+## Implemented social-state and lab media slice
+
+See [social state](SOCIAL_STATE.md) for typed `DialogueMemory`/`SocialAppraisal`, persona temperament, revision-checked SQLite relationships and bounded acknowledged recent history. This is partial state implementation, not the full delivery/outbox proposal. Reusable policy/storage stay in `src/npc/behavior/` and `src/npc/state/`; standalone HTTP, static models, voice and offline asset conversion stay in `tools/npc_lab/`. Public recipes live in `configs/npc_lab/`; all converted game assets/tools/weights remain ignored. Unit/integration cases live under the corresponding `tests/` owners.

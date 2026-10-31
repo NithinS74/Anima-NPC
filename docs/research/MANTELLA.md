@@ -59,3 +59,7 @@ The mod event API can add contextual events and receive action notifications; so
 ## Audit issue acceptance
 
 Record executable/mod version and source hashes; capture initialize/start/player/continue/end messages; verify route casing and port; label full versus partial fields; identify actual update cadence and perception limitations; replay a captured conversation into canonical input; publish a gap/capability report. Only then decide whether a full compatibility adapter fits the semester. No live capture or game launch has yet been performed.
+
+## Subsequent implemented lab extension
+
+The [character room](../NPC_LAB.md) now renders selectively converted local Skyrim meshes/textures with a game stone backdrop and uses copied installed Mantella Piper voices through an independently authored interactive-protocol adapter. The original installations are unchanged; private assets are ignored. See [setup/source versions](../../configs/npc_lab/README.md) and [verification](../reviews/2026-10-31-social-state-character-stage.md). Static poses have no idle animation or lip sync. This extends the earlier feasibility observation; it does not implement live game input/output integration.

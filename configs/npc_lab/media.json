@@ -1,0 +1,21 @@
+{
+  "piper_directory": "assets/private/npc_lab/piper",
+  "voices": {
+    "mira": "femalecommander",
+    "elin": "femalenord",
+    "daren": "maleguard",
+    "iona": "femaleeventoned"
+  },
+  "models": {
+    "mira": "assets/private/npc_lab/models/mira.glb",
+    "elin": "assets/private/npc_lab/models/elin.glb",
+    "daren": "assets/private/npc_lab/models/daren.glb",
+    "iona": "assets/private/npc_lab/models/iona.glb"
+  },
+  "appearance_sources": {
+    "mira": "Adrianne Avenicci / blacksmith outfit (Skyrim SE)",
+    "elin": "Hulda / barkeeper outfit (Skyrim SE)",
+    "daren": "Farkas face / Skyrim guard kit (Skyrim SE)",
+    "iona": "Lydia / iron outfit (visual stand-in for the station persona) (Skyrim SE)"
+  }
+}

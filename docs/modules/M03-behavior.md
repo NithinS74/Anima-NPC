@@ -33,3 +33,5 @@ Initial heuristics cover known greetings/refusals, not arbitrary natural-languag
 - Deliberate silence -> valid success, not an error fallback.
 
 Provide a labelled decision table, template catalog and fake policy. Record disagreements as tuning decisions rather than calling one universal rule "realistic human behavior".
+
+Implementation update: the [social-state slice](../SOCIAL_STATE.md) adds deterministic appraisal, persona temperament, SQLite directed relationships and bounded acknowledged dialogue history. The [separate lab](../NPC_LAB.md) exercises these contracts; production game delivery, full M02 semantics and semantic grounding are still future work.

@@ -8,7 +8,7 @@ Start with [setup](SETUP.md), the [general TRD](docs/TRD.md) and the [implementa
 
 | Location | Purpose |
 |---|---|
-| `src/npc/` | Runtime modules, game adapters and test-console assets |
+| `src/npc/` | Runtime modules and contracts; game adapters have separate owners |
 | `tests/` | Unit, contract and offline integration regression |
 | `fixtures/` | Shared public worlds, scenarios and labelled evaluation data |
 | `configs/` | Public authored settings; credentials stay in local `.env` |
@@ -29,9 +29,9 @@ Try the [offline context preview](docs/CONTEXT_BUILDER.md) after [setup](SETUP.m
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-The context command explains response influences. The runtime command exercises generation/validation using a fake provider by default. See the [generation guide](docs/GENERATION_VALIDATION.md) for **OpenRouter/Gemini configuration and live commands**. RAG, persistent state and game delivery remain planned. Skyrim/Mantella remains a best-effort reference adapter.
+The context command explains response influences. The runtime command exercises generation/validation using a fake provider by default. See the [generation guide](docs/GENERATION_VALIDATION.md) for **OpenRouter/Gemini configuration and live commands**. An initial [persistent social-state slice](docs/SOCIAL_STATE.md) is implemented; RAG and production game delivery remain planned. Skyrim/Mantella remains a best-effort reference adapter.
 
-For **manual testing in a chat box**, double-click [run_npc_lab.bat](run_npc_lab.bat). It opens the separate localhost [NPC lab](docs/NPC_LAB.md) using live Gemini configuration from `.env`; pass `--offline` for the fake. Four [authored personas](fixtures/personas/npc_lab/README.md), original portraits, relationship/state controls, trace inspection and session export are included. Each message is an independent turn; the visible chat log is not conversation memory. The UI has no dependency on Skyrim or the core package's deployment.
+For **manual testing in a chat box**, double-click [run_npc_lab.bat](run_npc_lab.bat). It opens the separate localhost [NPC lab](docs/NPC_LAB.md) using live Gemini configuration from `.env`; pass `--offline` for the fake. Four [authored personas](fixtures/personas/npc_lab/README.md), persistent relationship reactions, bounded displayed-conversation memory, trace inspection and export are included. Characters sit on the left; the central model has the text box below. Optional local Skyrim models, a game backdrop and copied Mantella voices are available through [media setup](configs/npc_lab/README.md); private game assets/voices are not pushed. The basic illustrated UI works without Skyrim and stays separate from core deployment. See the [latest self-review](docs/reviews/2026-10-31-social-state-character-stage.md): 254 offline tests pass; live recall remains unverified after provider failures.
 
 For every component, follow **plan -> review plan -> implement with unit tests -> review change -> run regression**. Read the [development skill](.agents/skills/develop-npc-component/SKILL.md) yourself or ask your agent:
 

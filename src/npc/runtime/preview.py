@@ -114,6 +114,7 @@ class PreviewRunner:
         current_state = current_state or (lambda: CurrentState(dialogue_revision=situation.dialogue_revision, turn_epoch=situation.turn_epoch))
         calls, violations, model = 0, (), None
         input_tokens, output_tokens, usage_complete = 0, 0, True
+        history_used, history_omitted = 0, 0
 
         def stale():
             state = current_state()
@@ -131,7 +132,7 @@ class PreviewRunner:
                                error_code=error, model=model, elapsed_ms=max(0, (self.clock()-start)*1000),
                                input_tokens=input_tokens, output_tokens=output_tokens, usage_complete=usage_complete,
                                response_deadline_ms=self.limits.response_timeout_ms, model_cutoff_ms=self.limits.model_cutoff_ms,
-                               timing_profile=self._timing_profile())
+                               timing_profile=self._timing_profile(), history_used=history_used, history_omitted=history_omitted)
 
         def checked(body):
             reply = ProviderReply(content=body.model_dump_json(), model="authored", finish_reason="stop")
@@ -165,6 +166,7 @@ class PreviewRunner:
                     prompt = build_prompt(situation, plan, max_input_bytes=self.limits.max_input_bytes,
                                           max_output_tokens=self.limits.max_output_tokens,
                                           repair_codes=violations if attempt else ())
+                    history_used, history_omitted = prompt.history_count, prompt.omitted_history_count
                 except PromptTooLarge:
                     return fallback("prompt_budget")
                 remaining = self.limits.model_cutoff_ms/1000 - (self.clock()-start)

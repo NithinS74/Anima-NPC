@@ -46,6 +46,9 @@ class Persona(Contract):
     service_role: StrictBool = False
     warmth: Probability = 0.5
     caution: Probability = 0.5
+    patience: Probability = 0.5
+    assertiveness: Probability = 0.5
+    swearing: Literal["never", "when_provoked"] = "never"
 
 
 class Relationship(Contract):
@@ -65,6 +68,23 @@ class NpcState(Contract):
     current_goal: ShortText | None = None
 
 
+class DialogueMemory(Contract):
+    request_id: Identifier
+    player_text: Annotated[str, Field(strict=True, max_length=4000)]
+    npc_text: Annotated[str, Field(strict=True, max_length=2000)]
+    mode: Literal["speech", "silence", "end"] = "speech"
+    source: Literal["console_display"] = "console_display"
+
+
+class SocialAppraisal(Contract):
+    stimulus: Literal["neutral", "incidental_profanity", "directed_insult", "threat", "apology", "gratitude", "rough_banter"] = "neutral"
+    willingness: Literal["engage", "brief", "boundary", "disengage", "withdraw"] = "brief"
+    tone: Literal["neutral", "warm", "guarded", "sarcastic", "angry", "fearful"] = "neutral"
+    allow_swearing: StrictBool = False
+    reasons: Annotated[tuple[Identifier, ...], Field(max_length=8)] = ()
+    policy_version: Literal["0.1"] = "0.1"
+
+
 class StateSnapshot(Contract):
     schema_version: Literal["0.1"] = "0.1"
     scope: Scope
@@ -76,6 +96,7 @@ class StateSnapshot(Contract):
     persona: Persona
     relationship: Relationship = Field(default_factory=Relationship)
     npc_state: NpcState | None = None
+    recent_dialogue: Annotated[tuple[DialogueMemory, ...], Field(max_length=8)] = ()
 
 
 class PlayerInput(Contract):
@@ -193,6 +214,8 @@ class Situation(Contract):
     influences: tuple[Influence, ...]
     dependencies: Annotated[tuple[AppraisalDependency, ...], Field(min_length=6, max_length=6)]
     notes: tuple[ShortText, ...] = ()
+    social_appraisal: SocialAppraisal = Field(default_factory=SocialAppraisal)
+    recent_dialogue: Annotated[tuple[DialogueMemory, ...], Field(max_length=8)] = ()
 
     @model_validator(mode="after")
     def check_dependencies(self) -> "Situation":

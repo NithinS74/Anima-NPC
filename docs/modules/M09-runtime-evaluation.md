@@ -25,3 +25,5 @@ NPC selector, scenario/world selector, text input, recent turns, speech/silence/
 ## Acceptance / handoff
 
 Implement fake vertical slice before real providers. Run [evaluation](../EVALUATION.md) and report generated-only plus all-route distributions. Verify restart, duplicate request, model failure, missing KB, state conflict, cancellation and overload without session crashes. Provide documented bootstrap/health/replay commands, one recorded demo scenario and requirement-mapped results. No mandatory cloud deployment.
+
+Implementation update: the [social-state slice](../SOCIAL_STATE.md) adds deterministic appraisal, persona temperament, SQLite directed relationships and bounded acknowledged dialogue history. The [separate lab](../NPC_LAB.md) exercises these contracts; production game delivery, full M02 semantics and semantic grounding are still future work.

@@ -8,14 +8,20 @@ import secrets
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from time import monotonic
 
-from tools.npc_lab.service import CancelRequest, LabService, LabTurn
+from tools.npc_lab.service import CancelRequest, DisplayAck, LabStateEdit, LabService, LabTurn
+from tools.npc_lab.media import MediaFailure
+from npc.state.social_store import StateConflict, StoreFailure
 
 STATIC = Path(__file__).parent / "web"
 ASSETS = {"/": ("index.html", "text/html"), "/app.js": ("app.js", "text/javascript"),
           "/style.css": ("style.css", "text/css")}
 for character in ("mira", "elin", "daren", "iona"):
     ASSETS[f"/portraits/{character}.svg"] = (f"portraits/{character}.svg", "image/svg+xml")
+ASSETS["/stage.js"] = ("stage.js", "text/javascript")
+for module in ("three.module.js", "three.core.js", "GLTFLoader.js", "BufferGeometryUtils.js", "SkeletonUtils.js"):
+    ASSETS[f"/vendor/{module}"] = (f"vendor/{module}", "text/javascript")
 
 
 class LabServer(ThreadingHTTPServer):
@@ -87,26 +93,60 @@ class LabHandler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass  # no user text, tokens or provider errors in access logs
 
-    def send(self, status, body, content_type="application/json"):
+    def send(self, status, body, content_type="application/json", extra_headers=None):
         if isinstance(body, dict):
             body = json.dumps(body, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
-        self.send_header("Content-Type", content_type + "; charset=utf-8")
+        self.send_header("Content-Type", content_type + ("; charset=utf-8" if content_type.startswith(("text/", "application/json")) else ""))
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
+        self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; media-src 'self' blob:; connect-src 'self' blob:; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
+        for key, value in (extra_headers or {}).items():
+            self.send_header(key, str(value))
         self.end_headers()
         self.wfile.write(body)
 
     def valid_host(self):
         return self.headers.get("Host") == self.server.origin.removeprefix("http://")
 
+    def reject_post(self, status, error):
+        # Closing a Windows socket with unread request data can reset the
+        # connection before the client receives its error. Drain only a small,
+        # declared body under the socket timeout; never trust an unbounded size.
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            if 0 < length <= 65536 and not self.headers.get("Transfer-Encoding"):
+                self.rfile.read(length)
+        except (OSError, ValueError):
+            pass
+        self.send(status, {"error": error})
+
     def do_GET(self):
         if not self.valid_host():
             self.send(403, {"error": "invalid_host"})
         elif self.path == "/api/info":
-            self.send(200, self.server.service.info())
+            try:
+                self.send(200, self.server.service.info())
+            except StoreFailure:
+                self.send(503, {"error": "state_unavailable"})
+        elif self.path == "/api/background/skyrim.png":
+            try:
+                if self.server.service.media is None:
+                    raise MediaFailure("background_unavailable")
+                self.send(200, self.server.service.media.background_bytes(), "image/png")
+            except MediaFailure:
+                self.send(404, {"error": "background_unavailable"})
+        elif self.path.startswith("/api/models/") and self.path.endswith(".glb"):
+            persona_id = self.path.removeprefix("/api/models/").removesuffix(".glb")
+            media = self.server.service.media
+            if persona_id not in self.server.service.profiles or media is None:
+                self.send(404, {"error": "model_unavailable"})
+                return
+            try:
+                self.send(200, media.model_bytes(persona_id), "model/gltf-binary")
+            except (MediaFailure, OSError, ValueError):
+                self.send(404, {"error": "model_unavailable"})
         elif self.path in ASSETS:
             name, mime = ASSETS[self.path]
             body = (STATIC / name).read_bytes()
@@ -118,20 +158,20 @@ class LabHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if not self.valid_host() or self.headers.get("Origin") != self.server.origin or not hmac.compare_digest(
-            self.headers.get("X-Lab-Token", ""), self.server.token
+            self.headers.get("X-Lab-Token", "").encode("utf-8"), self.server.token.encode("ascii")
         ):
-            self.send(403, {"error": "invalid_origin_or_token"})
+            self.reject_post(403, "invalid_origin_or_token")
             return
-        if self.path not in {"/api/turn", "/api/cancel"}:
-            self.send(404, {"error": "not_found"})
+        if self.path not in {"/api/turn", "/api/cancel", "/api/speech", "/api/state", "/api/displayed"}:
+            self.reject_post(404, "not_found")
             return
         try:
             if self.headers.get("Transfer-Encoding") or self.headers.get_content_type() != "application/json":
-                self.send(415, {"error": "json_required"})
+                self.reject_post(415, "json_required")
                 return
             length = int(self.headers.get("Content-Length", "0"))
             if not 1 <= length <= 16384:
-                self.send(413, {"error": "body_limit"})
+                self.reject_post(413, "body_limit")
                 return
             body = self.rfile.read(length)
             if len(body) != length:
@@ -139,12 +179,30 @@ class LabHandler(BaseHTTPRequestHandler):
             if self.path == "/api/turn":
                 turn = LabTurn.model_validate_json(body)
                 result = self.server.call(self.server.service.turn(turn))
-            else:
+            elif self.path == "/api/cancel":
                 request = CancelRequest.model_validate_json(body)
                 result = self.server.call(self.server.service.cancel(request))
+            elif self.path == "/api/state":
+                request = LabStateEdit.model_validate_json(body)
+                result = self.server.call(self.server.service.edit_state(request))
+            elif self.path == "/api/displayed":
+                request = DisplayAck.model_validate_json(body)
+                result = self.server.call(self.server.service.displayed(request))
+            else:
+                request = CancelRequest.model_validate_json(body)
+                start = monotonic()
+                raw = self.server.call(self.server.service.speech(request))
+                self.send(200, raw, "audio/wav", {"X-Synthesis-Ms": round((monotonic() - start) * 1000)})
+                return
             self.send(409 if result.get("error") == "lab_busy" else 200, result)
         except ValueError:
             self.send(400, {"error": "invalid_test_input"})
+        except MediaFailure as error:
+            self.send(409 if error.code == "voice_busy" else 503, {"error": error.code})
+        except StateConflict:
+            self.send(409, {"error": "state_conflict_reload"})
+        except StoreFailure:
+            self.send(503, {"error": "state_unavailable"})
         except TimeoutError:
             self.send(504, {"error": "lab_timeout"})
         except (BrokenPipeError, ConnectionResetError):

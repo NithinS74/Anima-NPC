@@ -60,6 +60,8 @@ class PromptPackage(Contract):
     budget_bytes: Nonnegative
     max_output_tokens: Annotated[StrictInt, Field(ge=32, le=512)] = 160
     template_version: Literal["0.1"] = "0.1"
+    history_count: Nonnegative = 0
+    omitted_history_count: Nonnegative = 0
 
 
 class ProviderReply(Contract):
@@ -98,4 +100,6 @@ class TurnPreview(Contract):
     response_deadline_ms: Nonnegative
     model_cutoff_ms: Nonnegative
     timing_profile: Literal["realtime", "development"]
+    history_used: Nonnegative = 0
+    history_omitted: Nonnegative = 0
     # Response-ready only: not a durable delivery acknowledgement.

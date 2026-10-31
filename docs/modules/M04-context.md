@@ -25,3 +25,5 @@ ContextBundle contains structured persona, perceived situation, directed relatio
 ## Acceptance / handoff
 
 Supply fixtures for unseen theft, contradictory CV/telemetry, inaccessible secret, busy-friendly NPC, expired event and oversized history. Assert mandatory constraints survive pruning and each included fact has a source/effect. Swapping a Skyrim-shaped input for a synthetic space-station input must require no context-builder source changes.
+
+Implementation update: the [social-state slice](../SOCIAL_STATE.md) adds deterministic appraisal, persona temperament, SQLite directed relationships and bounded acknowledged dialogue history. The [separate lab](../NPC_LAB.md) exercises these contracts; production game delivery, full M02 semantics and semantic grounding are still future work.

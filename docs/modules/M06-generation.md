@@ -25,3 +25,5 @@ Enforce max input/output tokens and the earlier model cutoff (initially ingress+
 ## Acceptance / handoff
 
 Provider contract tests cover valid JSON, invalid output, timeout, rate limit, cancellation and token overflow. Prompt snapshots cover persona differences, injection-as-data and context pruning. Show one API-provider smoke test when credentials are available and a second fake/local-compatible adapter without changes in policy/context modules. Model quality selection is benchmark-driven; do not pin a provider/model as a core architectural dependency.
+
+Implementation update: the [social-state slice](../SOCIAL_STATE.md) adds deterministic appraisal, persona temperament, SQLite directed relationships and bounded acknowledged dialogue history. The [separate lab](../NPC_LAB.md) exercises these contracts; production game delivery, full M02 semantics and semantic grounding are still future work.

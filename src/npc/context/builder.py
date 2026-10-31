@@ -208,6 +208,7 @@ def build_situation(turn: TurnInput, snapshot: StateSnapshot, now: datetime) -> 
                             source_ids=("npc_state.current_goal",) if goal is not None else (),
                             reason="fresh_npc_state" if goal is not None else "no_eligible_evidence"),
     )
+    from npc.behavior.appraisal import appraise_social
     return Situation(
         scope=turn.scope, request_id=turn.request_id, npc_id=turn.npc_id,
         player_id=turn.player_id, dialogue_revision=snapshot.dialogue_revision,
@@ -216,4 +217,6 @@ def build_situation(turn: TurnInput, snapshot: StateSnapshot, now: datetime) -> 
         recognition=recognition, trust_stance=trust_stance, mood=mood,
         current_goal=goal, perceived_facts=perceived, exclusions=exclusions,
         conflicts=conflicts, influences=tuple(influences), dependencies=dependencies, notes=tuple(notes),
+        social_appraisal=appraise_social(turn.player_input, persona, relationship),
+        recent_dialogue=snapshot.recent_dialogue,
     )

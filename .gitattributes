@@ -1,0 +1,3 @@
+
+# Preserve exact vendored bytes for the checked integrity manifest on Windows.
+tools/npc_lab/web/vendor/* -text
