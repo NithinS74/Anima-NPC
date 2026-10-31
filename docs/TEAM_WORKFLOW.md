@@ -4,6 +4,8 @@ This repository began empty. It contains a reviewed design baseline, not a runni
 
 ## Contract-first collaboration
 
+For each implementation task, teammates and agents follow the [development skill](../.agents/skills/develop-npc-component/SKILL.md): plan, review that plan before coding, implement with unit tests for each new/changed working component, review the diff and run applicable regression. Use the [reviewer skill](../.agents/skills/review-npc-design/SKILL.md) to check relevant design assumptions. Read [AGENTS.md](../AGENTS.md) for agent entry instructions. Routine review may be explicitly labelled self-review; an independent review must actually be independent.
+
 1. Review [TRD](TRD.md), [source differences](TRACEABILITY.md) and [contracts](CONTRACTS.md) together. Record acceptance of changed course scope separately if needed.
 2. Select one owner/reviewer per issue in [backlog](BACKLOG.md). Historical names/roles do not automatically assign work.
 3. Complete I00: executable schemas, shared fixtures and fakes. Use the corrected planning baseline to agree the first executable schema before independent implementation. Documentation version and future wire-schema version are separate.
@@ -27,10 +29,10 @@ Use relative milestones, not stale week/deadline dates from the PDFs. Do not del
 
 ## Repository conventions
 
-Future implementation layout: `src/npc/{contracts,inputs,state,behavior,context,rag,generation,validation,output,runtime}`, `tests/{contracts,unit,integration}`, `fixtures/`, `configs/`, `scripts/`. These directories are proposed, not placeholder claims of implementation.
+The [repository structure guide](REPOSITORY_STRUCTURE.md) defines the scaffolded source/test tree and maps each TRD to its code home. Put game/replay mappings under `src/npc/adapters/`, shared schemas under `contracts/`, and composition/console assets under `runtime/`. Directory existence does not imply implemented behavior. Use the guide as the single source for placement instead of starting another backend tree or duplicating fixtures.
 
-Branches: `feature/<issue-id>-<short-name>`. PRs state resulting behavior, interface changes and relevant validation. Definition of done: contract documented, independent fake-based tests, failure/cancellation cases where applicable, no secrets or game/model binaries, runnable example, metrics relevant to the change, reviewer approval. Avoid tests that merely mirror implementation.
+Branches: `feature/<issue-id>-<short-name>`. PRs state resulting behavior, interface changes and validation. Definition of done: reviewed plan, reviewed implementation, meaningful unit tests for each new/changed working component, passing existing offline regression and relevant contract/integration checks, failure/cancellation cases where applicable, updated docs, no secrets/game binaries, runnable example and relevant metrics. Record review findings, exact checks/outcomes and unverified limitations. Team PR review remains part of merging; it need not block an agent from implementing an already-reviewed authorized plan. Avoid tests that merely mirror implementation or claims that tests guarantee no future breakage.
 
 ## Environment
 
-Use the project `.venv`; never rely on a teammate's global Python packages. [SETUP](../SETUP.md) documents exact commands and dependency files. API keys belong in local `.env` based on `.env.example`. Local knowledge, generated audio and model/database directories are ignored. No framework or model dependency should be added without the owning module needing it.
+Use the project `.venv`; never rely on a teammate's global Python packages. [SETUP](../SETUP.md) documents exact commands and dependency files. API keys belong in local `.env` based on `.env.example`. Runtime generated audio and model/database directories are ignored; the user knowledge folder is not automatically excluded by the current ignore rules. Check corpus privacy/licensing before tracking it. No framework/model dependency should be added without the owning module needing it.

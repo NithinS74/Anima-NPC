@@ -2,7 +2,7 @@
 
 Place supported knowledge documents here when M05 is implemented. This is currently a folder convention; ingestion does not run yet. Set a different root through configuration if desired.
 
-Initial planned formats: UTF-8 text/Markdown, structured JSON/CSV and text-based PDF. Binary/scanned/encrypted PDFs need diagnostics or later OCR. Do not place credentials, personal player data, copyrighted game binaries or model weights here. User documents are ignored by Git by default.
+Initial planned formats: UTF-8 text/Markdown, structured JSON/CSV and text-based PDF. Binary/scanned/encrypted PDFs need diagnostics or later OCR. Do not place credentials, personal player data, copyrighted game binaries or model weights here. The current user-edited `.gitignore` does not exclude this folder; review privacy/licensing before tracking documents. Keep shared public test corpora in `fixtures/worlds/` instead.
 
 Every document requires a stable ID, world/source identity, provenance, revision and access metadata. A proposed sidecar `suppliers.md.meta.json`:
 

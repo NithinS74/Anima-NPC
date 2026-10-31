@@ -18,6 +18,8 @@ I05 will add Chroma and the selected CPU embedding/parser packages to this same 
 
 Copy `.env.example` to `.env` when API testing needs provider settings. Keep keys in the backend, never browser JavaScript or commits. No model/provider is hardcoded. Tests/CI use fakes by default; dependency setup launches no game/server, records no audio and makes no paid model calls.
 
-The `.venv`, `.tools` (and typo `.toolds`), temporary PDF renderings/extractions, databases, logs, private knowledge, captures and model files are ignored. The reusable [reviewer skill](.agents/skills/review-npc-design/SKILL.md) is committed; invoke `$review-npc-design` in a compatible agent or ask it to read that file explicitly.
+The `.venv`, `.tools` (and typo `.toolds`), temporary PDF renderings/extractions, runtime databases, logs, captures and model files are ignored. The current user-edited ignore file does not exclude `Knowledge base/kb`; check corpus privacy/licensing before tracking any contents. The reusable [reviewer skill](.agents/skills/review-npc-design/SKILL.md) is committed; invoke `$review-npc-design` in a compatible agent or ask it to read that file explicitly.
 
 No server-start/ingestion commands are offered because those modules have not been built. The next gate is executable contracts and one fake-provider vertical slice.
+
+The [repository structure guide](docs/REPOSITORY_STRUCTURE.md) shows where each teammate's code/tests belong. `src/npc/` and test/data/config directories are scaffolded only; Python package/build configuration and runnable test discovery are part of the first executable slice. Do not interpret the directory tree as an installed application or a passing regression suite.

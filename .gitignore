@@ -1,6 +1,6 @@
 .tools/
 .toolds/
-tmp/
+/tmp/
 .venv/
 venv/
 __pycache__/
@@ -15,13 +15,13 @@ htmlcov/
 *.pem
 *.key
 GPT_SECRET_KEY.txt
-data/
-models/
-logs/
-recordings/
-captures/
-output/
-assets/private/
+/data/
+/models/
+/logs/
+/recordings/
+/captures/
+/output/
+/assets/private/
 *.sqlite
 *.sqlite3
 *.db-wal
@@ -35,5 +35,3 @@ build/
 .vscode/
 .DS_Store
 Thumbs.db
-Knowledge base/kb/*
-!Knowledge base/kb/README.md
