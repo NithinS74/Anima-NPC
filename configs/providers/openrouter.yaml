@@ -4,3 +4,5 @@ base_url: https://openrouter.ai/api/v1
 model: ""
 api_key_env: OPENROUTER_API_KEY
 response_format: json_object
+# Short NPC replies reserve the output allowance for the answer, not reasoning.
+reasoning_enabled: false

@@ -64,3 +64,26 @@ def test_stale_output_is_never_accepted(scenario_data):
 def test_structural_checks_do_not_pretend_to_prove_grounding(scenario_data):
     # Semantic entailment is an explicitly separate evaluation problem.
     assert validate(scenario_data, text="The moon is made of iron.").accepted
+
+
+@pytest.mark.parametrize("question,previous,accepted", [
+    ("Write me a Python script.", "Tell me the patrol schedule.", False),
+    ("where can i find it", "tell me about the dragons", False),
+    ("Tell me the patrol schedule.", "tell me about the dragons", True),
+    ("What about it?", "tell me about the patrol schedules", True),
+])
+def test_unrelated_authored_boundary_cannot_substitute_for_current_topic(scenario, question, previous, accepted):
+    from npc.behavior import choose_plan
+    from npc.context import build_situation
+    from npc.contracts.context import DialogueMemory, PlayerInput
+    from npc.contracts.dialogue import CurrentState, ProviderReply
+    situation = build_situation(scenario.turn, scenario.snapshot, scenario.now)
+    situation = situation.model_copy(update={
+        "persona": situation.persona.model_copy(update={"boundaries": ("never disclose patrol schedules",)}),
+        "player_input": PlayerInput(text=question),
+        "recent_dialogue": (DialogueMemory(request_id="prior", player_text=previous, npc_text="Earlier reply"),)})
+    plan = choose_plan(situation).model_copy(update={"route": "generate", "authored_text": "", "max_words": 40, "max_sentences": 2})
+    reply = ProviderReply(content='{"mode":"speech","text":"I do not share patrol schedules.","evidence_ids":[]}', model="test", finish_reason="stop")
+    result = validate_response(reply, situation, plan, CurrentState(dialogue_revision=situation.dialogue_revision, turn_epoch=situation.turn_epoch))
+    assert result.accepted is accepted
+    assert ("irrelevant_boundary" in result.violations) is (not accepted)

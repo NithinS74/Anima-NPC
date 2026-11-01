@@ -5,12 +5,13 @@ from typing import Annotated, Literal
 from pydantic import Field, StrictInt, model_validator
 
 from npc.contracts.context import Contract, Identifier, Nonnegative, ShortText
+from npc.contracts.knowledge import Evidence, KnowledgeContext
 
 Cue = Literal["look_at", "resume_task", "guarded_stance", "dismissive_gesture"]
 ViolationCode = Literal[
     "invalid_json", "invalid_schema", "wrong_mode", "empty_speech", "unexpected_text",
     "too_many_words", "too_many_sentences", "too_many_characters", "unsupported_cue",
-    "unknown_evidence", "assistant_scaffolding", "incomplete_generation", "stale_state",
+    "unknown_evidence", "irrelevant_boundary", "assistant_scaffolding", "incomplete_generation", "stale_state",
 ]
 
 
@@ -60,6 +61,9 @@ class PromptPackage(Contract):
     budget_bytes: Nonnegative
     max_output_tokens: Annotated[StrictInt, Field(ge=32, le=512)] = 160
     template_version: Literal["0.1"] = "0.1"
+    evidence: Annotated[tuple[Evidence, ...], Field(max_length=3)] = ()
+    evidence_omitted: Nonnegative = 0
+    evidence_aliases: Annotated[dict[Identifier, Identifier], Field(max_length=3)] = Field(default_factory=dict)
     history_count: Nonnegative = 0
     omitted_history_count: Nonnegative = 0
 
@@ -102,4 +106,7 @@ class TurnPreview(Contract):
     timing_profile: Literal["realtime", "development"]
     history_used: Nonnegative = 0
     history_omitted: Nonnegative = 0
+    knowledge: KnowledgeContext | None = None
+    evidence_used: Annotated[tuple[Identifier, ...], Field(max_length=3)] = ()
+    evidence_omitted: Nonnegative = 0
     # Response-ready only: not a durable delivery acknowledgement.

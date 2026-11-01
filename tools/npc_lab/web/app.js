@@ -18,7 +18,10 @@ function fallbackExplanation(code) {
     provider_unavailable: 'The provider returned a server error. Try again later.',
     provider_bad_request: 'The API rejected the request settings. Check model and provider compatibility.',
     provider_not_found: 'The configured model or endpoint was not found.',
-    provider_transport: 'Could not reach the API. Check the network connection.'
+    provider_transport: 'Could not reach the API. Check the network connection.',
+    provider_output_limit: 'The model exhausted its output allowance before producing a reply. Disable reasoning for short NPC replies.',
+    provider_protocol: 'The API returned an unexpected response instead of usable answer text.',
+    irrelevant_boundary: 'The model answered an unrelated restriction instead of your current question; the reply was rejected.'
   };
   return `Outcome: ${code}. ${explanations[code] || 'Inspect validation and error details in the trace.'} A fallback is not successful generation.`;
 }
@@ -273,6 +276,8 @@ function showInspection(data) {
   for (const dependency of context.dependencies) card(`Resolved ${dependency.field}`, `${dependency.value ?? 'unknown'} (${dependency.reason})`, dependency.source_ids.join(', ') || 'No eligible evidence');
   card('Response contract', `${plan.max_words} words / ${plan.max_sentences} sentences; route ${plan.route}; affect ${plan.affect}. History used: ${data.result.history_used}, omitted: ${data.result.history_omitted}.`, plan.reason_codes.join(', '));
   card('Knowledge boundary', `${context.perceived_facts.length} eligible observations; ${context.exclusions.length} excluded. History and player claims remain untrusted.`, 'These rules describe implemented appraisal, not proven human psychology.');
+  const knowledge = data.result.knowledge;
+  if (knowledge) card('Retrieved knowledge', `${knowledge.status}; ${data.result.evidence_used.length} passages used, ${data.result.evidence_omitted} omitted by budget.`, knowledge.evidence.map(hit => `${hit.source} #${hit.chunk_index}`).join(', ') || 'No retrieved passages');
   $('impact-map').replaceChildren(...cards);
 }
 function updateCamera() {

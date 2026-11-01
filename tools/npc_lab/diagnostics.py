@@ -33,9 +33,13 @@ class InspectableProvider:
                 messages=[message.model_dump(mode="json") for message in prompt.messages],
                 max_output_tokens=prompt.max_output_tokens,
                 budget_bytes=prompt.budget_bytes,
+                evidence=[hit.model_dump(mode="json") for hit in prompt.evidence],
+                evidence_omitted=prompt.evidence_omitted,
+                evidence_aliases=prompt.evidence_aliases,
                 history_used=prompt.history_count,
                 history_omitted=prompt.omitted_history_count,
                 response_format=getattr(config, "response_format", None),
                 reasoning_effort=getattr(config, "reasoning_effort", None),
+                reasoning_enabled=getattr(config, "reasoning_enabled", None),
             ))
         return await self.provider.generate(prompt, timeout_s)

@@ -107,7 +107,7 @@ def make_scenario(profile: LabProfile, turn: LabTurn, revision: int, memory=()) 
 
 
 class LabService:
-    def __init__(self, provider, *, live: bool = False, realtime: bool = False, development_timeout_s: int = 30, profiles=None, media=None, state_store: SocialStore | None = None):
+    def __init__(self, provider, *, live: bool = False, realtime: bool = False, development_timeout_s: int = 30, profiles=None, media=None, state_store: SocialStore | None = None, retriever=None):
         self.profiles = profiles if profiles is not None else load_profiles()
         self.live = live
         self.realtime = realtime
@@ -118,7 +118,10 @@ class LabService:
         limits = PreviewLimits(max_input_bytes=3072) if realtime else PreviewLimits(
             response_timeout_ms=development_timeout_s * 1000,
             model_cutoff_ms=min(59000, development_timeout_s * 1000 - 550), max_input_bytes=3072)
-        self.runner = PreviewRunner(InspectableProvider(provider), limits)
+        if retriever is not None:
+            limits = limits.model_copy(update={"max_input_bytes": 10000,
+                                                   "retrieval_timeout_ms": 750 if realtime else 5000})
+        self.runner = PreviewRunner(InspectableProvider(provider), limits, retriever=retriever)
         self.active: tuple[str, asyncio.Event] | None = None
         self.revision = 0
         self.media = media

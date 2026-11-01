@@ -81,7 +81,7 @@ User-requested standalone lab: `tools/npc_lab/` owns its local HTTP bridge and s
 
 Track source, tests, small public fixtures, validated public config and documentation. Local `.venv/`, `.tools/`, `tmp/`, `data/`, `models/`, `logs/`, `captures/`, `recordings/` and `output/` are already ignored. Use `output/benchmarks/` for raw experiment results; place curated redacted conclusions in `docs/reviews/` when worth sharing. Do not delete teammates' local data to make the tree look tidy.
 
-Generated-data ignore rules are root-anchored so `src/npc/output/` and future source directories named `models` are not hidden. The current user-edited `.gitignore` does not automatically exclude `Knowledge base/kb/`; preserve that choice and review corpus privacy/licensing before tracking it. Public fixture packs and private user knowledge are different inputs even when both contain lore.
+Generated-data ignore rules are root-anchored so `src/npc/output/` and future source directories named `models` are not hidden. The internal RAG setup now explicitly ignores local documents under `Knowledge base/kb/` except its public README/placeholder, plus the generated `data/rag/` model/index cache. Review corpus privacy/licensing before deliberately sharing files through public fixtures. Public fixture packs and private user knowledge are different inputs even when both contain lore.
 
 ## Plan and structure self-review
 
@@ -111,3 +111,7 @@ Anima is the user-facing companion name. Existing `tools/npc_lab/` and persona/c
 The owner-approved `assets/runtime/anima-media.zip` is the narrowly scoped Git LFS runtime bundle for this private project. Its manifest/provenance are ordinary tracked text. `scripts/anima_assets.py` handles bounded verified setup-time extraction into ignored `assets/private/npc_lab/`, preserving explicit local overrides. Conversion scratch, .venv, keys and player state remain excluded.
 
 Automatic launch/bootstrap stays under `scripts/`: `launch_anima.py` coordinates readiness/setup, `check_environment.py` checks the local venv/media, and `source_update.py` owns bounded optional fast-forward updates. These scripts never enter the core turn pipeline.
+
+## Internal local RAG
+
+`src/npc/rag/backend/` owns the reused document loaders, chunking/CPU encoder and embedded Chroma service; `src/npc/rag/local.py` adapts it to NPC evidence without a second HTTP server. Configuration and evidence normalization stay in `src/npc/rag/`. Generated model/index files are under ignored `data/rag/`; user knowledge under `Knowledge base/kb/` is now explicitly ignored except its public README/placeholder. Backend storage tests live in `tests/integration/rag/`, pure loader/adapter/CLI tests in `tests/unit/rag/`. `python -m npc.rag` is the local maintenance entry point; setup prepares the model/index outside dialogue turns. No standalone RAG frontend is copied into the application.

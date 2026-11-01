@@ -9,6 +9,8 @@ from pydantic import Field, StrictInt, model_validator
 
 from npc.behavior import choose_plan
 from npc.context import build_situation
+from npc.context.assembly import assemble_knowledge
+from npc.contracts.knowledge import KnowledgeContext, Retriever
 from npc.contracts.context import ContextScenario, Contract
 from npc.contracts.dialogue import CurrentState, ProviderReply, ResponseBody, TurnPreview
 from npc.generation.prompt import PromptTooLarge, build_prompt
@@ -20,6 +22,7 @@ class PreviewLimits(Contract):
     response_timeout_ms: StrictInt = Field(default=3000, ge=100, le=60000)
     model_cutoff_ms: StrictInt = Field(default=2450, ge=50, le=59000)
     max_input_bytes: StrictInt = Field(default=2048, ge=512, le=32000)
+    retrieval_timeout_ms: StrictInt = Field(default=750, ge=10, le=5000)
     max_output_tokens: StrictInt = Field(default=160, ge=32, le=512)
 
     @model_validator(mode="after")
@@ -29,8 +32,8 @@ class PreviewLimits(Contract):
         return self
 
 
-async def _invoke(provider, prompt, timeout_s, cancellation, retain_cleanup):
-    task = asyncio.create_task(provider.generate(prompt, timeout_s))
+async def _await_work(work, timeout_s, cancellation, retain_cleanup):
+    task = asyncio.create_task(work)
     cancel_task = asyncio.create_task(cancellation.wait()) if cancellation is not None else None
     tasks = {task} | ({cancel_task} if cancel_task else set())
     try:
@@ -54,10 +57,12 @@ async def _invoke(provider, prompt, timeout_s, cancellation, retain_cleanup):
 
 
 class PreviewRunner:
-    """Reuse ONE instance to bound local provider work. No pending-work queue."""
+    """Reuse ONE instance to bound local request work. No pending-work queue."""
 
-    def __init__(self, provider: ModelProvider, limits: PreviewLimits | None = None, *, clock: Callable[[], float] = monotonic):
+    def __init__(self, provider: ModelProvider, limits: PreviewLimits | None = None, *, clock: Callable[[], float] = monotonic,
+                 retriever: Retriever | None = None):
         self.provider = provider
+        self.retriever = retriever
         self.limits = limits or PreviewLimits()
         self.clock = clock
         self._slot = asyncio.Lock()
@@ -65,7 +70,7 @@ class PreviewRunner:
         self._owners: set[tuple[str, str, str, str]] = set()
 
     def _retain_cleanup(self, task: asyncio.Task):
-        # At most one outstanding provider task: its admission remains held.
+        # At most one outstanding request task: its admission remains held.
         self._pending_cleanup = task
 
         def settled(completed):
@@ -115,6 +120,9 @@ class PreviewRunner:
         calls, violations, model = 0, (), None
         input_tokens, output_tokens, usage_complete = 0, 0, True
         history_used, history_omitted = 0, 0
+        evidence_used, evidence_omitted = (), 0
+        knowledge = KnowledgeContext(scope=situation.scope, npc_id=situation.npc_id,
+                                     status="not_requested" if self.retriever else "disabled")
 
         def stale():
             state = current_state()
@@ -132,7 +140,8 @@ class PreviewRunner:
                                error_code=error, model=model, elapsed_ms=max(0, (self.clock()-start)*1000),
                                input_tokens=input_tokens, output_tokens=output_tokens, usage_complete=usage_complete,
                                response_deadline_ms=self.limits.response_timeout_ms, model_cutoff_ms=self.limits.model_cutoff_ms,
-                               timing_profile=self._timing_profile(), history_used=history_used, history_omitted=history_omitted)
+                               timing_profile=self._timing_profile(), history_used=history_used, history_omitted=history_omitted,
+                               knowledge=knowledge, evidence_used=evidence_used, evidence_omitted=evidence_omitted)
 
         def checked(body):
             reply = ProviderReply(content=body.model_dump_json(), model="authored", finish_reason="stop")
@@ -156,6 +165,22 @@ class PreviewRunner:
         if self._slot.locked():
             return finish("busy", error="provider_busy")
         async with self._admission():
+            if self.retriever is not None and plan.knowledge_need != "none":
+                remaining = min(self.limits.retrieval_timeout_ms / 1000,
+                                self.limits.model_cutoff_ms / 1000 - (self.clock() - start))
+                if remaining <= 0:
+                    return fallback("model_cutoff")
+                try:
+                    retrieved = await _await_work(self.retriever.retrieve(situation, timeout_s=remaining),
+                                                 remaining, cancellation, self._retain_cleanup)
+                    knowledge = assemble_knowledge(situation, retrieved)
+                except ProviderFailure as error:
+                    if error.code == "cancelled":
+                        return finish("cancelled", error="cancelled")
+                    knowledge = KnowledgeContext(scope=situation.scope, npc_id=situation.npc_id, status="unavailable")
+                    return fallback("retrieval_timeout")
+                if knowledge.status in {"unavailable", "forbidden"}:
+                    return fallback("retrieval_" + knowledge.status)
             for attempt in range(2):
                 if stopped():
                     return finish("cancelled", error="cancelled_or_stale")
@@ -163,10 +188,12 @@ class PreviewRunner:
                 if remaining <= 0:
                     return fallback("model_cutoff")
                 try:
-                    prompt = build_prompt(situation, plan, max_input_bytes=self.limits.max_input_bytes,
+                    prompt = build_prompt(situation, plan, knowledge=knowledge if self.retriever else None, max_input_bytes=self.limits.max_input_bytes,
                                           max_output_tokens=self.limits.max_output_tokens,
                                           repair_codes=violations if attempt else ())
                     history_used, history_omitted = prompt.history_count, prompt.omitted_history_count
+                    evidence_used = tuple(hit.id for hit in prompt.evidence)
+                    evidence_omitted = prompt.evidence_omitted
                 except PromptTooLarge:
                     return fallback("prompt_budget")
                 remaining = self.limits.model_cutoff_ms/1000 - (self.clock()-start)
@@ -174,7 +201,7 @@ class PreviewRunner:
                     return fallback("model_cutoff")
                 calls += 1
                 try:
-                    reply = await _invoke(self.provider, prompt, remaining, cancellation, self._retain_cleanup)
+                    reply = await _await_work(self.provider.generate(prompt, remaining), remaining, cancellation, self._retain_cleanup)
                 except ProviderFailure as error:
                     usage_complete = False
                     if error.code == "cancelled":
@@ -188,11 +215,12 @@ class PreviewRunner:
                     return finish("cancelled", error="cancelled_or_stale")
                 if (self.clock()-start)*1000 >= self.limits.model_cutoff_ms:
                     return fallback("late_completion")
-                validation = validate_response(reply, situation, plan, current_state())
+                validation = validate_response(reply, situation, plan, current_state(), evidence=prompt.evidence,
+                                               evidence_aliases=prompt.evidence_aliases)
                 violations = tuple(dict.fromkeys(violations + validation.violations))
                 if validation.accepted:
                     return finish("repair_success" if attempt else "model_success", validation.response)
                 if "stale_state" in validation.violations:
                     return finish("cancelled", error="stale_state")
-            return fallback("invalid_candidate")
+            return fallback("irrelevant_boundary" if "irrelevant_boundary" in violations else "invalid_candidate")
         raise AssertionError("unreachable")

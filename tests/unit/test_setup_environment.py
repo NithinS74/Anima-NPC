@@ -57,3 +57,17 @@ def test_incomplete_environment_is_preserved_without_running_installers(tmp_path
     with pytest.raises(module.SetupFailure, match="incomplete"):
         module.setup(root, version=(3, 11), run=forbidden)
     assert (root / ".venv").is_dir()
+
+
+def test_setup_prepares_local_rag_before_regression_and_preserves_env_on_failure(tmp_path):
+    root = checkout(tmp_path)
+    (root / ".env").write_text("PRIVATE_EXISTING_KEY")
+    calls = []
+    def run(args, **kwargs):
+        calls.append(args)
+        return SimpleNamespace(returncode=1 if args[-3:] == ["-m", "npc.rag", "prepare"] else 0)
+    with pytest.raises(module.SetupFailure):
+        module.setup(root, version=(3, 11), run=run)
+    assert calls[-1][-3:] == ["-m", "npc.rag", "prepare"]
+    assert not any(args[-3:] == ["-m", "pytest", "-q"] for args in calls)
+    assert (root / ".env").read_text() == "PRIVATE_EXISTING_KEY"

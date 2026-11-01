@@ -35,3 +35,8 @@ build/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Local knowledge is user input, not public test fixtures.
+/Knowledge base/kb/*
+!/Knowledge base/kb/README.md
+!/Knowledge base/kb/.gitkeep

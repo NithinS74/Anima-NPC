@@ -1,0 +1,13 @@
+# Existing folder-RAG integration
+
+Outcome: retrieve the owner's indexed game dialogue through the existing folder-RAG HTTP API and include structured evidence in NPC model inputs, without copying the corpus, index, frontend or embedding dependencies.
+
+Plan: add a small typed evidence contract and HTTP adapter under src/npc/rag; recheck scope/NPC at context assembly; pack whole evidence passages within the existing final prompt budget; allow output citations only to evidence actually packed. Retrieve once after policy admission, reuse that result for repair, honor the same cancellation/deadline, and skip retrieval on authored/silent turns. Wire optional --rag-config into both scenario CLI and Anima; expose status, passages and packing in existing inspection data. Existing launches without configuration remain unchanged.
+
+Trusted JSON configuration binds each game/world/NPC to one exact source file. This matches the backend's existing source filter and prevents global retrieval followed only by filtering. It is file-level eligibility, not inferred speaker/quest authorization. Dialogue_2015.txt is a combined dialogue dump: quoted events are not evidence of current quest progress. No new database, cache, reranker, automatic corpus rewrite or LLM classification call.
+
+Plan self-review (not independent): use the existing HTTP boundary to avoid importing Chroma or maintaining a second ingestion pipeline. Required corrections: fail closed on missing bindings and source mismatches, preserve source/IDs, omit truncated passages, never validate citations to omitted evidence, include retrieval in admission/deadline accounting, and distinguish unavailable/empty from success. File-level access cannot isolate secrets inside one combined file; document this limit rather than claim full M05 completion.
+
+Acceptance: two game/world configurations exercise the same pipeline; expected source passages reach provider-bound messages and valid citations survive; foreign scope/NPC/source, oversized/truncated evidence and invented IDs cannot enter accepted output; greeting/combat skip retrieval; cancellation/timeout/failed API remain bounded; repairs use one retrieval. Test with deterministic HTTP transport and fake generation, then query the owner's existing index without paid calls.
+
+Checks: focused new unit/integration tests; full offline .venv/Scripts/python.exe -m pytest -q; pip check; CLI help and offline examples. Baseline sandbox test attempt was blocked by temporary-file/socket permissions and stale editable install after directory move. Repaired editable path and reran outside sandbox. Final outcomes recorded in the handoff.
