@@ -45,7 +45,10 @@ def create_app(bridge: Bridge):
         session = bridge.session
         return {"status": "ready", "pipeline_mode": bridge.settings.pipeline_mode,
                 "session_id": session.event.session_id if session else None,
-                "last_error": bridge.error, "image_descriptor": "not_connected"}
+                "last_error": bridge.error,
+                "image_descriptor": (session.visual_status if session else "configured") if bridge.cv_client else "not_connected",
+                "visual_attached": bridge.settings.attach_visual_reference,
+                "rag_configured": bridge.settings.rag_config is not None}
 
     @app.post("/v1/game/event")
     async def game_event(event: GameEvent):

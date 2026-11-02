@@ -1,5 +1,6 @@
 from __future__ import annotations
 import time
+import asyncio
 from pathlib import Path
 from uuid import uuid4
 from app.detection.yolo_detector import YoloDetector
@@ -17,8 +18,23 @@ class PipelineError(RuntimeError):
 class PerceptionPipeline:
     def __init__(self, detector: YoloDetector, vlm: OllamaVLM, artifact_dir: Path):
         self.detector, self.vlm, self.artifact_dir = detector, vlm, artifact_dir
+        self._slot = asyncio.Lock()
 
     async def analyze(self, validated: ValidatedImage, preprocessing_ms: float = 0) -> AnalysisResponse:
+        if self._slot.locked():
+            raise PipelineError("CV_BUSY", "One image is already being analyzed.")
+        await self._slot.acquire()
+        task = asyncio.create_task(self._analyze(validated, preprocessing_ms))
+        def settled(done):
+            if not done.cancelled():
+                done.exception()
+            self._slot.release()
+        task.add_done_callback(settled)
+        # A disconnected/cancelled caller cannot release admission while a native
+        # detector is still running in a worker thread.
+        return await asyncio.shield(task)
+
+    async def _analyze(self, validated: ValidatedImage, preprocessing_ms: float) -> AnalysisResponse:
         # Detector is synchronous; routes call this method from a worker thread for its blocking section.
         started = time.perf_counter()
         detected = await run_in_threadpool(self.detector.detect, validated.image)
@@ -31,6 +47,11 @@ class PerceptionPipeline:
         total_ms = (time.perf_counter() - started) * 1000
         request_id = str(uuid4())
         artifact_name = f"{request_id}.jpg"
+        self.artifact_dir.mkdir(parents=True, exist_ok=True)
+        # Keep at most 100 annotated frames; admission serializes retention/writes.
+        old = sorted(self.artifact_dir.glob("*.jpg"), key=lambda p: p.stat().st_mtime)
+        while len(old) >= 100:
+            old.pop(0).unlink(missing_ok=True)
         save_jpeg(detected.annotated_image, self.artifact_dir / artifact_name)
         perf = PerformanceMs(preprocessing=preprocessing_ms, detection=detected.duration_ms, vlm=vlm_ms, total=total_ms + preprocessing_ms)
         def model_list(key: str, model):
@@ -96,7 +117,7 @@ class PerceptionPipeline:
                 spatial_relationships=extract_strings("spatial_relationships"),
                 events=extract_strings("events"),
                 uncertainties=extract_strings("uncertainties"),
-                provenance=Provenance(detector_model=self.detector.model_name, vlm_model=self.vlm.model), performance_ms=perf,
+                provenance=Provenance(detector_provider="none" if self.detector.model_name == "disabled" else "ultralytics", detector_model=self.detector.model_name, vlm_model=self.vlm.model), performance_ms=perf,
             )
         except ValidationError as exc:
             raise PipelineError("VLM_INVALID_OUTPUT", "VLM JSON did not conform to the scene descriptor contract.") from exc

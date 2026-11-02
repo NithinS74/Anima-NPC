@@ -1,6 +1,6 @@
 # Skyrim CV
 
-Skyrim CV is an optional, standalone local screenshot-analysis service for this Anima repository. It accepts a manually selected PNG/JPEG, combines general-object detection with a local Ollama VLM, validates a versioned Scene Descriptor JSON response, and exposes a small testing dashboard. It does not modify or integrate with Mantella.
+Skyrim CV is an optional local screenshot-analysis service. It accepts PNG/JPEG from the Skyrim mod bridge or manual lab uploads, calls a local Ollama VLM and validates a versioned Scene Descriptor response. VLM-only is the default; the incoming optional YOLO wrapper is retained but disabled. It does not modify Mantella.
 
 For the complete installation and two-service workflow, use [SETUP.md](SETUP.md). The Anima-side bridge contract is documented in the repository [README](../README.md#optional-skyrim-cv--context-builder-workflow).
 
@@ -20,7 +20,7 @@ From the repository root on Windows:
 
 ```powershell
 .\cv\setupcv.bat
-.\cv\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir cv\backend --port 8000
+.\run_cv.bat
 ```
 
 In another PowerShell window at the repository root:
@@ -43,7 +43,7 @@ GET  /api/v1/artifacts/{id}.jpg
 Run the backend tests from the repository root with:
 
 ```powershell
-.\cv\.venv\Scripts\python.exe -m pytest -q cv\backend\tests
+.\.venv\Scripts\python.exe -m pytest -q cv\backend\tests
 ```
 
 To verify the integrated path after both services are running:
@@ -56,7 +56,7 @@ The end-to-end check uses the authored greeting route, so it is deterministic an
 
 ## Limitations
 
-- The bundled YOLO model is general-purpose rather than Skyrim-specific and can produce false positives.
+- No detector weights are bundled or required in default VLM-only mode. The optional YOLO wrapper requires its own reviewed dependencies/weights before enabling it.
 - The VLM can make uncertain or incorrect claims. Anima treats all returned visual text as untrusted.
 - First local inference can be slow; Anima's CV bridge defaults to a 120-second deadline.
-- This is a manual developer/testing workflow, not automated game capture or NPC visibility modeling.
+- The [Skyrim connector](../docs/SKYRIM_CONNECTOR.md) supplies automated game capture. Player-camera descriptions remain untrusted references; NPC visibility modeling is not implemented.

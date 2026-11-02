@@ -18,6 +18,17 @@ class DetectionResult:
     device: str
 
 
+class NoDetector:
+    """Explicit VLM-only mode; no detections are fabricated or weights loaded."""
+    model_name = "disabled"
+
+    def is_available(self):
+        return True, "detector disabled; VLM-only mode"
+
+    def detect(self, image):
+        return DetectionResult([], image.copy(), 0, "none")
+
+
 class YoloDetector:
     def __init__(self, model_name: str, confidence: float, image_size: int, device: str = "auto"):
         self.model_name, self.confidence, self.image_size, self.requested_device = model_name, confidence, image_size, device

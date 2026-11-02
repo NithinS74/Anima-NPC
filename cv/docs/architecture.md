@@ -1,6 +1,6 @@
 # Architecture
 
-The standalone service receives a manually uploaded PNG/JPEG, verifies its bytes and decoded dimensions, then runs the configured Ultralytics YOLO model. The original RGB image and raw detection evidence are passed sequentially to Ollama. The VLM is instructed to return only evidence-conscious JSON. That JSON is validated into a provider-independent `SceneDescriptor` (v1.0); detector output remains separately available in the response.
+The service receives a PNG/JPEG from manual upload or the Skyrim connector and validates its bytes/dimensions before decoding. Default VLM-only mode supplies an empty detector result explicitly. The retained optional YOLO wrapper can supply detections when independently configured. The bounded RGB image and detector evidence go to local Ollama; JSON is validated into `SceneDescriptor` v1.0. One admitted analysis at a time prevents inference queues; cancelling a caller retains admission until native work settles. Annotated output retains at most 100 images.
 
 Synchronous YOLO inference is dispatched to a worker thread so the FastAPI event loop can continue serving requests. VLM network I/O is asynchronous. The system never automatically downloads weights or pulls Ollama models.
 

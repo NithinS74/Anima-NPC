@@ -2,7 +2,7 @@
 
 A game-independent orchestration system for believable NPC interactions. The system decides whether an NPC engages, what they know, and how they respond before asking a replaceable language model to express the response.
 
-The independent [Skyrim connector](docs/SKYRIM_CONNECTOR.md) adds an SKSE mod source/build package and a localhost bridge for game data, screenshot files, STT text and correlated text/audio delivery. Start the bridge with `run_skyrim_connector.bat`; pipeline endpoints are configurable. It has no Mantella runtime dependency. Offline connector checks do not establish live Skyrim compatibility; consult the connector guide and review before claiming in-game readiness.
+The independent [Skyrim connector](docs/SKYRIM_CONNECTOR.md) connects SKSE game context/screenshots through optional local VLM, scoped RAG, NPC generation/validation and native text/audio delivery. Start `run_cv.bat`, then `run_skyrim_connector.bat --cv-url http://127.0.0.1:8000`; add `--attach-visual-reference` to include the untrusted descriptor in prompts. The default provider is scripted/offline; STT/TTS stay unconfigured for later. It has no Mantella runtime dependency. Offline checks do not establish live Skyrim/model compatibility; consult the guide and [integration review](docs/reviews/2026-11-02-skyrim-vision-pipeline.md).
 
 **Status:** context building and a generation/validation scenario preview are implemented and tested offline. The preview adds deterministic engagement rules, replaceable API generation, strict output checks and bounded repair. A [live Gemini sample](docs/reviews/2026-10-31-behavior-quality-audit.md) confirmed integration but exposed grounding, social-policy and latency gaps; realism is not signed off. A small [OpenRouter/Nemotron diagnostic](docs/reviews/2026-11-01-openrouter-output-budget.md) also verified answer text with reasoning disabled; response quality remains unverified. The full game pipeline is not yet implemented; local inference is a later option.
 
@@ -42,7 +42,7 @@ The included standalone [CV service](cv/README.md) feeds its validated `scene_de
 ```powershell
 # Terminal 1 — repository root: Skyrim CV service
 cd C:\path\to\Anima-NPC
-.\cv\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir cv\backend --port 8000
+.\run_cv.bat
 
 # Terminal 2 — repository root: Anima
 cd C:\path\to\Anima-NPC

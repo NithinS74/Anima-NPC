@@ -1,6 +1,6 @@
 # Independent Skyrim connection layer
 
-This connector is independently authored and does not load, modify or call Mantella. It consists of an SKSE plugin (`AnimaConnector.dll`) and a loopback Python bridge. The image descriptor and new STT/LLM/TTS implementations are outside this component. Native source/build verification and live-game verification are distinct; see the [implementation self-review](reviews/2026-11-02-skyrim-connector.md) for current results.
+This connector is independently authored and does not load, modify or call Mantella. It consists of an SKSE plugin (`AnimaConnector.dll`) and a loopback Python bridge. The built-in pipeline connects captured frames to the local VLM service, scoped RAG, the existing context/policy/provider/validation pipeline and native text/optional audio delivery. STT/TTS endpoints remain blank for later configuration. Native source/build verification and live-game verification are distinct; see the [implementation self-review](reviews/2026-11-02-skyrim-connector.md) and [integration plan](plans/I18-skyrim-vision-pipeline.md).
 
 ## What it captures
 
@@ -35,7 +35,7 @@ The server binds **127.0.0.1:8768**. If changing its port, also change `Data/SKS
 
 ## Pipeline connections
 
-Default `pipeline_mode: "inbox"` writes typed JSON events to `output/skyrim/inbox/` and waits for a result callback. This is a usable handoff for the unfinished pipeline: a consumer watches new event IDs and posts results. Do not infer ordering from UUID filenames; use `kind`, `request_id`, `revision` and capture timestamps. Context is persisted before that session's player turn is emitted. Files remain local, subject to the output budget; archive them explicitly when the budget fills.
+The public example defaults to `pipeline_mode: "preview"`, composing the working core with an offline provider. Existing local configuration is preserved. The alternative `pipeline_mode: "inbox"` writes typed JSON events to `output/skyrim/inbox/` and waits for a result callback. Do not infer ordering from UUID filenames; use `kind`, `request_id`, `revision` and capture timestamps. Context is persisted before that session's player turn is emitted. Files remain local, subject to the output budget; archive them explicitly when the budget fills.
 
 For a running external pipeline set `pipeline_mode: "http"` and `pipeline_url` to its loopback event endpoint. The bridge sends:
 
@@ -82,13 +82,19 @@ For a text-only test use `source: "text"`. A duplicate input ID does not generat
 
 ## Screenshots and image-descriptor handoff
 
-On conversation start, the bridge captures the foreground game's client area by process ID and saves PNG under `output/skyrim/screenshots/`. Payload metadata includes the file path, frame capture time, source event and `viewpoint: "player_camera"`. `image_description` is deliberately null. No VLM call or screenshot upload occurs. A failed/minimized/nonforeground capture does not block conversation data. Retention defaults to 100 frames; old frames may be removed, so downstream consumers must copy any frame they need to retain.
+On conversation start and material context updates, the bridge captures the foreground game's client area by process ID and saves PNG under `output/skyrim/screenshots/`. Payload metadata includes the file path, frame capture time, source event and `viewpoint: "player_camera"`. Set `cv_url` to `http://127.0.0.1:8000` to send the frame to the local CV service. `image_description` then carries a compact validated descriptor; it stays null when disabled/unavailable/stale. Capture or analysis failure permits ordinary dialogue. Retention defaults to 100 frames; old frames may be removed.
+
+CV waits at most `cv_timeout_s` (default 8 seconds) within the player's total turn deadline. Results are bound to session/revision and expire `visual_ttl_s` after capture (default 15 seconds). A subsequent turn refreshes expired/missing visual context. Slow cold inference can finish too late and be discarded; warm the VLM separately. The descriptor is available for inspection by default. Only explicit `attach_visual_reference: true` includes it in the built-in provider prompt as untrusted player-camera reference. It never becomes NPC perception, state, a RAG source or a valid citation. HUD/identity/quest claims must not be treated as known facts.
 
 This first capture backend uses Windows GDI. Use borderless/windowed Skyrim; exclusive fullscreen, overlays or protected rendering can produce missing/black frames. That behavior needs an actual game check. Captured HUD/quest text is player-visible data and must not be promoted into NPC knowledge by a future descriptor.
 
 ## Existing pipeline smoke binding
 
-Set `pipeline_mode: "preview"` to compose the existing `PreviewRunner` and configured provider profile. The default profile is scripted/offline; changing it to a live profile can make paid calls when the player submits input. It exercises the current canonical context subset only. It does not create production social memory, import knowledge automatically, or convert console acknowledgements into game-heard memory. Use external HTTP mode for the full pipeline's eventual input/output endpoints.
+Set `pipeline_mode: "preview"` to compose the existing `PreviewRunner` and configured provider profile. The default profile is scripted/offline; changing it to a live profile can make paid calls when the player submits input. Set `rag_config` to a trusted RAG configuration with `game_id: "skyrim"`, your `world_id` and actual actor reference IDs such as `ref:00013478`. Prepare the index with the existing [RAG commands](RAG_INTEGRATION.md) before play. Unbound identities fail closed; authored profile knowledge labels alone do not grant retrieval access. No ingestion/model download occurs during a turn. The built-in path uses a 12,000-byte prompt cap to accommodate game observations, evidence and optional visual reference.
+
+Run `run_cv.bat` in one terminal and `run_skyrim_connector.bat` in another. See [CV setup](../cv/SETUP.md) for the Ollama prerequisite; `GET http://127.0.0.1:8000/ready` checks the local model without downloading it. Keep `stt_url` and `tts_url` null until you add those services. Submit text to `/v1/player-input` using the active session ID from `/v1/health`; validated output is returned through the plugin's command polling. The [integration tests](../tests/unit/adapters/test_skyrim_connector.py) exercise this path with deterministic inference and game boundaries.
+
+This composes the current canonical game-context subset. Production social memory and reliable heard-memory commits remain unimplemented for this best-effort native receiver. Console acknowledgements do not establish game delivery.
 
 ## Guarantees and limits
 

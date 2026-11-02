@@ -19,7 +19,8 @@ def test_normalizes_only_compact_visual_reference_fields():
     assert visual.prompt_payload()["objects"] == ("A wooden table",)
 
 
-@pytest.mark.parametrize("url", ["https://127.0.0.1:8000", "http://example.com", "http://user@127.0.0.1:8000", "http://127.0.0.1:8000/path"])
+@pytest.mark.parametrize("url", ["https://127.0.0.1:8000", "http://example.com", "http://user@127.0.0.1:8000", "http://127.0.0.1:8000/path",
+    "http://localhost:0", "http://localhost:65536", "http://localhost:abc"])
 def test_rejects_non_loopback_or_non_origin_cv_urls(url):
     with pytest.raises(ValueError):
         validate_cv_url(url)
@@ -28,3 +29,20 @@ def test_rejects_non_loopback_or_non_origin_cv_urls(url):
 def test_rejects_malformed_upstream_payload():
     with pytest.raises(CVFailure, match="cv_invalid_response"):
         normalize_scene_response({"scene_descriptor": {"environment": {}}})
+
+
+@pytest.mark.parametrize("uncertainties", [None, "bad shape", {"bad": "shape"}])
+def test_bad_uncertainty_shape_is_not_iterated(uncertainties):
+    data = payload(); data["scene_descriptor"]["uncertainties"] = uncertainties
+    assert normalize_scene_response(data).uncertainties == ()
+
+
+@pytest.mark.parametrize("status,content,code", [(503, b"", "cv_unavailable"),
+    (200, b"x" * (128 * 1024 + 1), "cv_invalid_response"),
+    (200, b"not json", "cv_invalid_response"), (422, b"", "cv_invalid_response")])
+def test_http_errors_and_bounded_response(status, content, code):
+    import asyncio
+    import httpx
+    from npc.vision import CVSceneClient
+    client = CVSceneClient("http://localhost:8000", transport=httpx.MockTransport(lambda _: httpx.Response(status, content=content)))
+    with pytest.raises(CVFailure, match=code): asyncio.run(client.analyze(b"image", "image/png"))

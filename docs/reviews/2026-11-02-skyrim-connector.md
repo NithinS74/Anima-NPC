@@ -26,3 +26,12 @@ P1 before claiming live readiness: load with SKSE and the matching 1.6.318 Addre
 P2: validate GDI capture in borderless Skyrim and default-microphone MCI recording on this hardware. Fullscreen/overlay capture can fail or produce black frames. Amplitude mouth motion is approximate; no phoneme-aligned lip sync is claimed. Knowledge and dialogue coverage are deliberately bounded, and save scoping is per load rather than historical save-checkpoint persistence.
 
 Verdict: implemented and offline/build verified; go for the first controlled in-game smoke test. No live game launch, real recording, paid model call, Mantella modification, commit or push was performed. No production game-heard memory guarantee is claimed.
+
+## Subsequent pipeline integration
+
+The verification above records the original connector-only work. The later
+user-authorized checkpoint/GitHub merge and VLM/RAG/response integration supersede
+its disconnected-image scope. See [integration self-review](2026-11-02-skyrim-vision-pipeline.md)
+for 492 passing offline cases, service-startup evidence and remaining live gates.
+STT/TTS are deliberately unconfigured. The updated connector guide describes the
+connected configuration; live gameplay/inference has not been established.

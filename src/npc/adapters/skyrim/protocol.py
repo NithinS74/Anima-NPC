@@ -113,6 +113,11 @@ class Settings(Contract):
     pipeline_url: str | None = None
     tts_url: str | None = None
     stt_url: str | None = None
+    cv_url: str | None = None
+    cv_timeout_s: float = Field(default=8, ge=1, le=15)
+    visual_ttl_s: float = Field(default=15, ge=1, le=60)
+    attach_visual_reference: bool = False
+    rag_config: str | None = None
     provider_profile: str = "configs/providers/offline.yaml"
     audio_root: str = "output/pipeline/audio"
     port: int = Field(default=8768, ge=1024, le=65535)
@@ -120,6 +125,12 @@ class Settings(Contract):
     capture_screenshots: bool = True
     max_screenshots: int = Field(default=100, ge=1, le=1000)
     max_output_bytes: int = Field(default=250 * 1024 * 1024, ge=1024, le=2 * 1024**3)
+
+    @field_validator("cv_url")
+    @classmethod
+    def cv_origin(cls, value):
+        from npc.vision.client import validate_cv_url
+        return validate_cv_url(value) if value is not None else None
 
     @field_validator("pipeline_url", "tts_url", "stt_url")
     @classmethod

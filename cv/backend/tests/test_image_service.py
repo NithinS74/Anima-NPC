@@ -16,3 +16,10 @@ def test_rejects_invalid_content(data, content_type):
 
 def test_rejects_oversized_byte_upload():
     with pytest.raises(ImageValidationError): validate_image(png_bytes(), "image/png", 2, 100)
+
+
+def test_rejects_large_dimensions_before_decoding(monkeypatch):
+    raw = png_bytes()
+    def load(*args, **kwargs): raise AssertionError("pixel decoding must not run")
+    monkeypatch.setattr(Image.Image, "load", load)
+    with pytest.raises(ImageValidationError): validate_image(raw, "image/png", 10000, 5)

@@ -29,10 +29,12 @@ def validate_image(data: bytes, content_type: str | None, max_bytes: int, max_di
         raise ImageValidationError("Only PNG and JPEG images are accepted.")
     try:
         with Image.open(BytesIO(data)) as candidate:
+            if candidate.width > max_dimension or candidate.height > max_dimension:
+                raise ImageValidationError(f"Image dimensions must not exceed {max_dimension}px.")
             candidate.verify()
         image = Image.open(BytesIO(data))
         image.load()
-    except (UnidentifiedImageError, OSError, ValueError) as exc:
+    except (UnidentifiedImageError, OSError, ValueError, Image.DecompressionBombError) as exc:
         raise ImageValidationError("Upload is not a valid decodable image.") from exc
     if image.format not in ALLOWED_FORMATS:
         raise ImageValidationError("Decoded image format must be PNG or JPEG.")

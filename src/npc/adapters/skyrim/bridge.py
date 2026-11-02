@@ -14,6 +14,7 @@ import httpx
 from .assets import Artifacts, MAX_WAV_BYTES, mouth_envelope, read_audio, stage_audio, wav_duration
 from .protocol import GameEvent, NpcProfile, PipelineResult, Settings, SpeechInput, canonical_scenario, npc_id, profile_for
 from .windows import Microphone, capture_client
+from npc.vision import CVSceneClient, CVFailure, VisualContext
 
 
 class ConnectionError(ValueError):
@@ -34,11 +35,15 @@ class Session:
     screenshot: dict | None = None
     context_task: asyncio.Task | None = None
     turn_task: asyncio.Task | None = None
+    visual: VisualContext | None = None
+    visual_revision: int = -1
+    visual_time: float = 0
+    visual_status: str = "disabled"
 
 
 class Bridge:
     def __init__(self, settings: Settings, *, root: Path, capture=capture_client,
-                 client: httpx.AsyncClient | None = None, runner=None, microphone=None, clock=time.time):
+                 client: httpx.AsyncClient | None = None, runner=None, microphone=None, clock=time.time, cv_client=None):
         self.settings, self.root = settings, root.resolve()
         self.output = self.resolve(settings.output_directory)
         self.game = self.resolve(settings.game_directory)
@@ -59,6 +64,7 @@ class Bridge:
         self.client = client or httpx.AsyncClient(timeout=settings.timeout_s, trust_env=False,
                                                  limits=httpx.Limits(max_connections=3))
         self.runner = runner
+        self.cv_client = cv_client or (CVSceneClient(settings.cv_url, settings.cv_timeout_s) if settings.cv_url else None)
         self.microphone = microphone or Microphone(self.output / "microphone")
         self.session: Session | None = None
         self.ended = deque(maxlen=16)
@@ -144,6 +150,7 @@ class Bridge:
             changed = event.state_revision != session.revision
             if changed:
                 self.invalidate(session)
+                session.visual = None
                 session.revision = event.state_revision
             session.event = event
             # Coalesce context notifications while a bounded capture/HTTP operation runs.
@@ -220,14 +227,38 @@ class Bridge:
 
     async def publish_context(self, session, kind):
         event = session.event
-        if self.settings.capture_screenshots and kind == "context_ready":
+        revision = session.revision
+        captured_time = self.clock()
+        if self.settings.capture_screenshots:
             try:
                 path = await asyncio.to_thread(self.artifacts.screenshot, uuid.uuid4().hex, event.game_pid)
                 session.screenshot = {"path": path, "viewpoint": "player_camera", "status": "saved",
                                       "captured_at": datetime.now(timezone.utc).isoformat(),
                                       "npc_visibility": "unknown", "event_id": event.event_id}
+                if self.cv_client:
+                    session.visual_status = "analyzing"
+                    try:
+                        with Path(path).open("rb") as stream:
+                            image = stream.read(10 * 1024 * 1024 + 1)
+                        if len(image) > 10 * 1024 * 1024:
+                            raise ValueError("CV image exceeds upload budget")
+                        async with asyncio.timeout(self.settings.cv_timeout_s):
+                            visual = await self.cv_client.analyze(image, "image/png")
+                        if self.session is session and session.revision == revision:
+                            session.visual = visual.model_copy(update={
+                                "captured_at": datetime.fromisoformat(session.screenshot["captured_at"])})
+                            session.visual_revision = revision
+                            session.visual_time = captured_time
+                            session.visual_status = "ready"
+                        else:
+                            session.visual_status = "stale"
+                    except (CVFailure, TimeoutError, ValueError, OSError):
+                        session.visual = None
+                        session.visual_status = "unavailable"
             except (OSError, ValueError):
                 session.screenshot = {"status": "unavailable", "viewpoint": "player_camera"}
+                session.visual = None
+                session.visual_status = "unavailable"
         if self.session is not session:
             return
         # Use latest coalesced snapshot after capture, while preserving frame provenance.
@@ -238,7 +269,17 @@ class Bridge:
                             "revision": session.revision, "game": event.snapshot.model_dump(mode="json"),
                             "npc_profile": profile.model_dump(mode="json"),
                             "knowledge_status": "authored" if profile.knowledge_sources else "unknown",
-                            "screenshot": session.screenshot, "image_description": None})
+                            "screenshot": session.screenshot, "image_description": self.visual_payload(session)})
+
+    def visual_reference(self, session):
+        if (session.visual is not None and session.visual_revision == session.revision
+                and 0 <= self.clock() - session.visual_time <= self.settings.visual_ttl_s):
+            return session.visual
+        return None
+
+    def visual_payload(self, session):
+        visual = self.visual_reference(session)
+        return visual.model_dump(mode="json") if visual else None
 
     async def player_input(self, speech: SpeechInput):
         session = self.current(speech.session_id)
@@ -251,13 +292,17 @@ class Bridge:
         session.request_id = speech.input_id
         session.deadline = self.clock() + self.settings.timeout_s
         session.inputs[speech.input_id] = "pending"
+        if (self.cv_client and self.visual_reference(session) is None
+                and (not session.context_task or session.context_task.done())):
+            session.context_task = self.spawn(self.publish_context(session, "context_updated"))
         session.turn_task = self.spawn(self.run_turn(session, speech))
         return {"request_id": speech.input_id, "status": "pending"}
 
     async def run_turn(self, session, speech):
         try:
             if session.context_task:
-                await asyncio.shield(session.context_task)
+                async with asyncio.timeout(max(0.001, session.deadline - self.clock())):
+                    await asyncio.shield(session.context_task)
             if self.session is not session or session.request_id != speech.input_id:
                 return
             profile = profile_for(session.event.snapshot, self.profiles)
@@ -269,7 +314,7 @@ class Bridge:
                        "scenario": scenario.model_dump(mode="json"),
                        "game": session.event.snapshot.model_dump(mode="json"),
                        "npc_profile": profile.model_dump(mode="json"),
-                       "screenshot": session.screenshot, "image_description": None}
+                       "screenshot": session.screenshot, "image_description": self.visual_payload(session)}
             remaining = session.deadline - self.clock()
             if remaining <= 0:
                 raise ConnectionError("turn expired")
@@ -278,11 +323,15 @@ class Bridge:
                 if self.settings.pipeline_mode == "preview":
                     if self.runner is None:
                         raise ConnectionError("preview runner not configured")
-                    preview = await self.runner.run(scenario)
+                    preview = await self.runner.run(
+                        scenario, visual_context=self.visual_reference(session)
+                        if self.settings.attach_visual_reference else None)
                     if preview.response:
                         await self.result(PipelineResult(session_id=speech.session_id, request_id=speech.input_id,
                                                         npc_id=scenario.turn.npc_id, mode=preview.response.mode,
                                                         text=preview.response.text))
+                    else:
+                        raise ConnectionError("pipeline returned no deliverable response")
         except asyncio.CancelledError:
             session.inputs[speech.input_id] = "cancelled"
             raise

@@ -360,3 +360,177 @@ def test_ptt_without_stt_configuration_keeps_context_and_never_records(tmp_path)
             assert bridge.error == "stt_not_configured"
         finally: await bridge.close()
     asyncio.run(run())
+
+
+def test_runner_composes_configured_rag_and_provider(tmp_path):
+    from npc.adapters.skyrim.__main__ import build_runner
+    from npc.rag.http import HTTPRetriever
+    from npc.generation.provider import OfflineProvider
+    profile = tmp_path / "offline.yaml"
+    profile.write_text("provider: offline\n")
+    config = tmp_path / "rag.json"
+    config.write_text(json.dumps({"backend": "http", "bindings": [{"game_id": "skyrim",
+        "world_id": "local-skyrim", "npc_ids": ["ref:00013478"], "source": "public.txt"}]}))
+    runner = build_runner(settings(tmp_path, provider_profile="offline.yaml", rag_config="rag.json"), tmp_path)
+    assert isinstance(runner.provider, OfflineProvider)
+    assert isinstance(runner.retriever, HTTPRetriever)
+    assert runner.retriever.config.bindings[0].npc_ids == ("ref:00013478",)
+    assert runner.limits.max_input_bytes == 12000
+
+
+def test_cli_overrides_enable_connected_path_without_rewriting_config(tmp_path, monkeypatch):
+    import sys
+    import uvicorn
+    from fastapi.testclient import TestClient
+    from npc.adapters.skyrim.__main__ import main
+    profile = tmp_path / "offline.yaml"; profile.write_text("provider: offline\n")
+    config = tmp_path / "connector.json"
+    original = settings(tmp_path, pipeline_mode="preview", provider_profile=str(profile)).model_dump_json()
+    config.write_text(original)
+    monkeypatch.setattr(sys, "argv", ["connector", "--config", str(config), "--cv-url", "http://localhost:8000",
+                                      "--attach-visual-reference", "--provider-profile", str(profile)])
+    observed = []
+    def serve(app, **kwargs):
+        assert kwargs["host"] == "127.0.0.1"
+        with TestClient(app) as client: observed.append(client.get("/v1/health").json())
+    monkeypatch.setattr(uvicorn, "run", serve)
+    main()
+    assert observed[0]["pipeline_mode"] == "preview"
+    assert observed[0]["image_descriptor"] == "configured"
+    assert observed[0]["visual_attached"] is True
+    assert config.read_text() == original
+
+
+@pytest.mark.parametrize("failure", ["unavailable", "timeout"])
+def test_vision_failure_keeps_text_pipeline_usable(tmp_path, failure):
+    from npc.vision import CVFailure
+    from npc.generation.provider import OfflineProvider
+    from npc.runtime.preview import PreviewRunner
+    class BrokenVision:
+        async def analyze(self, *args):
+            raise CVFailure("cv_unavailable") if failure == "unavailable" else TimeoutError()
+    async def run():
+        config = settings(tmp_path, pipeline_mode="preview").model_copy(update={"capture_screenshots": True})
+        bridge = Bridge(config, root=tmp_path, cv_client=BrokenVision(), capture=lambda _: png_from_bgra(1, 1, b"\0\0\0\xff"),
+                        runner=PreviewRunner(OfflineProvider()))
+        try:
+            await pending(bridge)
+            assert bridge.session.visual is None
+            assert bridge.session.visual_status == "unavailable"
+            assert bridge.command("session-a")["text"]
+        finally: await bridge.close()
+    asyncio.run(run())
+
+
+def test_visual_frame_is_bound_to_revision_ttl_and_session(tmp_path):
+    from npc.vision import VisualContext
+    class Vision:
+        def __init__(self): self.started = asyncio.Event(); self.finish = asyncio.Event()
+        async def analyze(self, *args):
+            self.started.set()
+            await self.finish.wait()
+            return VisualContext(id="frame-a", captured_at=datetime.now(timezone.utc), environment="Old room")
+    async def run():
+        vision = Vision()
+        now = [time.time()]
+        config = settings(tmp_path).model_copy(update={"capture_screenshots": True})
+        bridge = Bridge(config, root=tmp_path, cv_client=vision, clock=lambda: now[0],
+                        capture=lambda _: png_from_bgra(1, 1, b"\0\0\0\xff"))
+        try:
+            await bridge.game_event(event())
+            await vision.started.wait()
+            await bridge.game_event(event("snapshot", 2, state_revision=2))
+            vision.finish.set()
+            await bridge.session.context_task
+            assert bridge.session.visual is None
+            assert bridge.session.visual_status == "stale"
+            await bridge.publish_context(bridge.session, "context_updated")
+            assert bridge.visual_reference(bridge.session).environment == "Old room"
+            now[0] += 16
+            assert bridge.visual_reference(bridge.session) is None
+            await bridge.game_event(event().model_copy(update={"session_id": "session-b", "game_epoch": "load-b"}))
+            assert bridge.session.visual is None
+            await bridge.session.context_task
+            assert bridge.session.visual_revision == 1
+        finally: await bridge.close()
+    asyncio.run(run())
+
+
+def test_no_response_releases_pending_turn(tmp_path):
+    class EmptyRunner:
+        async def run(self, *args, **kwargs):
+            from types import SimpleNamespace
+            return SimpleNamespace(response=None)
+    async def run():
+        bridge = Bridge(settings(tmp_path, pipeline_mode="preview"), root=tmp_path, runner=EmptyRunner())
+        try:
+            await pending(bridge)
+            assert bridge.session.request_id is None
+            assert bridge.session.inputs["input-a"] == "failed"
+            assert bridge.command("session-a") == {"kind": "idle"}
+        finally: await bridge.close()
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("attach", [True, False])
+def test_capture_vlm_rag_generation_delivery_roundtrip(tmp_path, attach):
+    """Real CV HTTP/schema, VLM client, core and adapter; fake inference/game IO."""
+    from fastapi import FastAPI
+    from app.api.routes import router
+    from app.detection.yolo_detector import NoDetector
+    from app.perception.pipeline import PerceptionPipeline
+    from app.vision.ollama_vlm import OllamaVLM
+    from npc.vision import CVSceneClient
+    from npc.contracts.dialogue import ProviderReply
+    from npc.rag.config import RAGConfig
+    from npc.rag.http import HTTPRetriever
+    from npc.runtime.preview import PreviewLimits, PreviewRunner
+    from npc.context import build_situation
+    prompts, queries, vlm_requests = [], [], []
+    class Provider:
+        async def generate(self, prompt, timeout_s):
+            prompts.append(prompt)
+            return ProviderReply(content='{"mode":"speech","text":"The healer works at the eastern gate.","cue":null,"evidence_ids":["kb1"]}',
+                                 model="fake", finish_reason="stop", input_tokens=20, output_tokens=10)
+    def model(request):
+        vlm_requests.append(json.loads(request.content))
+        return httpx.Response(200, json={"response": json.dumps({"environment": {"description": "A stone room"},
+            "uncertainties": ["NPC visibility unknown"]})})
+    def retrieve(request):
+        queries.append(json.loads(request.content))
+        return httpx.Response(200, json={"query": queries[-1]["query"], "matches": [{"id": "healer-fact",
+            "text": "The healer works at the eastern gate.", "source": "public.txt", "chunk_index": 0,
+            "distance": 0.1, "truncated": False}]})
+    async def run():
+        app = FastAPI(); app.include_router(router)
+        app.state.pipeline = PerceptionPipeline(NoDetector(), OllamaVLM("http://localhost:11434", "fake-vlm", 2,
+            transport=httpx.MockTransport(model)), tmp_path / "cv")
+        vision = CVSceneClient("http://localhost:8000", 2, transport=httpx.ASGITransport(app=app))
+        retriever = HTTPRetriever(RAGConfig(backend="http", bindings=[{"game_id": "skyrim", "world_id": "local-skyrim",
+            "npc_ids": ["ref:00013478"], "source": "public.txt"}]), transport=httpx.MockTransport(retrieve))
+        runner = PreviewRunner(Provider(), PreviewLimits(max_input_bytes=12000), retriever=retriever)
+        config = settings(tmp_path, pipeline_mode="preview", attach_visual_reference=attach).model_copy(update={"capture_screenshots": True})
+        bridge = Bridge(config, root=tmp_path, cv_client=vision, runner=runner,
+                        capture=lambda _: png_from_bgra(1, 1, b"\0\0\0\xff"))
+        try:
+            await ready(bridge)
+            question = speech().model_copy(update={"text": "Where can I find the healer?"})
+            await bridge.player_input(question)
+            await bridge.session.turn_task
+            command = bridge.command("session-a")
+            assert command["text"] == "The healer works at the eastern gate."
+            assert command["audio_file"] is None
+            assert len(prompts) == len(queries) == len(vlm_requests) == 1
+            data = json.loads(prompts[0].messages[1].content)
+            assert ("untrusted_visual_reference" in data) is attach
+            if attach: assert data["untrusted_visual_reference"]["environment"] == "A stone room"
+            assert data["retrieved_evidence"][0]["text"] == command["text"]
+            scenario = canonical_scenario(event(), question, profile_for(event().snapshot, {}), "local-skyrim", 1)
+            situation = build_situation(scenario.turn, scenario.snapshot, scenario.now)
+            assert not any(f.value == "A stone room" for f in situation.perceived_facts)
+            await bridge.game_event(event("delivery", 2, delivery_id=command["delivery_id"], status="started"))
+            await bridge.game_event(event("delivery", 3, delivery_id=command["delivery_id"], status="completed"))
+            assert bridge.command("session-a") == {"kind": "idle"}
+            assert bridge.session.delivery_status == "completed"
+        finally: await bridge.close()
+    asyncio.run(run())

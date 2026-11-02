@@ -7,6 +7,7 @@ BACKEND_ROOT = PROJECT_ROOT / "backend"
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=BACKEND_ROOT / ".env", env_prefix="SKYRIM_CV_", extra="ignore")
     yolo_model: str = "yolo26n.pt"
+    enable_detector: bool = False
     yolo_confidence: float = 0.25
     yolo_image_size: int = 640
     device: str = "auto"
