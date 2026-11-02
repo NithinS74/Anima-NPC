@@ -2,6 +2,8 @@
 
 Status: proposed | Requirement: SYS-01 | Owner/reviewer: unassigned
 
+Implementation update: the [independent Skyrim connector](../SKYRIM_CONNECTOR.md) now supplies a typed game/bridge boundary, screenshot files, player-input handoff and optional existing-preview binding. It uses its own SKSE plugin, with Mantella as reference only. This is a bounded adapter implementation, not completion of every M01 capability or verified live gameplay.
+
 ## Responsibility
 
 Normalize player text, game snapshots/events and optional visual observations. Deliver versioned, ordered inputs without importing Skyrim names into the core. Maintain adapters for replay first and Mantella as a later reference experiment. Do not infer persona, retrieve lore or generate dialogue here.

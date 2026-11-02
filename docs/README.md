@@ -19,6 +19,7 @@ Start with the [general TRD](TRD.md), then the [shared contracts](CONTRACTS.md) 
 | Persistent relationships and bounded dialogue memory | [Social-state guide](SOCIAL_STATE.md), [latest self-review](reviews/2026-10-31-social-state-character-stage.md) |
 | Local character models and Mantella voices | [Media configuration/setup](../configs/npc_lab/README.md) |
 | Skyrim input extraction | [Mantella audit](research/MANTELLA.md) |
+| Independent Skyrim mod, screenshots and pipeline connections | [Skyrim connector](SKYRIM_CONNECTOR.md), [implementation plan](plans/I17-skyrim-connector.md) |
 | Browser testing/demo choices | [Browser demo feasibility](research/BROWSER_DEMO.md) |
 | User knowledge folder | [Knowledge folder contract](../Knowledge%20base/kb/README.md) |
 

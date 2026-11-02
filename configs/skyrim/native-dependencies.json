@@ -1,0 +1,7 @@
+{
+  "CommonLibSSE-NG": {"url": "https://github.com/CharmedBaryon/CommonLibSSE-NG.git", "commit": "c4ab853d095e81e3390b282d7ba01ab2f24ebf25"},
+  "spdlog": {"url": "https://github.com/gabime/spdlog.git", "commit": "7e635fca68d014934b4af8a1cf874f63989352b7"},
+  "json": {"url": "https://github.com/nlohmann/json.git", "commit": "9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03"},
+  "rapidcsv": {"url": "https://github.com/d99kris/rapidcsv.git", "commit": "a98b85e663114b8fdc9c0dc03abf22c296f38241"},
+  "fmt": {"url": "https://github.com/fmtlib/fmt.git", "commit": "f5e54359df4c26b6230fc61d38aa294581393084"}
+}

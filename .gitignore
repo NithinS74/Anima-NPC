@@ -21,6 +21,8 @@ GPT_SECRET_KEY.txt
 /recordings/
 /captures/
 /output/
+/configs/skyrim/connector.json
+/configs/skyrim/npcs.json
 /assets/private/
 *.sqlite
 *.sqlite3

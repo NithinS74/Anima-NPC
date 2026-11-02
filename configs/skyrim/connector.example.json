@@ -1,0 +1,17 @@
+{
+  "game_directory": "../TES - Skyrim - Anniversary Edition",
+  "output_directory": "output/skyrim",
+  "world_id": "local-skyrim",
+  "pipeline_mode": "inbox",
+  "pipeline_url": null,
+  "tts_url": null,
+  "stt_url": null,
+  "provider_profile": "configs/providers/offline.yaml",
+  "profiles_file": null,
+  "audio_root": "output/pipeline/audio",
+  "port": 8768,
+  "timeout_s": 30,
+  "capture_screenshots": true,
+  "max_screenshots": 100,
+  "max_output_bytes": 262144000
+}

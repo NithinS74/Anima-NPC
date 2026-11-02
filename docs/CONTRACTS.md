@@ -143,6 +143,8 @@ Ack statuses: `accepted`, `started`, `completed`, `interrupted`, `failed`; core 
 
 ## Ownership rules
 
+The independent Skyrim connector's adapter-specific wire protocol is implemented in `adapters/skyrim/protocol.py` and documented in [Skyrim connections](SKYRIM_CONNECTOR.md). Its full game envelope and screenshot references sit beside the executable `ContextScenario` subset; they do not extend `TurnInput` implicitly. Context-ready prewarms the future pipeline, player-turn supplies input, and correlated results return via a separate endpoint. Native playback acknowledgements are best effort and do not implement the broader production outbox/memory guarantees above.
+
 M02 owns persistent mutations; M03 owns social decisions; M04 owns NPC knowledge eligibility and context selection; M05 enforces retrieval filters without NPC-specific business rules; M06 owns serialization/provider details; M07 owns acceptance; M08 owns transport/cues; M09 owns deadline, idempotency and scheduling. M10 supplies uncertain observations only.
 
 ## Implemented social-state and lab media slice

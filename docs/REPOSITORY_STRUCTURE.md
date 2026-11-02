@@ -114,4 +114,6 @@ Automatic launch/bootstrap stays under `scripts/`: `launch_anima.py` coordinates
 
 ## Internal local RAG
 
+The independent Skyrim connection layer lives in `src/npc/adapters/skyrim/`, including its native SKSE source/build recipe under `native/`. Public settings/dependency pins are in `configs/skyrim/`; local settings are ignored. `scripts/build_skyrim_connector.py` builds/tests/packages the DLL without altering a game installation. Python boundary tests and a standalone C++ delivery check live under `tests/unit/adapters/`. See [Skyrim connector](SKYRIM_CONNECTOR.md).
+
 `src/npc/rag/backend/` owns the reused document loaders, chunking/CPU encoder and embedded Chroma service; `src/npc/rag/local.py` adapts it to NPC evidence without a second HTTP server. Configuration and evidence normalization stay in `src/npc/rag/`. Generated model/index files are under ignored `data/rag/`; user knowledge under `Knowledge base/kb/` is now explicitly ignored except its public README/placeholder. Backend storage tests live in `tests/integration/rag/`, pure loader/adapter/CLI tests in `tests/unit/rag/`. `python -m npc.rag` is the local maintenance entry point; setup prepares the model/index outside dialogue turns. No standalone RAG frontend is copied into the application.
