@@ -14,6 +14,7 @@ from npc.contracts.context import Contract, ContextScenario, Identifier, Persona
 from npc.runtime.preview import PreviewLimits, PreviewRunner
 from npc.state.social_store import SocialStore
 from tools.npc_lab.diagnostics import InspectableProvider, capture_inputs
+from npc.vision import CVFailure, VisualContext
 
 ROOT = Path(__file__).resolve().parents[2]
 PROFILE_DIR = ROOT / "fixtures/personas/npc_lab"
@@ -42,6 +43,7 @@ class LabTurn(Contract):
     state: Literal["available", "busy", "closed", "combat"] = "available"
     weapon_drawn: StrictBool = False
     state_revision: Annotated[StrictInt, Field(ge=0)] | None = None
+    visual_id: Identifier | None = None
 
 
 class CancelRequest(Contract):
@@ -107,7 +109,7 @@ def make_scenario(profile: LabProfile, turn: LabTurn, revision: int, memory=()) 
 
 
 class LabService:
-    def __init__(self, provider, *, live: bool = False, realtime: bool = False, development_timeout_s: int = 30, profiles=None, media=None, state_store: SocialStore | None = None, retriever=None):
+    def __init__(self, provider, *, live: bool = False, realtime: bool = False, development_timeout_s: int = 30, profiles=None, media=None, state_store: SocialStore | None = None, retriever=None, cv_client=None):
         self.profiles = profiles if profiles is not None else load_profiles()
         self.live = live
         self.realtime = realtime
@@ -128,6 +130,8 @@ class LabService:
         self.speech_records = OrderedDict()
         self.state_store = state_store
         self.active_profile = None
+        self.cv_client = cv_client
+        self.visual_context: VisualContext | None = None
         if state_store:
             for profile in self.profiles.values():
                 state_store.ensure(self.state_key(profile.id), profile.relationship, profile.mood)
@@ -158,6 +162,8 @@ class LabService:
                     skyrim_fonts_available=self.media.game_fonts_ready() if self.media else False,
                     profiles=[self.profile_info(p) for p in self.profiles.values()],
                     persistent_state=self.state_store is not None,
+                    cv_enabled=self.cv_client is not None,
+                    visual_selected=self.visual_context is not None,
                     memory="Relationships persist; recent displayed dialogue is untrusted memory." if self.state_store else
                     "Single-turn context. Chat history is display-only; no conversation memory.")
 
@@ -183,17 +189,24 @@ class LabService:
             data = turn.model_dump(); data.update(relationship=state["relationship"].model_dump(), mood=state["mood"])
             turn = LabTurn.model_validate(data)
             memory = state["history"]
+        visual = None
+        if turn.visual_id is not None:
+            if self.visual_context is None or turn.visual_id != self.visual_context.id:
+                raise ValueError("unknown visual context")
+            visual = self.visual_context
         scenario = make_scenario(self.profiles[turn.persona_id], turn, state["revision"] if state else self.revision, memory)
         cancellation = asyncio.Event()
         self.active = (turn.request_id, cancellation)
         self.active_profile = turn.persona_id
         try:
-            situation = build_situation(scenario.turn, scenario.snapshot, scenario.now)
+            situation = build_situation(scenario.turn, scenario.snapshot, scenario.now, visual_context=visual)
             with capture_inputs() as calls:
-                result = await self.runner.run(scenario, cancellation=cancellation)
+                result = await self.runner.run(scenario, cancellation=cancellation, visual_context=visual)
             payload = {"result": result.model_dump(mode="json"), "context": situation.model_dump(mode="json"),
                        "llm_input": {"calls": calls, "note": "Exact provider-bound messages; no keys or headers."
                                      if calls else "No LLM call was made for this turn."}}
+            if visual is not None:
+                payload["visual_context"] = visual.model_dump(mode="json")
             if state:
                 payload.update(social_change=audit, saved_state=self.public_state(state))
                 if result.status != "cancelled":
@@ -206,6 +219,13 @@ class LabService:
         finally:
             self.active = None
             self.active_profile = None
+
+    async def analyze_visual(self, image: bytes, content_type: str):
+        if self.cv_client is None:
+            raise CVFailure("cv_disabled")
+        visual = await self.cv_client.analyze(image, content_type)
+        self.visual_context = visual
+        return {"status": "ready", "visual": visual.model_dump(mode="json")}
 
     async def cancel(self, request: CancelRequest):
         matched = self.active is not None and self.active[0] == request.request_id

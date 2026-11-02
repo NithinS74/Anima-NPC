@@ -11,6 +11,7 @@ from pathlib import Path
 from time import monotonic
 
 from tools.npc_lab.service import CancelRequest, DisplayAck, LabStateEdit, LabService, LabTurn
+from npc.vision import CVFailure, ALLOWED_IMAGE_TYPES
 from tools.npc_lab.media import MediaFailure
 from npc.state.social_store import StateConflict, StoreFailure
 
@@ -62,10 +63,11 @@ class LabServer(ThreadingHTTPServer):
         finally:
             self.workers.release()
 
-    def call(self, coroutine):
+    def call(self, coroutine, *, timeout_s=None):
         future = asyncio.run_coroutine_threadsafe(coroutine, self.loop)
         try:
-            return future.result(timeout=max(12, self.service.runner.limits.response_timeout_ms / 1000 + 2))
+            default_timeout = max(12, self.service.runner.limits.response_timeout_ms / 1000 + 2)
+            return future.result(timeout=default_timeout if timeout_s is None else timeout_s)
         except concurrent.futures.TimeoutError:
             future.cancel()
             raise TimeoutError from None
@@ -179,6 +181,32 @@ class LabHandler(BaseHTTPRequestHandler):
             self.headers.get("X-Lab-Token", "").encode("utf-8"), self.server.token.encode("ascii")
         ):
             self.reject_post(403, "invalid_origin_or_token")
+            return
+        if self.path == "/api/vision/analyze":
+            try:
+                if self.headers.get("Transfer-Encoding") or self.headers.get_content_type() not in ALLOWED_IMAGE_TYPES:
+                    self.reject_post(415, "image_required")
+                    return
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 1 <= length <= 10 * 1024 * 1024:
+                    self.reject_post(413, "image_limit")
+                    return
+                image = self.rfile.read(length)
+                if len(image) != length: raise ValueError("incomplete image")
+                # CV can take longer than a dialogue turn while a local VLM is cold.
+                cv_timeout = getattr(self.server.service.cv_client, "timeout_s", 30) + 5
+                result = self.server.call(self.server.service.analyze_visual(image, self.headers.get_content_type()), timeout_s=cv_timeout)
+                self.send(200, result)
+            except CVFailure as error:
+                self.send(503 if error.code in {"cv_disabled", "cv_unavailable", "cv_timeout"} else 422, {"error": error.code})
+            except TimeoutError:
+                self.send(503, {"error": "cv_timeout"})
+            except ValueError:
+                self.send(400, {"error": "invalid_image"})
+            except (BrokenPipeError, ConnectionResetError):
+                return
+            except Exception:
+                self.send(500, {"error": "lab_failure"})
             return
         if self.path not in {"/api/turn", "/api/cancel", "/api/speech", "/api/state", "/api/displayed"}:
             self.reject_post(404, "not_found")

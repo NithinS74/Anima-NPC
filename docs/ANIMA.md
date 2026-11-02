@@ -12,9 +12,16 @@ After installing Python 3.11, Git and Git LFS (see [setup](../SETUP.md)), double
 .\run_anima.bat --realtime
 .\run_anima.bat --development-timeout 60
 .\run_anima.bat --state-db output/npc_lab/fresh-encounter.sqlite3
+.\run_anima.bat --offline --rag-config configs/rag/dialogue.example.json --cv-url http://127.0.0.1:8000
 ```
 
 Manual-testing mode defaults to 30,000 ms response deadline / 29,450 ms model cutoff, with at most two calls including repair. `--realtime` preserves the core's 3,000/2,450 ms limits. Lab prompts remain bounded to 3,072 UTF-8 bytes, output to 160 tokens; the core CLI defaults remain unchanged. Fake/offline mode is labelled and is not a model-quality experiment.
+
+## Optional Skyrim CV reference
+
+Run the standalone CV backend separately on loopback (`http://127.0.0.1:8000`), then pass `--cv-url http://127.0.0.1:8000` to Anima. The **Optional visual reference** control accepts a manually chosen PNG/JPEG (up to 10 MiB), forwards it through Anima's authenticated loopback bridge, and shows the compact returned descriptor. Checking **Attach** sends that descriptor to the next provider call as `untrusted_visual_reference`. The CV bridge allows 120 seconds by default because the first local VLM pass can be slow; override it with `--cv-timeout 1..180` when needed.
+
+This is a manual developer/testing bridge. The descriptor is kept only in the lab process, is not written to social state, and can be cleared before a turn. It is deliberately not converted to `ObservedFact`, model evidence, NPC knowledge, identity, action, current game state, HUD text, or hidden information. A player-camera screenshot has no established NPC-visibility mapping; Anima instructs the provider to preserve uncertainty and use it only for cautious visible-detail wording. CV failures leave ordinary turns available. Offline scripted replies do not demonstrate visual grounding; inspect the LLM input or use a configured live provider to see the attached descriptor reach the model.
 
 ## A conversation, rather than a dashboard
 

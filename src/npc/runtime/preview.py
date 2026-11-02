@@ -16,6 +16,7 @@ from npc.contracts.dialogue import CurrentState, ProviderReply, ResponseBody, Tu
 from npc.generation.prompt import PromptTooLarge, build_prompt
 from npc.generation.provider import ModelProvider, ProviderFailure
 from npc.validation import validate_response
+from npc.vision import VisualContext
 
 
 class PreviewLimits(Contract):
@@ -94,17 +95,17 @@ class PreviewRunner:
                 self._slot.release()
 
     async def run(self, scenario: ContextScenario, *, cancellation: asyncio.Event | None = None,
-                  current_state: Callable[[], CurrentState] | None = None) -> TurnPreview:
+                  current_state: Callable[[], CurrentState] | None = None, visual_context: VisualContext | None = None) -> TurnPreview:
         key = (scenario.turn.scope.game_id, scenario.turn.scope.world_id, scenario.turn.scope.save_branch_id, scenario.turn.npc_id)
         if key in self._owners:
-            situation = build_situation(scenario.turn, scenario.snapshot, scenario.now)
+            situation = build_situation(scenario.turn, scenario.snapshot, scenario.now, visual_context=visual_context)
             return TurnPreview(request_id=situation.request_id, npc_id=situation.npc_id, status="busy",
                                plan=choose_plan(situation), response=None, model_calls=0, error_code="npc_busy", elapsed_ms=0,
                                response_deadline_ms=self.limits.response_timeout_ms, model_cutoff_ms=self.limits.model_cutoff_ms,
                                timing_profile=self._timing_profile())
         self._owners.add(key)
         try:
-            return await self._run(scenario, cancellation=cancellation, current_state=current_state)
+            return await self._run(scenario, cancellation=cancellation, current_state=current_state, visual_context=visual_context)
         finally:
             self._owners.discard(key)
 
@@ -112,9 +113,9 @@ class PreviewRunner:
         return "realtime" if (self.limits.response_timeout_ms, self.limits.model_cutoff_ms) == (3000, 2450) else "development"
 
     async def _run(self, scenario: ContextScenario, *, cancellation: asyncio.Event | None = None,
-                   current_state: Callable[[], CurrentState] | None = None) -> TurnPreview:
+                   current_state: Callable[[], CurrentState] | None = None, visual_context: VisualContext | None = None) -> TurnPreview:
         start = self.clock()
-        situation = build_situation(scenario.turn, scenario.snapshot, scenario.now)
+        situation = build_situation(scenario.turn, scenario.snapshot, scenario.now, visual_context=visual_context)
         plan = choose_plan(situation)
         current_state = current_state or (lambda: CurrentState(dialogue_revision=situation.dialogue_revision, turn_epoch=situation.turn_epoch))
         calls, violations, model = 0, (), None
@@ -189,8 +190,7 @@ class PreviewRunner:
                     return fallback("model_cutoff")
                 try:
                     prompt = build_prompt(situation, plan, knowledge=knowledge if self.retriever else None, max_input_bytes=self.limits.max_input_bytes,
-                                          max_output_tokens=self.limits.max_output_tokens,
-                                          repair_codes=violations if attempt else ())
+                                          max_output_tokens=self.limits.max_output_tokens, repair_codes=violations if attempt else ())
                     history_used, history_omitted = prompt.history_count, prompt.omitted_history_count
                     evidence_used = tuple(hit.id for hit in prompt.evidence)
                     evidence_omitted = prompt.evidence_omitted

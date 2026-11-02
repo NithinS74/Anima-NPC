@@ -105,6 +105,26 @@ class PlayerInput(Contract):
     confidence: Probability = 1.0
 
 
+class VisualContext(Contract):
+    """Bounded CV descriptor available to context assembly, never canonical game truth."""
+
+    id: Identifier
+    captured_at: AwareDatetime
+    environment: ShortText | None = None
+    characters: Annotated[tuple[ShortText, ...], Field(max_length=4)] = ()
+    objects: Annotated[tuple[ShortText, ...], Field(max_length=8)] = ()
+    uncertainties: Annotated[tuple[ShortText, ...], Field(max_length=4)] = ()
+    detector_model: Identifier | None = None
+    vlm_model: Identifier | None = None
+
+    def prompt_payload(self) -> dict:
+        return {
+            "environment": self.environment, "characters": self.characters,
+            "objects": self.objects, "uncertainties": self.uncertainties,
+            "source": {"detector_model": self.detector_model, "vlm_model": self.vlm_model},
+        }
+
+
 BOOLEAN_PATHS = frozenset({"npc.in_combat", "npc.busy", "shop.open", "player.weapon_drawn"})
 TEXT_PATHS = frozenset({"world.location", "world.weather"})
 SUPPORTED_PATHS = BOOLEAN_PATHS | TEXT_PATHS | {"world.hour"}
@@ -215,6 +235,7 @@ class Situation(Contract):
     dependencies: Annotated[tuple[AppraisalDependency, ...], Field(min_length=6, max_length=6)]
     notes: tuple[ShortText, ...] = ()
     social_appraisal: SocialAppraisal = Field(default_factory=SocialAppraisal)
+    visual_context: VisualContext | None = None
     recent_dialogue: Annotated[tuple[DialogueMemory, ...], Field(max_length=8)] = ()
 
     @model_validator(mode="after")

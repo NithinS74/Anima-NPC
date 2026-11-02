@@ -38,6 +38,15 @@ build/
 .DS_Store
 Thumbs.db
 
+# The optional CV service has its own local environment, models and transient
+# annotated previews. Its small checked-in samples remain trackable.
+/cv/.venv/
+/cv/backend/.env
+/cv/backend/*.pt
+/cv/datasets/
+/cv/frontend/dist/
+/cv/frontend/node_modules/
+
 # Local knowledge is user input, not public test fixtures.
 /Knowledge base/kb/*
 !/Knowledge base/kb/README.md
