@@ -33,6 +33,24 @@ The context command explains response influences. The runtime command exercises 
 
 For **manual testing in a chat box**, double-click [run_anima.bat](run_anima.bat). It opens the separate localhost [Anima companion](docs/ANIMA.md) using valid Gemini configuration from `.env`, or a clearly labelled scripted preview when configuration is absent; pass `--offline` to require the fake or `--live` to require API configuration. Four [authored personas](fixtures/personas/npc_lab/README.md), persistent relationship reactions, bounded displayed-conversation memory, trace inspection and export are included. Characters sit on the left; the central model has the text box below. Optional local Skyrim models, a game backdrop and copied Mantella voices are available through [media setup](configs/npc_lab/README.md); the owner-approved runtime media archive is now included via Git LFS in this private repository. Raw game/conversion files remain ignored. The basic illustrated UI works without Skyrim and stays separate from core deployment. See the [current setup/media review](docs/reviews/2026-10-31-setup-native-faces.md); reliable recall and human realism are still not signed off.
 
+## Optional Skyrim CV → Context Builder workflow
+
+The included standalone [CV service](cv/README.md) feeds its validated `scene_descriptor` JSON into Anima's **Context Builder** as an optional `Situation.visual_context`. Install it once with `cv\\setupcv.bat`, then start both local services:
+
+```powershell
+# Terminal 1 — repository root: Skyrim CV service
+cd C:\path\to\Anima-NPC
+.\cv\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir cv\backend --port 8000
+
+# Terminal 2 — repository root: Anima
+cd C:\path\to\Anima-NPC
+.\run_anima.bat --offline --rag-config configs/rag/dialogue.example.json --cv-url http://127.0.0.1:8000
+```
+
+In Anima, expand **Shape the encounter**, choose a PNG/JPEG under **Optional visual reference**, click **Analyze scene**, then check **Attach to next turn**. The bridge sends the image to the local CV API, normalizes the returned Scene Descriptor, and passes it to `build_situation(...)`. Open **Inspect context** to view `context.visual_context`; the exact provider input includes it as `untrusted_visual_reference`.
+
+This is intentionally not a canonical `ObservedFact`: a manually selected player-camera screenshot does not establish what a particular NPC can see. Therefore it does not change availability, combat/threat, relationships, RAG eligibility, durable memory, identity, quest state, or other trusted context. The model receives it only as uncertain visual reference; its uncertainty/provenance are preserved. If CV is unavailable, leave it unattached and normal dialogue continues. See [Anima](docs/ANIMA.md) and [the integration plan](docs/plans/I10-local-cv-bridge.md).
+
 For every component, follow **plan -> review plan -> implement with unit tests -> review change -> run regression**. Read the [development skill](.agents/skills/develop-npc-component/SKILL.md) yourself or ask your agent:
 
 ```text
