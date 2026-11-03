@@ -1,0 +1,1343 @@
+{
+  "corpus_documents": 24,
+  "source_index": {
+    "indexed": 24,
+    "unchanged": 0,
+    "deleted": 0,
+    "skipped": [],
+    "errors": {},
+    "chunks": 24
+  },
+  "indexing_ms": 1219.0110000010463,
+  "dialogue_anthology": {
+    "indexed": 1,
+    "unchanged": 0,
+    "deleted": 0,
+    "skipped": [],
+    "errors": {},
+    "chunks": 21
+  },
+  "dialogue_indexing_ms": 929.6524000019417,
+  "queries": [
+    {
+      "id": "R01",
+      "query": "Which bank of the River Lume contains Cedarvale?",
+      "relevant_sources": [
+        "atlas.md"
+      ],
+      "matches": [
+        {
+          "id": "23a0340aa1a7ca22275f49fde6bbabca5b72349633a88945959f5c6826ed49cc:0",
+          "text": "# CV09: River Lume and public landing\r\n\r\nSource ID: CV09\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe River Lume flows along Cedarvale's eastern boundary. The town and its market stand on the west bank; the terraced farms and Oren's depot stand on the east bank. A stone bridge connects the inhabited eastern gate to the farms. The public landing is south of the bridge on the town bank. Boat schedules, water depth and current river conditions are not recorded. Nessa's stall is inside the market by its fountain, not on the riverbank. The eastern merchants use the landing for lawful trade under published inspection rules. A geographical relation is not proof that an NPC can currently see the river or any person standing beside it.",
+          "source": "river.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.23119866847991943,
+          "truncated": false
+        },
+        {
+          "id": "431e3f99d1f8435d8f696c787532004dd9d59f865ea7e034797b73f1f351c95c:0",
+          "text": "# CV01: Cedarvale public atlas\r\n\r\nSource ID: CV01\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nCedarvale lies on the west bank of the River Lume. The eastern market is inside the eastern gate, west of the river. The stone bridge connects that gate to the east-bank farms. The Lantern Inn stands on Orchard Lane, south of the market. The northern well is in the craft quarter, northwest of the market. Public paths connect the market fountain, archive steps and gate without crossing the bridge. Directions in this collection are relative to the market fountain. The old Ashen Gate is a sealed monument north of town, not the inhabited eastern gate. These names describe fictional places; no travel times or distances have been surveyed. The atlas does not establish where any person is at a particular moment.",
+          "source": "atlas.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.34624022245407104,
+          "truncated": false
+        },
+        {
+          "id": "b395a8985d48c7feed8ee7b1cf878ccf4880a0555d2de8e3d918a78eb6d9db55:0",
+          "text": "# CV08: Eastern market directory\r\n\r\nSource ID: CV08\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nCedarvale's eastern market is inside the eastern gate and west of the River Lume. The fountain marks its center. Nessa's Copper Kettle stall, selling rare ingredients and bottles, is on its western edge. The archive steps are northwest of the fountain and the shrine garden path leads north. Orchard Lane runs south toward the Lantern Inn. The gate and bridge lie east. Oren's Ember Root depot is across the bridge on the east bank, outside this market. The directory describes stable geography, not a merchant's live presence, stock or opening state. No measured walking distances are supplied. Visitors should distinguish the inhabited eastern gate from the sealed Ashen Gate monument north of town.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.447628378868103,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 27.363199998944765,
+      "metrics": {
+        "p1": 0.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 0.5
+      }
+    },
+    {
+      "id": "R02",
+      "query": "What does Moonleaf do in the fictional draught?",
+      "relevant_sources": [
+        "moonleaf.md"
+      ],
+      "matches": [
+        {
+          "id": "d1cd7dc08c2ddd904132a56a80eb33b9bb1c93c5e9d92fba5be58572db536eb3:0",
+          "text": "# CV02: Moonleaf: ingredient record\r\n\r\nSource ID: CV02\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nMoonleaf is a fictional blue-veined herb used in the Cedarvale healing draught. Its game-world property is to calm fever; it does not restore lost blood. Public picking is allowed in the shrine garden only with gardener Sera's permission. Pick mature outer leaves and leave the central shoot intact. Nessa sells dried Moonleaf at her Copper Kettle stall in the eastern market. Dried and fresh leaves are interchangeable in the documented recipe. Moonleaf cannot replace Ember Root: they perform different functions. The garden closes for maintenance during frost, but no current opening state is recorded. Prices, current stock and the medicinal safety of real plants are outside this fictional record. Consult the recipe record for exact ingredients.",
+          "source": "moonleaf.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4918474555015564,
+          "truncated": false
+        },
+        {
+          "id": "1cebdda73d3c1f567b5956f05c70ca0e676678c280259b13875af920d2251715:0",
+          "text": "# CV04: Cedarvale healing draught recipe\r\n\r\nSource ID: CV04\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe documented Cedarvale healing draught needs two Moonleaf leaves, one cleaned Ember Root portion and one cup of boiled water. Steep the leaves in cooled boiled water, add the cleaned root and strain into a clean bottle. The fictional item calms fever and provides warmth; it does not revive the dead. Both Moonleaf and Ember Root are required. There is no approved substitute for Ember Root and no verified root-free variant. Nessa sells Moonleaf at the Copper Kettle in the eastern market; Oren sells Ember Root at the riverside depot. The recipe is public and can be discussed by any authorized village persona. It gives no claim about the player owning ingredients or successfully completing crafting.",
+          "source": "draught.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5785771608352661,
+          "truncated": false
+        },
+        {
+          "id": "d7b7bb43ddc3dc16c11a6a799a122443b6f52ab6d997357b251e6c4f5e6c1aee:0",
+          "text": "# CV03: Ember Root: ingredient record\r\n\r\nSource ID: CV03\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nEmber Root is a fictional red root that supplies warmth in the Cedarvale healing draught. It grows on the east-bank terraced farms beyond the stone bridge. Oren, the licensed farm merchant, sells cleaned portions at the riverside depot. Town visitors should buy a prepared portion rather than dig in private farm beds. Ember Root is a required ingredient and has no approved substitute in the public recipe. Moonleaf alone does not produce the documented draught. The depot is east of the bridge; it is a different location from Nessa's Copper Kettle stall west of the river. No current stock, sale price or travel duration is recorded. The source documents a fictional crafting item rather than medical advice.",
+          "source": "ember-root.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6557456851005554,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 19.696399998792913,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R03",
+      "query": "What is Ember Root used for?",
+      "relevant_sources": [
+        "ember-root.md"
+      ],
+      "matches": [
+        {
+          "id": "d7b7bb43ddc3dc16c11a6a799a122443b6f52ab6d997357b251e6c4f5e6c1aee:0",
+          "text": "# CV03: Ember Root: ingredient record\r\n\r\nSource ID: CV03\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nEmber Root is a fictional red root that supplies warmth in the Cedarvale healing draught. It grows on the east-bank terraced farms beyond the stone bridge. Oren, the licensed farm merchant, sells cleaned portions at the riverside depot. Town visitors should buy a prepared portion rather than dig in private farm beds. Ember Root is a required ingredient and has no approved substitute in the public recipe. Moonleaf alone does not produce the documented draught. The depot is east of the bridge; it is a different location from Nessa's Copper Kettle stall west of the river. No current stock, sale price or travel duration is recorded. The source documents a fictional crafting item rather than medical advice.",
+          "source": "ember-root.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.34343254566192627,
+          "truncated": false
+        },
+        {
+          "id": "f9b146bba4f425e672340561c3c40ac679414fb8d78e8a8326f781c29337a85a:0",
+          "text": "# CV05: Shrine garden and harvesting rules\r\n\r\nSource ID: CV05\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe shrine garden is north of the eastern market and west of the archive. Gardener Sera tends its Moonleaf beds. Visitors must ask Sera before picking mature outer leaves and must leave central shoots intact. The beds are maintained as a public teaching garden, not an unlimited supply chest. During frost the garden closes for maintenance. The documents record this general seasonal rule but do not record the present season, Sera's current location, or any visitor's permission. Nessa obtains some licensed stock from the garden; the complete supply chain is not public. The garden has no Ember Root beds. Buy cleaned Ember Root from Oren at the riverside depot rather than treating other garden plants as substitutes.",
+          "source": "garden.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5302091836929321,
+          "truncated": false
+        },
+        {
+          "id": "1cebdda73d3c1f567b5956f05c70ca0e676678c280259b13875af920d2251715:0",
+          "text": "# CV04: Cedarvale healing draught recipe\r\n\r\nSource ID: CV04\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe documented Cedarvale healing draught needs two Moonleaf leaves, one cleaned Ember Root portion and one cup of boiled water. Steep the leaves in cooled boiled water, add the cleaned root and strain into a clean bottle. The fictional item calms fever and provides warmth; it does not revive the dead. Both Moonleaf and Ember Root are required. There is no approved substitute for Ember Root and no verified root-free variant. Nessa sells Moonleaf at the Copper Kettle in the eastern market; Oren sells Ember Root at the riverside depot. The recipe is public and can be discussed by any authorized village persona. It gives no claim about the player owning ingredients or successfully completing crafting.",
+          "source": "draught.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5314610004425049,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.239799999719253,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R04",
+      "query": "Which ingredients and quantities make the Cedarvale healing draught?",
+      "relevant_sources": [
+        "draught.md"
+      ],
+      "matches": [
+        {
+          "id": "1cebdda73d3c1f567b5956f05c70ca0e676678c280259b13875af920d2251715:0",
+          "text": "# CV04: Cedarvale healing draught recipe\r\n\r\nSource ID: CV04\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe documented Cedarvale healing draught needs two Moonleaf leaves, one cleaned Ember Root portion and one cup of boiled water. Steep the leaves in cooled boiled water, add the cleaned root and strain into a clean bottle. The fictional item calms fever and provides warmth; it does not revive the dead. Both Moonleaf and Ember Root are required. There is no approved substitute for Ember Root and no verified root-free variant. Nessa sells Moonleaf at the Copper Kettle in the eastern market; Oren sells Ember Root at the riverside depot. The recipe is public and can be discussed by any authorized village persona. It gives no claim about the player owning ingredients or successfully completing crafting.",
+          "source": "draught.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.29150819778442383,
+          "truncated": false
+        },
+        {
+          "id": "d1cd7dc08c2ddd904132a56a80eb33b9bb1c93c5e9d92fba5be58572db536eb3:0",
+          "text": "# CV02: Moonleaf: ingredient record\r\n\r\nSource ID: CV02\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nMoonleaf is a fictional blue-veined herb used in the Cedarvale healing draught. Its game-world property is to calm fever; it does not restore lost blood. Public picking is allowed in the shrine garden only with gardener Sera's permission. Pick mature outer leaves and leave the central shoot intact. Nessa sells dried Moonleaf at her Copper Kettle stall in the eastern market. Dried and fresh leaves are interchangeable in the documented recipe. Moonleaf cannot replace Ember Root: they perform different functions. The garden closes for maintenance during frost, but no current opening state is recorded. Prices, current stock and the medicinal safety of real plants are outside this fictional record. Consult the recipe record for exact ingredients.",
+          "source": "moonleaf.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.43522369861602783,
+          "truncated": false
+        },
+        {
+          "id": "d7b7bb43ddc3dc16c11a6a799a122443b6f52ab6d997357b251e6c4f5e6c1aee:0",
+          "text": "# CV03: Ember Root: ingredient record\r\n\r\nSource ID: CV03\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nEmber Root is a fictional red root that supplies warmth in the Cedarvale healing draught. It grows on the east-bank terraced farms beyond the stone bridge. Oren, the licensed farm merchant, sells cleaned portions at the riverside depot. Town visitors should buy a prepared portion rather than dig in private farm beds. Ember Root is a required ingredient and has no approved substitute in the public recipe. Moonleaf alone does not produce the documented draught. The depot is east of the bridge; it is a different location from Nessa's Copper Kettle stall west of the river. No current stock, sale price or travel duration is recorded. The source documents a fictional crafting item rather than medical advice.",
+          "source": "ember-root.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4549853801727295,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 17.752200001268648,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R05",
+      "query": "Who must approve picking leaves from the shrine beds?",
+      "relevant_sources": [
+        "garden.md"
+      ],
+      "matches": [
+        {
+          "id": "f9b146bba4f425e672340561c3c40ac679414fb8d78e8a8326f781c29337a85a:0",
+          "text": "# CV05: Shrine garden and harvesting rules\r\n\r\nSource ID: CV05\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe shrine garden is north of the eastern market and west of the archive. Gardener Sera tends its Moonleaf beds. Visitors must ask Sera before picking mature outer leaves and must leave central shoots intact. The beds are maintained as a public teaching garden, not an unlimited supply chest. During frost the garden closes for maintenance. The documents record this general seasonal rule but do not record the present season, Sera's current location, or any visitor's permission. Nessa obtains some licensed stock from the garden; the complete supply chain is not public. The garden has no Ember Root beds. Buy cleaned Ember Root from Oren at the riverside depot rather than treating other garden plants as substitutes.",
+          "source": "garden.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4648060202598572,
+          "truncated": false
+        },
+        {
+          "id": "0ef95503963ce99ec206193ebe5c6595113605502deed9682a1305bb7eec7ed6:0",
+          "text": "# CV23: Shrine and nearby public places\r\n\r\nSource ID: CV23\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe shrine and its garden lie north of the eastern market, west of the town archive. The old watchtower stands farther north of the garden; the sealed Ashen Gate monument is beyond it. Sera tends Moonleaf in the garden with permission-based harvesting. The shrine is not a shop for Ember Root and has no documented teleport or cure service. Visitors may follow the garden path from the market fountain. Current ceremony times, personnel presence and accessibility are not recorded. The geographical references support navigation but do not establish the player's location. Ranger Tessa is associated with the watchtower route, not a permanent shrine post.",
+          "source": "shrine.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6842871904373169,
+          "truncated": false
+        },
+        {
+          "id": "d1cd7dc08c2ddd904132a56a80eb33b9bb1c93c5e9d92fba5be58572db536eb3:0",
+          "text": "# CV02: Moonleaf: ingredient record\r\n\r\nSource ID: CV02\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nMoonleaf is a fictional blue-veined herb used in the Cedarvale healing draught. Its game-world property is to calm fever; it does not restore lost blood. Public picking is allowed in the shrine garden only with gardener Sera's permission. Pick mature outer leaves and leave the central shoot intact. Nessa sells dried Moonleaf at her Copper Kettle stall in the eastern market. Dried and fresh leaves are interchangeable in the documented recipe. Moonleaf cannot replace Ember Root: they perform different functions. The garden closes for maintenance during frost, but no current opening state is recorded. Prices, current stock and the medicinal safety of real plants are outside this fictional record. Consult the recipe record for exact ingredients.",
+          "source": "moonleaf.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6862115263938904,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.645899999683024,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R06",
+      "query": "Who runs the Copper Kettle stall and what does it sell?",
+      "relevant_sources": [
+        "nessa.md"
+      ],
+      "matches": [
+        {
+          "id": "0b3f8e1a0b6d5c8068da53f7f8936a7ef069d7e63d0599c1ecee99ad53f9dc71:0",
+          "text": "# CV06: Nessa and the Copper Kettle stall\r\n\r\nSource ID: CV06\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nNessa is the public rare-ingredient merchant at the Copper Kettle stall in Cedarvale's eastern market. Her stall is on the market's western edge beside the fountain, west of the River Lume. She sells dried Moonleaf and glass bottles. She does not sell Ember Root; the public directory sends buyers to Oren at the riverside depot. Nessa is an eastern merchant but does not lead their council. Her business hours, current inventory and private suppliers are not recorded. A visitor may ask about public goods without receiving guest identities, patrol schedules or private account records. The stall is near the archive steps and the path to the shrine garden. No document establishes a secret password for purchasing ingredients.",
+          "source": "nessa.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4530841112136841,
+          "truncated": false
+        },
+        {
+          "id": "d7b7bb43ddc3dc16c11a6a799a122443b6f52ab6d997357b251e6c4f5e6c1aee:0",
+          "text": "# CV03: Ember Root: ingredient record\r\n\r\nSource ID: CV03\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nEmber Root is a fictional red root that supplies warmth in the Cedarvale healing draught. It grows on the east-bank terraced farms beyond the stone bridge. Oren, the licensed farm merchant, sells cleaned portions at the riverside depot. Town visitors should buy a prepared portion rather than dig in private farm beds. Ember Root is a required ingredient and has no approved substitute in the public recipe. Moonleaf alone does not produce the documented draught. The depot is east of the bridge; it is a different location from Nessa's Copper Kettle stall west of the river. No current stock, sale price or travel duration is recorded. The source documents a fictional crafting item rather than medical advice.",
+          "source": "ember-root.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6301627159118652,
+          "truncated": false
+        },
+        {
+          "id": "56155b48298035ae831aa59fa91457a2f340b2f44711e8d61bad05e39be35bb1:0",
+          "text": "# CV07: Oren and the riverside depot\r\n\r\nSource ID: CV07\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nOren is a licensed farm merchant who sells cleaned Ember Root at the riverside depot east of the stone bridge. The depot serves the terraced farms on the east bank of the River Lume. Customers approaching from the eastern market cross the bridge and turn south along the bank path. The depot is not in the market and is not Nessa's stall. Oren sells prepared root portions, not permission to harvest private beds. His current inventory and prices are unknown. This public record identifies the merchant and location without describing private suppliers or contracts. The bridge inspection rules apply to wagons; the record does not invent a new permit requirement for individual customers walking to the depot.",
+          "source": "oren.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6514620184898376,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.021399999270216,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R07",
+      "query": "Where does Oren sell cleaned root portions?",
+      "relevant_sources": [
+        "oren.md"
+      ],
+      "matches": [
+        {
+          "id": "d7b7bb43ddc3dc16c11a6a799a122443b6f52ab6d997357b251e6c4f5e6c1aee:0",
+          "text": "# CV03: Ember Root: ingredient record\r\n\r\nSource ID: CV03\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nEmber Root is a fictional red root that supplies warmth in the Cedarvale healing draught. It grows on the east-bank terraced farms beyond the stone bridge. Oren, the licensed farm merchant, sells cleaned portions at the riverside depot. Town visitors should buy a prepared portion rather than dig in private farm beds. Ember Root is a required ingredient and has no approved substitute in the public recipe. Moonleaf alone does not produce the documented draught. The depot is east of the bridge; it is a different location from Nessa's Copper Kettle stall west of the river. No current stock, sale price or travel duration is recorded. The source documents a fictional crafting item rather than medical advice.",
+          "source": "ember-root.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.46101391315460205,
+          "truncated": false
+        },
+        {
+          "id": "56155b48298035ae831aa59fa91457a2f340b2f44711e8d61bad05e39be35bb1:0",
+          "text": "# CV07: Oren and the riverside depot\r\n\r\nSource ID: CV07\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nOren is a licensed farm merchant who sells cleaned Ember Root at the riverside depot east of the stone bridge. The depot serves the terraced farms on the east bank of the River Lume. Customers approaching from the eastern market cross the bridge and turn south along the bank path. The depot is not in the market and is not Nessa's stall. Oren sells prepared root portions, not permission to harvest private beds. His current inventory and prices are unknown. This public record identifies the merchant and location without describing private suppliers or contracts. The bridge inspection rules apply to wagons; the record does not invent a new permit requirement for individual customers walking to the depot.",
+          "source": "oren.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4655129909515381,
+          "truncated": false
+        },
+        {
+          "id": "0b3f8e1a0b6d5c8068da53f7f8936a7ef069d7e63d0599c1ecee99ad53f9dc71:0",
+          "text": "# CV06: Nessa and the Copper Kettle stall\r\n\r\nSource ID: CV06\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nNessa is the public rare-ingredient merchant at the Copper Kettle stall in Cedarvale's eastern market. Her stall is on the market's western edge beside the fountain, west of the River Lume. She sells dried Moonleaf and glass bottles. She does not sell Ember Root; the public directory sends buyers to Oren at the riverside depot. Nessa is an eastern merchant but does not lead their council. Her business hours, current inventory and private suppliers are not recorded. A visitor may ask about public goods without receiving guest identities, patrol schedules or private account records. The stall is near the archive steps and the path to the shrine garden. No document establishes a secret password for purchasing ingredients.",
+          "source": "nessa.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.523503303527832,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.957299998466624,
+      "metrics": {
+        "p1": 0.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 0.5
+      }
+    },
+    {
+      "id": "R08",
+      "query": "What places surround the eastern market fountain?",
+      "relevant_sources": [
+        "market.md"
+      ],
+      "matches": [
+        {
+          "id": "b395a8985d48c7feed8ee7b1cf878ccf4880a0555d2de8e3d918a78eb6d9db55:0",
+          "text": "# CV08: Eastern market directory\r\n\r\nSource ID: CV08\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nCedarvale's eastern market is inside the eastern gate and west of the River Lume. The fountain marks its center. Nessa's Copper Kettle stall, selling rare ingredients and bottles, is on its western edge. The archive steps are northwest of the fountain and the shrine garden path leads north. Orchard Lane runs south toward the Lantern Inn. The gate and bridge lie east. Oren's Ember Root depot is across the bridge on the east bank, outside this market. The directory describes stable geography, not a merchant's live presence, stock or opening state. No measured walking distances are supplied. Visitors should distinguish the inhabited eastern gate from the sealed Ashen Gate monument north of town.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.3668666481971741,
+          "truncated": false
+        },
+        {
+          "id": "431e3f99d1f8435d8f696c787532004dd9d59f865ea7e034797b73f1f351c95c:0",
+          "text": "# CV01: Cedarvale public atlas\r\n\r\nSource ID: CV01\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nCedarvale lies on the west bank of the River Lume. The eastern market is inside the eastern gate, west of the river. The stone bridge connects that gate to the east-bank farms. The Lantern Inn stands on Orchard Lane, south of the market. The northern well is in the craft quarter, northwest of the market. Public paths connect the market fountain, archive steps and gate without crossing the bridge. Directions in this collection are relative to the market fountain. The old Ashen Gate is a sealed monument north of town, not the inhabited eastern gate. These names describe fictional places; no travel times or distances have been surveyed. The atlas does not establish where any person is at a particular moment.",
+          "source": "atlas.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.44618701934814453,
+          "truncated": false
+        },
+        {
+          "id": "23a0340aa1a7ca22275f49fde6bbabca5b72349633a88945959f5c6826ed49cc:0",
+          "text": "# CV09: River Lume and public landing\r\n\r\nSource ID: CV09\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe River Lume flows along Cedarvale's eastern boundary. The town and its market stand on the west bank; the terraced farms and Oren's depot stand on the east bank. A stone bridge connects the inhabited eastern gate to the farms. The public landing is south of the bridge on the town bank. Boat schedules, water depth and current river conditions are not recorded. Nessa's stall is inside the market by its fountain, not on the riverbank. The eastern merchants use the landing for lawful trade under published inspection rules. A geographical relation is not proof that an NPC can currently see the river or any person standing beside it.",
+          "source": "river.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5948021411895752,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 17.28680000087479,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R09",
+      "query": "Where is the public landing relative to the bridge?",
+      "relevant_sources": [
+        "river.md"
+      ],
+      "matches": [
+        {
+          "id": "faeb18183549701d7f3af9cf22f6c565eca1a60ac2f570dba05c0a5b67f2dcd8:0",
+          "text": "# CV22: Stone bridge and wagon rules\r\n\r\nSource ID: CV22\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe stone bridge connects the inhabited eastern gate on the west bank to the east-bank farms. Oren's riverside depot lies south of its eastern end; the town landing lies south of its western end. Daren's published wagon inspection checks a wagon permit. These rules do not state that pedestrians need wagon papers. The River Accord funded repairs after the Flood Year dispute and provided joint inspection. That historical fact does not prove the bridge is currently safe, open or visible to a particular NPC. No exact length, crossing time or current queue is recorded. Directions should use bank and gate relations rather than invented distances.",
+          "source": "bridge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5177410840988159,
+          "truncated": false
+        },
+        {
+          "id": "23a0340aa1a7ca22275f49fde6bbabca5b72349633a88945959f5c6826ed49cc:0",
+          "text": "# CV09: River Lume and public landing\r\n\r\nSource ID: CV09\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe River Lume flows along Cedarvale's eastern boundary. The town and its market stand on the west bank; the terraced farms and Oren's depot stand on the east bank. A stone bridge connects the inhabited eastern gate to the farms. The public landing is south of the bridge on the town bank. Boat schedules, water depth and current river conditions are not recorded. Nessa's stall is inside the market by its fountain, not on the riverbank. The eastern merchants use the landing for lawful trade under published inspection rules. A geographical relation is not proof that an NPC can currently see the river or any person standing beside it.",
+          "source": "river.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6004772186279297,
+          "truncated": false
+        },
+        {
+          "id": "431e3f99d1f8435d8f696c787532004dd9d59f865ea7e034797b73f1f351c95c:0",
+          "text": "# CV01: Cedarvale public atlas\r\n\r\nSource ID: CV01\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nCedarvale lies on the west bank of the River Lume. The eastern market is inside the eastern gate, west of the river. The stone bridge connects that gate to the east-bank farms. The Lantern Inn stands on Orchard Lane, south of the market. The northern well is in the craft quarter, northwest of the market. Public paths connect the market fountain, archive steps and gate without crossing the bridge. Directions in this collection are relative to the market fountain. The old Ashen Gate is a sealed monument north of town, not the inhabited eastern gate. These names describe fictional places; no travel times or distances have been surveyed. The atlas does not establish where any person is at a particular moment.",
+          "source": "atlas.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6378703117370605,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.591899999591988,
+      "metrics": {
+        "p1": 0.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 0.5
+      }
+    },
+    {
+      "id": "R10",
+      "query": "What public food service does Elin provide at her inn?",
+      "relevant_sources": [
+        "inn.md"
+      ],
+      "matches": [
+        {
+          "id": "d736edfd1d6ec730a402d4e5a9fab0939afc16ac790c0f61e8355f9582e9ae38:0",
+          "text": "# CV10: The Lantern Inn public services\r\n\r\nSource ID: CV10\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nElin is the innkeeper of the Lantern Inn on Orchard Lane south of the eastern market. She is a welcoming village host who keeps service moving and protects guests' privacy. The inn serves barley soup and offers a common room for conversation. This record does not disclose guest identities, room assignments, room availability or prices. Elin may explain public directions and publicly documented ingredients without claiming to be a healer or merchant. Her role remains innkeeper even when she discusses the healing draught. The inn's name is the Lantern Inn, not the Blue Lantern used in an older experimental fiction. Current guest state must come from trusted application context rather than an external directory.",
+          "source": "inn.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.42718011140823364,
+          "truncated": false
+        },
+        {
+          "id": "0b3f8e1a0b6d5c8068da53f7f8936a7ef069d7e63d0599c1ecee99ad53f9dc71:0",
+          "text": "# CV06: Nessa and the Copper Kettle stall\r\n\r\nSource ID: CV06\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nNessa is the public rare-ingredient merchant at the Copper Kettle stall in Cedarvale's eastern market. Her stall is on the market's western edge beside the fountain, west of the River Lume. She sells dried Moonleaf and glass bottles. She does not sell Ember Root; the public directory sends buyers to Oren at the riverside depot. Nessa is an eastern merchant but does not lead their council. Her business hours, current inventory and private suppliers are not recorded. A visitor may ask about public goods without receiving guest identities, patrol schedules or private account records. The stall is near the archive steps and the path to the shrine garden. No document establishes a secret password for purchasing ingredients.",
+          "source": "nessa.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5937491655349731,
+          "truncated": false
+        },
+        {
+          "id": "b395a8985d48c7feed8ee7b1cf878ccf4880a0555d2de8e3d918a78eb6d9db55:0",
+          "text": "# CV08: Eastern market directory\r\n\r\nSource ID: CV08\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nCedarvale's eastern market is inside the eastern gate and west of the River Lume. The fountain marks its center. Nessa's Copper Kettle stall, selling rare ingredients and bottles, is on its western edge. The archive steps are northwest of the fountain and the shrine garden path leads north. Orchard Lane runs south toward the Lantern Inn. The gate and bridge lie east. Oren's Ember Root depot is across the bridge on the east bank, outside this market. The directory describes stable geography, not a merchant's live presence, stock or opening state. No measured walking distances are supplied. Visitors should distinguish the inhabited eastern gate from the sealed Ashen Gate monument north of town.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6508334279060364,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.411099998047575,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R11",
+      "query": "Where is Mira based and what does she repair?",
+      "relevant_sources": [
+        "forge.md"
+      ],
+      "matches": [
+        {
+          "id": "5f8f64e6eee7f005b0c7e41df8dc9d566a9a276c4b20782501eb2f0abb383a3a:0",
+          "text": "# CV11: Mira and the northern-well forge\r\n\r\nSource ID: CV11\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nMira is Cedarvale's blacksmith. Her forge stands beside the northern well in the craft quarter northwest of the eastern market. She repairs iron tools and has orders to finish. Her dry, direct manner does not change public facts about directions or ingredients. She does not sell healing potions and should not claim that the healing draught recipe is her own invention. Customer business remains private. Public questions may be answered briefly while she maintains her occupational identity. The source contains no customer names, sale prices, current order contents or proof of a completed repair. A later knowledge-update demonstration may change the forge location in a disposable corpus copy; that experiment does not change this released baseline.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.49464529752731323,
+          "truncated": false
+        },
+        {
+          "id": "0ef95503963ce99ec206193ebe5c6595113605502deed9682a1305bb7eec7ed6:0",
+          "text": "# CV23: Shrine and nearby public places\r\n\r\nSource ID: CV23\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe shrine and its garden lie north of the eastern market, west of the town archive. The old watchtower stands farther north of the garden; the sealed Ashen Gate monument is beyond it. Sera tends Moonleaf in the garden with permission-based harvesting. The shrine is not a shop for Ember Root and has no documented teleport or cure service. Visitors may follow the garden path from the market fountain. Current ceremony times, personnel presence and accessibility are not recorded. The geographical references support navigation but do not establish the player's location. Ranger Tessa is associated with the watchtower route, not a permanent shrine post.",
+          "source": "shrine.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6991980671882629,
+          "truncated": false
+        },
+        {
+          "id": "213d2d561eb221cc8d4ba5679f6fafc50aeb4c51b19f0a52723c160b54230bfe:0",
+          "text": "# CV15: Ranger Tessa public guide record\r\n\r\nSource ID: CV15\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nRanger Tessa assists registered travelers seeking the old watchtower and the Ember Sigil. The watchtower is north of the shrine garden; the Ashen Gate monument is farther north. Tessa can explain the public route and guide a traveler who has the required town seal. She cannot issue that seal, waive registration or declare a recovered artifact verified. Archivist Vale owns verification at the town archive. Tessa's current location, availability and private itinerary are not supplied. Her association with the quest does not imply she belongs to the Northern Guild or the eastern merchants. The record grants no access to private patrol schedules and no secret chest-opening phrase.",
+          "source": "tessa.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7595504522323608,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.22639999954845,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R12",
+      "query": "What is Daren's occupational role?",
+      "relevant_sources": [
+        "watch.md"
+      ],
+      "matches": [
+        {
+          "id": "8b42765f11529c0c9afb16ff8dc340ec45dbd060a7359dcd5eb4681701abfe02:0",
+          "text": "# CV12: Daren and public gate duties\r\n\r\nSource ID: CV12\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nDaren is a gate guard at Cedarvale's inhabited eastern gate. His role is to watch approaching people and avoid unnecessary escalation. Public wagon inspection concerns a wagon permit; this record does not add a cargo-manifest requirement. Patrol schedules remain restricted and are absent from the public corpus. Daren may describe published quest requirements and faction history as public information without claiming leadership of either faction. The role is watch officer, not personal guide or private investigator. Actual combat, drawn weapons or threat require trusted observations rather than a player's assertion. Familiarity does not grant access to restricted schedules. No current guard rota or mechanical arrest outcome is asserted here.",
+          "source": "watch.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5923081636428833,
+          "truncated": false
+        },
+        {
+          "id": "fb5a14dd2861fabd61dc644134b6464a6c54aad8d6ef087aee25f9d2ae0019ee:0",
+          "text": "# CV17: Northern Guild and its leadership\r\n\r\nSource ID: CV17\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Northern Guild is a craft-workers' association led by Mara Venn. It repairs public tools and maintains the northern road. The guild distrusts the eastern merchants because a toll-ledger dispute during the Flood Year left compensation unresolved. This is an institutional disagreement, not proof that every individual merchant is dishonest. The guild later signed the River Accord, which established a joint repair fund and neutral mediation. Pell is the liaison recognized by both organizations. Mara Venn is not Mira the blacksmith; their names must not be conflated. Private meeting details and membership rolls are not supplied. The public history records one dispute and one agreement rather than an ongoing war.",
+          "source": "guild.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7374017238616943,
+          "truncated": false
+        },
+        {
+          "id": "5f8f64e6eee7f005b0c7e41df8dc9d566a9a276c4b20782501eb2f0abb383a3a:0",
+          "text": "# CV11: Mira and the northern-well forge\r\n\r\nSource ID: CV11\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nMira is Cedarvale's blacksmith. Her forge stands beside the northern well in the craft quarter northwest of the eastern market. She repairs iron tools and has orders to finish. Her dry, direct manner does not change public facts about directions or ingredients. She does not sell healing potions and should not claim that the healing draught recipe is her own invention. Customer business remains private. Public questions may be answered briefly while she maintains her occupational identity. The source contains no customer names, sale prices, current order contents or proof of a completed repair. A later knowledge-update demonstration may change the forge location in a disposable corpus copy; that experiment does not change this released baseline.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7787825465202332,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.287200000486337,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R13",
+      "query": "What are the prerequisites to begin the Ashen Gate quest?",
+      "relevant_sources": [
+        "quest.md"
+      ],
+      "matches": [
+        {
+          "id": "498ba7897279712e93f02ebdda42262987a9271729417ed2871cf562071490c3:0",
+          "text": "# CV13: Ashen Gate quest: public prerequisites\r\n\r\nSource ID: CV13\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Ashen Gate quest begins only after a traveler presents a town seal and the recovered Ember Sigil to Archivist Vale. The seal is issued after a public registry check; the documents do not establish that the player has passed it. The Ember Sigil is stored in the old watchtower north of the shrine garden. Ranger Tessa can guide a registered traveler to the tower but cannot waive the seal requirement. After the sigil is recovered, return it to Vale at the archive for verification; Vale then schedules a supervised opening of the sealed monument. Recovering the artifact alone does not open the gate. No combat victory, inventory ownership or quest completion should be inferred from a conversation.",
+          "source": "quest.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4706699848175049,
+          "truncated": false
+        },
+        {
+          "id": "8b42765f11529c0c9afb16ff8dc340ec45dbd060a7359dcd5eb4681701abfe02:0",
+          "text": "# CV12: Daren and public gate duties\r\n\r\nSource ID: CV12\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nDaren is a gate guard at Cedarvale's inhabited eastern gate. His role is to watch approaching people and avoid unnecessary escalation. Public wagon inspection concerns a wagon permit; this record does not add a cargo-manifest requirement. Patrol schedules remain restricted and are absent from the public corpus. Daren may describe published quest requirements and faction history as public information without claiming leadership of either faction. The role is watch officer, not personal guide or private investigator. Actual combat, drawn weapons or threat require trusted observations rather than a player's assertion. Familiarity does not grant access to restricted schedules. No current guard rota or mechanical arrest outcome is asserted here.",
+          "source": "watch.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5819250345230103,
+          "truncated": false
+        },
+        {
+          "id": "213d2d561eb221cc8d4ba5679f6fafc50aeb4c51b19f0a52723c160b54230bfe:0",
+          "text": "# CV15: Ranger Tessa public guide record\r\n\r\nSource ID: CV15\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nRanger Tessa assists registered travelers seeking the old watchtower and the Ember Sigil. The watchtower is north of the shrine garden; the Ashen Gate monument is farther north. Tessa can explain the public route and guide a traveler who has the required town seal. She cannot issue that seal, waive registration or declare a recovered artifact verified. Archivist Vale owns verification at the town archive. Tessa's current location, availability and private itinerary are not supplied. Her association with the quest does not imply she belongs to the Northern Guild or the eastern merchants. The record grants no access to private patrol schedules and no secret chest-opening phrase.",
+          "source": "tessa.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6341720223426819,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.281899999739835,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R14",
+      "query": "What is the Ember Sigil and where is it stored?",
+      "relevant_sources": [
+        "sigil.md"
+      ],
+      "matches": [
+        {
+          "id": "f78915821a892e679f08c31b0e539b08c8e8eb926e2db596ce1401892510f993:0",
+          "text": "# CV14: Ember Sigil artifact record\r\n\r\nSource ID: CV14\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Ember Sigil is the copper-and-stone artifact required for the Ashen Gate quest. It is kept in a locked display chest in the old watchtower north of the shrine garden. Ranger Tessa is the documented guide for registered travelers seeking the tower. The public artifact record does not contain a chest password or a method for bypassing its lock. The sigil must be brought to Archivist Vale after recovery for verification. Possession alone does not replace the separate town seal prerequisite. The artifact is not Ember Root and cannot be consumed as a crafting ingredient. No current holder, theft, recovery event or player inventory state is recorded in this reference.",
+          "source": "sigil.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.27236759662628174,
+          "truncated": false
+        },
+        {
+          "id": "498ba7897279712e93f02ebdda42262987a9271729417ed2871cf562071490c3:0",
+          "text": "# CV13: Ashen Gate quest: public prerequisites\r\n\r\nSource ID: CV13\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Ashen Gate quest begins only after a traveler presents a town seal and the recovered Ember Sigil to Archivist Vale. The seal is issued after a public registry check; the documents do not establish that the player has passed it. The Ember Sigil is stored in the old watchtower north of the shrine garden. Ranger Tessa can guide a registered traveler to the tower but cannot waive the seal requirement. After the sigil is recovered, return it to Vale at the archive for verification; Vale then schedules a supervised opening of the sealed monument. Recovering the artifact alone does not open the gate. No combat victory, inventory ownership or quest completion should be inferred from a conversation.",
+          "source": "quest.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.48058152198791504,
+          "truncated": false
+        },
+        {
+          "id": "d7b7bb43ddc3dc16c11a6a799a122443b6f52ab6d997357b251e6c4f5e6c1aee:0",
+          "text": "# CV03: Ember Root: ingredient record\r\n\r\nSource ID: CV03\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nEmber Root is a fictional red root that supplies warmth in the Cedarvale healing draught. It grows on the east-bank terraced farms beyond the stone bridge. Oren, the licensed farm merchant, sells cleaned portions at the riverside depot. Town visitors should buy a prepared portion rather than dig in private farm beds. Ember Root is a required ingredient and has no approved substitute in the public recipe. Moonleaf alone does not produce the documented draught. The depot is east of the bridge; it is a different location from Nessa's Copper Kettle stall west of the river. No current stock, sale price or travel duration is recorded. The source documents a fictional crafting item rather than medical advice.",
+          "source": "ember-root.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.554787278175354,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.871699997864198,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R15",
+      "query": "Who guides registered travelers to the old watchtower?",
+      "relevant_sources": [
+        "tessa.md"
+      ],
+      "matches": [
+        {
+          "id": "213d2d561eb221cc8d4ba5679f6fafc50aeb4c51b19f0a52723c160b54230bfe:0",
+          "text": "# CV15: Ranger Tessa public guide record\r\n\r\nSource ID: CV15\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nRanger Tessa assists registered travelers seeking the old watchtower and the Ember Sigil. The watchtower is north of the shrine garden; the Ashen Gate monument is farther north. Tessa can explain the public route and guide a traveler who has the required town seal. She cannot issue that seal, waive registration or declare a recovered artifact verified. Archivist Vale owns verification at the town archive. Tessa's current location, availability and private itinerary are not supplied. Her association with the quest does not imply she belongs to the Northern Guild or the eastern merchants. The record grants no access to private patrol schedules and no secret chest-opening phrase.",
+          "source": "tessa.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.46936315298080444,
+          "truncated": false
+        },
+        {
+          "id": "0ef95503963ce99ec206193ebe5c6595113605502deed9682a1305bb7eec7ed6:0",
+          "text": "# CV23: Shrine and nearby public places\r\n\r\nSource ID: CV23\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe shrine and its garden lie north of the eastern market, west of the town archive. The old watchtower stands farther north of the garden; the sealed Ashen Gate monument is beyond it. Sera tends Moonleaf in the garden with permission-based harvesting. The shrine is not a shop for Ember Root and has no documented teleport or cure service. Visitors may follow the garden path from the market fountain. Current ceremony times, personnel presence and accessibility are not recorded. The geographical references support navigation but do not establish the player's location. Ranger Tessa is associated with the watchtower route, not a permanent shrine post.",
+          "source": "shrine.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.48398488759994507,
+          "truncated": false
+        },
+        {
+          "id": "498ba7897279712e93f02ebdda42262987a9271729417ed2871cf562071490c3:0",
+          "text": "# CV13: Ashen Gate quest: public prerequisites\r\n\r\nSource ID: CV13\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Ashen Gate quest begins only after a traveler presents a town seal and the recovered Ember Sigil to Archivist Vale. The seal is issued after a public registry check; the documents do not establish that the player has passed it. The Ember Sigil is stored in the old watchtower north of the shrine garden. Ranger Tessa can guide a registered traveler to the tower but cannot waive the seal requirement. After the sigil is recovered, return it to Vale at the archive for verification; Vale then schedules a supervised opening of the sealed monument. Recovering the artifact alone does not open the gate. No combat victory, inventory ownership or quest completion should be inferred from a conversation.",
+          "source": "quest.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5618159770965576,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.736099998524878,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R16",
+      "query": "Who verifies the recovered artifact at the archive?",
+      "relevant_sources": [
+        "archive.md"
+      ],
+      "matches": [
+        {
+          "id": "38d0685a6c32159725308f10e48ec6901cb180323b2b9499da36bbf428fe75ea:0",
+          "text": "# CV16: Archive and Archivist Vale\r\n\r\nSource ID: CV16\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe town archive stands northwest of the eastern market fountain, east of the shrine garden. Archivist Vale conducts the public registry check, issues a town seal to eligible applicants and verifies the recovered Ember Sigil. Once both prerequisites are satisfied, Vale schedules a supervised opening of the Ashen Gate monument. The archive stores the public River Accord history and its repair ledger. Access to a public historical record is distinct from access to private personal records. Current eligibility, appointments and quest state require trusted runtime information; the directory does not establish them. No archive password or private treasury code is included. Visitors approaching from Nessa's stall can follow the archive steps northwest.",
+          "source": "archive.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.47019267082214355,
+          "truncated": false
+        },
+        {
+          "id": "f78915821a892e679f08c31b0e539b08c8e8eb926e2db596ce1401892510f993:0",
+          "text": "# CV14: Ember Sigil artifact record\r\n\r\nSource ID: CV14\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Ember Sigil is the copper-and-stone artifact required for the Ashen Gate quest. It is kept in a locked display chest in the old watchtower north of the shrine garden. Ranger Tessa is the documented guide for registered travelers seeking the tower. The public artifact record does not contain a chest password or a method for bypassing its lock. The sigil must be brought to Archivist Vale after recovery for verification. Possession alone does not replace the separate town seal prerequisite. The artifact is not Ember Root and cannot be consumed as a crafting ingredient. No current holder, theft, recovery event or player inventory state is recorded in this reference.",
+          "source": "sigil.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4901571273803711,
+          "truncated": false
+        },
+        {
+          "id": "498ba7897279712e93f02ebdda42262987a9271729417ed2871cf562071490c3:0",
+          "text": "# CV13: Ashen Gate quest: public prerequisites\r\n\r\nSource ID: CV13\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Ashen Gate quest begins only after a traveler presents a town seal and the recovered Ember Sigil to Archivist Vale. The seal is issued after a public registry check; the documents do not establish that the player has passed it. The Ember Sigil is stored in the old watchtower north of the shrine garden. Ranger Tessa can guide a registered traveler to the tower but cannot waive the seal requirement. After the sigil is recovered, return it to Vale at the archive for verification; Vale then schedules a supervised opening of the sealed monument. Recovering the artifact alone does not open the gate. No combat victory, inventory ownership or quest completion should be inferred from a conversation.",
+          "source": "quest.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5116279125213623,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.382099999143975,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R17",
+      "query": "Who leads the Northern Guild?",
+      "relevant_sources": [
+        "guild.md"
+      ],
+      "matches": [
+        {
+          "id": "fb5a14dd2861fabd61dc644134b6464a6c54aad8d6ef087aee25f9d2ae0019ee:0",
+          "text": "# CV17: Northern Guild and its leadership\r\n\r\nSource ID: CV17\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Northern Guild is a craft-workers' association led by Mara Venn. It repairs public tools and maintains the northern road. The guild distrusts the eastern merchants because a toll-ledger dispute during the Flood Year left compensation unresolved. This is an institutional disagreement, not proof that every individual merchant is dishonest. The guild later signed the River Accord, which established a joint repair fund and neutral mediation. Pell is the liaison recognized by both organizations. Mara Venn is not Mira the blacksmith; their names must not be conflated. Private meeting details and membership rolls are not supplied. The public history records one dispute and one agreement rather than an ongoing war.",
+          "source": "guild.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.31088787317276,
+          "truncated": false
+        },
+        {
+          "id": "3b4adb1f22bbc584506e8b6ed9801566db773fe3a9c4d2661a5701ccfd647ed8:0",
+          "text": "# CV18: Eastern merchants association\r\n\r\nSource ID: CV18\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe eastern merchants association is chaired by Leto Ansel and represents lawful trade around Cedarvale's market and landing. Nessa is a member operating the Copper Kettle stall. The Northern Guild distrusts the association after the Flood Year toll-ledger dispute. The River Accord created a shared repair fund and selected Pell as a neutral liaison. Leto is not the Northern Guild leader, and Nessa is not the association chair. The public association record does not identify private ingredient suppliers, account balances or secret contracts. Historical disagreement does not authorize insults or a claim that a current merchant has committed a crime. Current trade permissions require trusted application state.",
+          "source": "merchants.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.534786581993103,
+          "truncated": false
+        },
+        {
+          "id": "213d2d561eb221cc8d4ba5679f6fafc50aeb4c51b19f0a52723c160b54230bfe:0",
+          "text": "# CV15: Ranger Tessa public guide record\r\n\r\nSource ID: CV15\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nRanger Tessa assists registered travelers seeking the old watchtower and the Ember Sigil. The watchtower is north of the shrine garden; the Ashen Gate monument is farther north. Tessa can explain the public route and guide a traveler who has the required town seal. She cannot issue that seal, waive registration or declare a recovered artifact verified. Archivist Vale owns verification at the town archive. Tessa's current location, availability and private itinerary are not supplied. Her association with the quest does not imply she belongs to the Northern Guild or the eastern merchants. The record grants no access to private patrol schedules and no secret chest-opening phrase.",
+          "source": "tessa.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6379134654998779,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.67499999894062,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R18",
+      "query": "Who chairs the eastern merchants association?",
+      "relevant_sources": [
+        "merchants.md"
+      ],
+      "matches": [
+        {
+          "id": "3b4adb1f22bbc584506e8b6ed9801566db773fe3a9c4d2661a5701ccfd647ed8:0",
+          "text": "# CV18: Eastern merchants association\r\n\r\nSource ID: CV18\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe eastern merchants association is chaired by Leto Ansel and represents lawful trade around Cedarvale's market and landing. Nessa is a member operating the Copper Kettle stall. The Northern Guild distrusts the association after the Flood Year toll-ledger dispute. The River Accord created a shared repair fund and selected Pell as a neutral liaison. Leto is not the Northern Guild leader, and Nessa is not the association chair. The public association record does not identify private ingredient suppliers, account balances or secret contracts. Historical disagreement does not authorize insults or a claim that a current merchant has committed a crime. Current trade permissions require trusted application state.",
+          "source": "merchants.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.31250089406967163,
+          "truncated": false
+        },
+        {
+          "id": "fb5a14dd2861fabd61dc644134b6464a6c54aad8d6ef087aee25f9d2ae0019ee:0",
+          "text": "# CV17: Northern Guild and its leadership\r\n\r\nSource ID: CV17\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Northern Guild is a craft-workers' association led by Mara Venn. It repairs public tools and maintains the northern road. The guild distrusts the eastern merchants because a toll-ledger dispute during the Flood Year left compensation unresolved. This is an institutional disagreement, not proof that every individual merchant is dishonest. The guild later signed the River Accord, which established a joint repair fund and neutral mediation. Pell is the liaison recognized by both organizations. Mara Venn is not Mira the blacksmith; their names must not be conflated. Private meeting details and membership rolls are not supplied. The public history records one dispute and one agreement rather than an ongoing war.",
+          "source": "guild.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5147828459739685,
+          "truncated": false
+        },
+        {
+          "id": "1e4f016867f20ed295d998ffafbff8468346f6d1e25adf61acb36f4feb559f44:0",
+          "text": "# CV19: Pell: neutral liaison\r\n\r\nSource ID: CV19\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nPell is a mediator recognized by both the Northern Guild and the eastern merchants association. Pell helped negotiate the River Accord after the Flood Year toll-ledger dispute. The role is neutral liaison, not leader of either group. Mara Venn leads the guild; Leto Ansel chairs the merchants. Pell can explain the published repair-fund agreement without disclosing private negotiations. There is no evidence that Pell supplies Nessa with ingredients or controls the Ember Sigil chest. The source records no current location, availability or personal friendship with the player. When discussing the two groups, prior dialogue should identify the referent rather than invent a third organization or a new conflict.",
+          "source": "pell.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5293240547180176,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 17.474300002504606,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R19",
+      "query": "Which mediator is recognized by both trading groups?",
+      "relevant_sources": [
+        "pell.md"
+      ],
+      "matches": [
+        {
+          "id": "1e4f016867f20ed295d998ffafbff8468346f6d1e25adf61acb36f4feb559f44:0",
+          "text": "# CV19: Pell: neutral liaison\r\n\r\nSource ID: CV19\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nPell is a mediator recognized by both the Northern Guild and the eastern merchants association. Pell helped negotiate the River Accord after the Flood Year toll-ledger dispute. The role is neutral liaison, not leader of either group. Mara Venn leads the guild; Leto Ansel chairs the merchants. Pell can explain the published repair-fund agreement without disclosing private negotiations. There is no evidence that Pell supplies Nessa with ingredients or controls the Ember Sigil chest. The source records no current location, availability or personal friendship with the player. When discussing the two groups, prior dialogue should identify the referent rather than invent a third organization or a new conflict.",
+          "source": "pell.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5712941884994507,
+          "truncated": false
+        },
+        {
+          "id": "3b4adb1f22bbc584506e8b6ed9801566db773fe3a9c4d2661a5701ccfd647ed8:0",
+          "text": "# CV18: Eastern merchants association\r\n\r\nSource ID: CV18\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe eastern merchants association is chaired by Leto Ansel and represents lawful trade around Cedarvale's market and landing. Nessa is a member operating the Copper Kettle stall. The Northern Guild distrusts the association after the Flood Year toll-ledger dispute. The River Accord created a shared repair fund and selected Pell as a neutral liaison. Leto is not the Northern Guild leader, and Nessa is not the association chair. The public association record does not identify private ingredient suppliers, account balances or secret contracts. Historical disagreement does not authorize insults or a claim that a current merchant has committed a crime. Current trade permissions require trusted application state.",
+          "source": "merchants.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6023208498954773,
+          "truncated": false
+        },
+        {
+          "id": "fb5a14dd2861fabd61dc644134b6464a6c54aad8d6ef087aee25f9d2ae0019ee:0",
+          "text": "# CV17: Northern Guild and its leadership\r\n\r\nSource ID: CV17\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Northern Guild is a craft-workers' association led by Mara Venn. It repairs public tools and maintains the northern road. The guild distrusts the eastern merchants because a toll-ledger dispute during the Flood Year left compensation unresolved. This is an institutional disagreement, not proof that every individual merchant is dishonest. The guild later signed the River Accord, which established a joint repair fund and neutral mediation. Pell is the liaison recognized by both organizations. Mara Venn is not Mira the blacksmith; their names must not be conflated. Private meeting details and membership rolls are not supplied. The public history records one dispute and one agreement rather than an ongoing war.",
+          "source": "guild.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.701562762260437,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.627199998765718,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R20",
+      "query": "What did the River Accord establish after the Flood Year?",
+      "relevant_sources": [
+        "accord.md"
+      ],
+      "matches": [
+        {
+          "id": "31c5782d9f4bfd4cf950f14ac7967432f01f928c3f156db8afcef6d952e8cc8d:0",
+          "text": "# CV20: Flood Year dispute and River Accord\r\n\r\nSource ID: CV20\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nDuring the Flood Year, bridge damage led to disputed toll-ledger entries between the Northern Guild and the eastern merchants. Neither public record assigns criminal guilt. Pell mediated the River Accord: a joint repair fund, shared inspection of the repaired bridge and neutral mediation of future ledger disputes. The event explains the guild's distrust without establishing that trade stopped or a war began. Mara Venn and Leto Ansel represented their organizations. The precise calendar date of private negotiations is not recorded. The archive preserves the published accord and repair ledger. This history does not establish the current condition of the bridge, which must be observed separately.",
+          "source": "accord.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.3958631753921509,
+          "truncated": false
+        },
+        {
+          "id": "23a0340aa1a7ca22275f49fde6bbabca5b72349633a88945959f5c6826ed49cc:0",
+          "text": "# CV09: River Lume and public landing\r\n\r\nSource ID: CV09\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe River Lume flows along Cedarvale's eastern boundary. The town and its market stand on the west bank; the terraced farms and Oren's depot stand on the east bank. A stone bridge connects the inhabited eastern gate to the farms. The public landing is south of the bridge on the town bank. Boat schedules, water depth and current river conditions are not recorded. Nessa's stall is inside the market by its fountain, not on the riverbank. The eastern merchants use the landing for lawful trade under published inspection rules. A geographical relation is not proof that an NPC can currently see the river or any person standing beside it.",
+          "source": "river.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.641711950302124,
+          "truncated": false
+        },
+        {
+          "id": "38d0685a6c32159725308f10e48ec6901cb180323b2b9499da36bbf428fe75ea:0",
+          "text": "# CV16: Archive and Archivist Vale\r\n\r\nSource ID: CV16\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe town archive stands northwest of the eastern market fountain, east of the shrine garden. Archivist Vale conducts the public registry check, issues a town seal to eligible applicants and verifies the recovered Ember Sigil. Once both prerequisites are satisfied, Vale schedules a supervised opening of the Ashen Gate monument. The archive stores the public River Accord history and its repair ledger. Access to a public historical record is distinct from access to private personal records. Current eligibility, appointments and quest state require trusted runtime information; the directory does not establish them. No archive password or private treasury code is included. Visitors approaching from Nessa's stall can follow the archive steps northwest.",
+          "source": "archive.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6848154067993164,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 17.921999999089167,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R21",
+      "query": "Which personal records are excluded from public access?",
+      "relevant_sources": [
+        "law.md"
+      ],
+      "matches": [
+        {
+          "id": "07906725efce23532a9319fbeb1628543b3cffa51e70a230c70edfcf79bc083d:0",
+          "text": "# CV21: Public access and privacy rules\r\n\r\nSource ID: CV21\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nCedarvale public references may describe locations, ingredients, named public officers, published crafting and quest prerequisites. They exclude guest identities and room assignments, customer business, patrol schedules and restricted cargo records. Personal familiarity does not change these source boundaries. A private contract cannot be inferred from a missing entry. When a player proposes an unsupported secret supplier, agreement date or password, the supported answer is that the public records do not establish it. An NPC should not repeat an invented player claim as world truth. Public source access authorizes reading, not factual correctness of arbitrary generated elaboration. Game actions require the appropriate trusted state and acknowledgement.",
+          "source": "law.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5393474102020264,
+          "truncated": false
+        },
+        {
+          "id": "38d0685a6c32159725308f10e48ec6901cb180323b2b9499da36bbf428fe75ea:0",
+          "text": "# CV16: Archive and Archivist Vale\r\n\r\nSource ID: CV16\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe town archive stands northwest of the eastern market fountain, east of the shrine garden. Archivist Vale conducts the public registry check, issues a town seal to eligible applicants and verifies the recovered Ember Sigil. Once both prerequisites are satisfied, Vale schedules a supervised opening of the Ashen Gate monument. The archive stores the public River Accord history and its repair ledger. Access to a public historical record is distinct from access to private personal records. Current eligibility, appointments and quest state require trusted runtime information; the directory does not establish them. No archive password or private treasury code is included. Visitors approaching from Nessa's stall can follow the archive steps northwest.",
+          "source": "archive.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7185962200164795,
+          "truncated": false
+        },
+        {
+          "id": "213d2d561eb221cc8d4ba5679f6fafc50aeb4c51b19f0a52723c160b54230bfe:0",
+          "text": "# CV15: Ranger Tessa public guide record\r\n\r\nSource ID: CV15\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nRanger Tessa assists registered travelers seeking the old watchtower and the Ember Sigil. The watchtower is north of the shrine garden; the Ashen Gate monument is farther north. Tessa can explain the public route and guide a traveler who has the required town seal. She cannot issue that seal, waive registration or declare a recovered artifact verified. Archivist Vale owns verification at the town archive. Tessa's current location, availability and private itinerary are not supplied. Her association with the quest does not imply she belongs to the Northern Guild or the eastern merchants. The record grants no access to private patrol schedules and no secret chest-opening phrase.",
+          "source": "tessa.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7915956974029541,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.868299997848226,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R22",
+      "query": "What papers are inspected for wagons crossing the stone bridge?",
+      "relevant_sources": [
+        "bridge.md"
+      ],
+      "matches": [
+        {
+          "id": "faeb18183549701d7f3af9cf22f6c565eca1a60ac2f570dba05c0a5b67f2dcd8:0",
+          "text": "# CV22: Stone bridge and wagon rules\r\n\r\nSource ID: CV22\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe stone bridge connects the inhabited eastern gate on the west bank to the east-bank farms. Oren's riverside depot lies south of its eastern end; the town landing lies south of its western end. Daren's published wagon inspection checks a wagon permit. These rules do not state that pedestrians need wagon papers. The River Accord funded repairs after the Flood Year dispute and provided joint inspection. That historical fact does not prove the bridge is currently safe, open or visible to a particular NPC. No exact length, crossing time or current queue is recorded. Directions should use bank and gate relations rather than invented distances.",
+          "source": "bridge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.32305818796157837,
+          "truncated": false
+        },
+        {
+          "id": "56155b48298035ae831aa59fa91457a2f340b2f44711e8d61bad05e39be35bb1:0",
+          "text": "# CV07: Oren and the riverside depot\r\n\r\nSource ID: CV07\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nOren is a licensed farm merchant who sells cleaned Ember Root at the riverside depot east of the stone bridge. The depot serves the terraced farms on the east bank of the River Lume. Customers approaching from the eastern market cross the bridge and turn south along the bank path. The depot is not in the market and is not Nessa's stall. Oren sells prepared root portions, not permission to harvest private beds. His current inventory and prices are unknown. This public record identifies the merchant and location without describing private suppliers or contracts. The bridge inspection rules apply to wagons; the record does not invent a new permit requirement for individual customers walking to the depot.",
+          "source": "oren.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5230883359909058,
+          "truncated": false
+        },
+        {
+          "id": "31c5782d9f4bfd4cf950f14ac7967432f01f928c3f156db8afcef6d952e8cc8d:0",
+          "text": "# CV20: Flood Year dispute and River Accord\r\n\r\nSource ID: CV20\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nDuring the Flood Year, bridge damage led to disputed toll-ledger entries between the Northern Guild and the eastern merchants. Neither public record assigns criminal guilt. Pell mediated the River Accord: a joint repair fund, shared inspection of the repaired bridge and neutral mediation of future ledger disputes. The event explains the guild's distrust without establishing that trade stopped or a war began. Mara Venn and Leto Ansel represented their organizations. The precise calendar date of private negotiations is not recorded. The archive preserves the published accord and repair ledger. This history does not establish the current condition of the bridge, which must be observed separately.",
+          "source": "accord.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6200599670410156,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 17.433500001061475,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R23",
+      "query": "Where is the shrine relative to the market and archive?",
+      "relevant_sources": [
+        "shrine.md"
+      ],
+      "matches": [
+        {
+          "id": "0ef95503963ce99ec206193ebe5c6595113605502deed9682a1305bb7eec7ed6:0",
+          "text": "# CV23: Shrine and nearby public places\r\n\r\nSource ID: CV23\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe shrine and its garden lie north of the eastern market, west of the town archive. The old watchtower stands farther north of the garden; the sealed Ashen Gate monument is beyond it. Sera tends Moonleaf in the garden with permission-based harvesting. The shrine is not a shop for Ember Root and has no documented teleport or cure service. Visitors may follow the garden path from the market fountain. Current ceremony times, personnel presence and accessibility are not recorded. The geographical references support navigation but do not establish the player's location. Ranger Tessa is associated with the watchtower route, not a permanent shrine post.",
+          "source": "shrine.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4395616054534912,
+          "truncated": false
+        },
+        {
+          "id": "f9b146bba4f425e672340561c3c40ac679414fb8d78e8a8326f781c29337a85a:0",
+          "text": "# CV05: Shrine garden and harvesting rules\r\n\r\nSource ID: CV05\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe shrine garden is north of the eastern market and west of the archive. Gardener Sera tends its Moonleaf beds. Visitors must ask Sera before picking mature outer leaves and must leave central shoots intact. The beds are maintained as a public teaching garden, not an unlimited supply chest. During frost the garden closes for maintenance. The documents record this general seasonal rule but do not record the present season, Sera's current location, or any visitor's permission. Nessa obtains some licensed stock from the garden; the complete supply chain is not public. The garden has no Ember Root beds. Buy cleaned Ember Root from Oren at the riverside depot rather than treating other garden plants as substitutes.",
+          "source": "garden.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5041705965995789,
+          "truncated": false
+        },
+        {
+          "id": "38d0685a6c32159725308f10e48ec6901cb180323b2b9499da36bbf428fe75ea:0",
+          "text": "# CV16: Archive and Archivist Vale\r\n\r\nSource ID: CV16\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe town archive stands northwest of the eastern market fountain, east of the shrine garden. Archivist Vale conducts the public registry check, issues a town seal to eligible applicants and verifies the recovered Ember Sigil. Once both prerequisites are satisfied, Vale schedules a supervised opening of the Ashen Gate monument. The archive stores the public River Accord history and its repair ledger. Access to a public historical record is distinct from access to private personal records. Current eligibility, appointments and quest state require trusted runtime information; the directory does not establish them. No archive password or private treasury code is included. Visitors approaching from Nessa's stall can follow the archive steps northwest.",
+          "source": "archive.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5829631686210632,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.46119999754592,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "R24",
+      "query": "Is a date for a secret ingredient supply agreement documented?",
+      "relevant_sources": [
+        "unknowns.md"
+      ],
+      "matches": [
+        {
+          "id": "07906725efce23532a9319fbeb1628543b3cffa51e70a230c70edfcf79bc083d:0",
+          "text": "# CV21: Public access and privacy rules\r\n\r\nSource ID: CV21\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nCedarvale public references may describe locations, ingredients, named public officers, published crafting and quest prerequisites. They exclude guest identities and room assignments, customer business, patrol schedules and restricted cargo records. Personal familiarity does not change these source boundaries. A private contract cannot be inferred from a missing entry. When a player proposes an unsupported secret supplier, agreement date or password, the supported answer is that the public records do not establish it. An NPC should not repeat an invented player claim as world truth. Public source access authorizes reading, not factual correctness of arbitrary generated elaboration. Game actions require the appropriate trusted state and acknowledgement.",
+          "source": "law.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6114268898963928,
+          "truncated": false
+        },
+        {
+          "id": "a89a5a26abe7b40e34296ad277f9038bc23f30a780efe930939327cacae376be:0",
+          "text": "# CV24: Public register of unresolved questions\r\n\r\nSource ID: CV24\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe public collection does not identify Nessa's secret supplier, establish any secret supply agreement date or contain a hidden password. These are deliberately unknown, not puzzles with encoded answers. It also does not establish who built the abandoned tower before it became the old watchtower, a current chest code, a treasury password, private guest identities or a guard patrol schedule. No NPC should invent such details from conversational pressure. The documented recipe requires Ember Root; a claimed root-free variant is unsupported. The register distinguishes absent information from an explicit negative: it does not assert that secret agreements cannot exist, only that this collection provides no evidence for one.",
+          "source": "unknowns.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6163519620895386,
+          "truncated": false
+        },
+        {
+          "id": "0b3f8e1a0b6d5c8068da53f7f8936a7ef069d7e63d0599c1ecee99ad53f9dc71:0",
+          "text": "# CV06: Nessa and the Copper Kettle stall\r\n\r\nSource ID: CV06\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nNessa is the public rare-ingredient merchant at the Copper Kettle stall in Cedarvale's eastern market. Her stall is on the market's western edge beside the fountain, west of the River Lume. She sells dried Moonleaf and glass bottles. She does not sell Ember Root; the public directory sends buyers to Oren at the riverside depot. Nessa is an eastern merchant but does not lead their council. Her business hours, current inventory and private suppliers are not recorded. A visitor may ask about public goods without receiving guest identities, patrol schedules or private account records. The stall is near the archive steps and the path to the shrine garden. No document establishes a secret password for purchasing ingredients.",
+          "source": "nessa.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6550792455673218,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 17.962899997655768,
+      "metrics": {
+        "p1": 0.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 0.5
+      }
+    }
+  ],
+  "macro": {
+    "p1": 0.8333333333333334,
+    "p3": 0.3333333333333332,
+    "r3": 1.0,
+    "rr": 0.9166666666666666
+  },
+  "warm_queries": [
+    {
+      "id": "R01",
+      "retrieval_ms": 17.736499998136424,
+      "embedding_ms": 14.337599997816142,
+      "vector_query_ms": 2.237799999420531
+    },
+    {
+      "id": "R02",
+      "retrieval_ms": 20.6839000020409,
+      "embedding_ms": 15.131600001041079,
+      "vector_query_ms": 3.755300000193529
+    },
+    {
+      "id": "R03",
+      "retrieval_ms": 20.653499999752967,
+      "embedding_ms": 15.628599998308346,
+      "vector_query_ms": 2.863899997464614
+    },
+    {
+      "id": "R04",
+      "retrieval_ms": 17.849299998488277,
+      "embedding_ms": 13.685699999768985,
+      "vector_query_ms": 2.756900001259055
+    },
+    {
+      "id": "R05",
+      "retrieval_ms": 17.71039999948698,
+      "embedding_ms": 14.204299997800263,
+      "vector_query_ms": 2.746300000580959
+    },
+    {
+      "id": "R06",
+      "retrieval_ms": 17.764500000339467,
+      "embedding_ms": 14.1951000005065,
+      "vector_query_ms": 2.5678000019979663
+    },
+    {
+      "id": "R07",
+      "retrieval_ms": 18.691199999011587,
+      "embedding_ms": 13.927000003604917,
+      "vector_query_ms": 2.9892000020481646
+    },
+    {
+      "id": "R08",
+      "retrieval_ms": 18.145000001823064,
+      "embedding_ms": 13.623399998323293,
+      "vector_query_ms": 2.7363000008335803
+    },
+    {
+      "id": "R09",
+      "retrieval_ms": 18.276099999638973,
+      "embedding_ms": 13.787200001388555,
+      "vector_query_ms": 2.8888999986520503
+    },
+    {
+      "id": "R10",
+      "retrieval_ms": 17.878700000437675,
+      "embedding_ms": 14.535999998770421,
+      "vector_query_ms": 2.1481000003404915
+    },
+    {
+      "id": "R11",
+      "retrieval_ms": 16.415300000517163,
+      "embedding_ms": 13.346499999897787,
+      "vector_query_ms": 2.1193000029597897
+    },
+    {
+      "id": "R12",
+      "retrieval_ms": 16.644100000121398,
+      "embedding_ms": 13.887300003261771,
+      "vector_query_ms": 1.9653999988804571
+    },
+    {
+      "id": "R13",
+      "retrieval_ms": 17.34249999935855,
+      "embedding_ms": 14.051000001927605,
+      "vector_query_ms": 2.2586000013689045
+    },
+    {
+      "id": "R14",
+      "retrieval_ms": 17.15920000060578,
+      "embedding_ms": 13.744600000791252,
+      "vector_query_ms": 2.0153000004938804
+    },
+    {
+      "id": "R15",
+      "retrieval_ms": 18.8841000017419,
+      "embedding_ms": 14.527899998938665,
+      "vector_query_ms": 2.887499998905696
+    },
+    {
+      "id": "R16",
+      "retrieval_ms": 16.716900001483737,
+      "embedding_ms": 13.758600001892773,
+      "vector_query_ms": 1.9332000010763295
+    },
+    {
+      "id": "R17",
+      "retrieval_ms": 17.64499999990221,
+      "embedding_ms": 13.656099999934668,
+      "vector_query_ms": 2.5856000029307324
+    },
+    {
+      "id": "R18",
+      "retrieval_ms": 18.841799999790965,
+      "embedding_ms": 14.341699999931734,
+      "vector_query_ms": 2.8611999987333547
+    },
+    {
+      "id": "R19",
+      "retrieval_ms": 18.347600002016407,
+      "embedding_ms": 14.57999999911408,
+      "vector_query_ms": 2.16040000304929
+    },
+    {
+      "id": "R20",
+      "retrieval_ms": 18.18260000072769,
+      "embedding_ms": 14.794700000493322,
+      "vector_query_ms": 2.3818000008759554
+    },
+    {
+      "id": "R21",
+      "retrieval_ms": 17.96969999850262,
+      "embedding_ms": 13.579099999333266,
+      "vector_query_ms": 2.708899999561254
+    },
+    {
+      "id": "R22",
+      "retrieval_ms": 17.893199998070486,
+      "embedding_ms": 13.999800001329277,
+      "vector_query_ms": 2.6702999966801144
+    },
+    {
+      "id": "R23",
+      "retrieval_ms": 19.710000000486616,
+      "embedding_ms": 14.943000001949258,
+      "vector_query_ms": 3.135499999189051
+    },
+    {
+      "id": "R24",
+      "retrieval_ms": 19.16250000067521,
+      "embedding_ms": 15.650800000003073,
+      "vector_query_ms": 1.8627000026754104
+    },
+    {
+      "id": "R01",
+      "retrieval_ms": 18.423000001348555,
+      "embedding_ms": 15.33470000140369,
+      "vector_query_ms": 2.1409000000858214
+    },
+    {
+      "id": "R02",
+      "retrieval_ms": 18.628399997396627,
+      "embedding_ms": 15.029499998490792,
+      "vector_query_ms": 1.9725000020116568
+    },
+    {
+      "id": "R03",
+      "retrieval_ms": 18.58400000128313,
+      "embedding_ms": 15.08290000128909,
+      "vector_query_ms": 1.832599999033846
+    },
+    {
+      "id": "R04",
+      "retrieval_ms": 17.833499998232583,
+      "embedding_ms": 13.69420000264654,
+      "vector_query_ms": 2.5245999968319666
+    },
+    {
+      "id": "R05",
+      "retrieval_ms": 17.176999997900566,
+      "embedding_ms": 14.019400001416216,
+      "vector_query_ms": 2.3169000014604535
+    },
+    {
+      "id": "R06",
+      "retrieval_ms": 17.403900001227157,
+      "embedding_ms": 13.567599999078084,
+      "vector_query_ms": 2.763500000583008
+    }
+  ],
+  "warm_summary": {
+    "retrieval_ms": {
+      "n": 30,
+      "mean_ms": 18.14511333335152,
+      "median_ms": 17.931449998286553,
+      "sample_sd_ms": 1.0103383036830316,
+      "p95_ms": 20.653499999752967,
+      "min_ms": 16.415300000517163,
+      "max_ms": 20.6839000020409
+    },
+    "embedding_ms": {
+      "n": 30,
+      "mean_ms": 14.288196667015049,
+      "median_ms": 14.123050001217052,
+      "sample_sd_ms": 0.6525104665856013,
+      "p95_ms": 15.628599998308346,
+      "min_ms": 13.346499999897787,
+      "max_ms": 15.650800000003073
+    },
+    "vector_query_ms": {
+      "n": 30,
+      "mean_ms": 2.4929066670059306,
+      "median_ms": 2.5461999994149664,
+      "sample_sd_ms": 0.44637335641045267,
+      "p95_ms": 3.135499999189051,
+      "min_ms": 1.832599999033846,
+      "max_ms": 3.755300000193529
+    }
+  },
+  "knowledge_update": {
+    "before": {
+      "query": "Where is Mira based and what does she repair?",
+      "context": "[1] forge.md\n# CV11: Mira and the northern-well forge\r\n\r\nSource ID: CV11\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nMira is Cedarvale's blacksmith. Her forge stands beside the northern well in the craft quarter northwest of the eastern market. She repairs iron tools and has orders to finish. Her dry, direct manner does not change public facts about directions or ingredients. She does not sell healing potions and should not claim that the healing draught recipe is her own invention. Customer business remains private. Public questions may be answered briefly while she maintains her occupational identity. The source contains no customer names, sale prices, current order contents or proof of a completed repair. A later knowledge-update demonstration may change the forge location in a disposable corpus copy; that experiment does not change this released baseline.",
+      "matches": [
+        {
+          "id": "5f8f64e6eee7f005b0c7e41df8dc9d566a9a276c4b20782501eb2f0abb383a3a:0",
+          "text": "# CV11: Mira and the northern-well forge\r\n\r\nSource ID: CV11\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nMira is Cedarvale's blacksmith. Her forge stands beside the northern well in the craft quarter northwest of the eastern market. She repairs iron tools and has orders to finish. Her dry, direct manner does not change public facts about directions or ingredients. She does not sell healing potions and should not claim that the healing draught recipe is her own invention. Customer business remains private. Public questions may be answered briefly while she maintains her occupational identity. The source contains no customer names, sale prices, current order contents or proof of a completed repair. A later knowledge-update demonstration may change the forge location in a disposable corpus copy; that experiment does not change this released baseline.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.49464529752731323,
+          "truncated": false
+        }
+      ]
+    },
+    "after": {
+      "query": "Where is Mira based and what does she repair?",
+      "context": "[1] forge.md\n# CV11: Mira and the northern-well forge\r\n\r\nSource ID: CV11\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nMira is Cedarvale's blacksmith. Her forge stands beside the southern mill in the craft quarter northwest of the eastern market. She repairs iron tools and has orders to finish. Her dry, direct manner does not change public facts about directions or ingredients. She does not sell healing potions and should not claim that the healing draught recipe is her own invention. Customer business remains private. Public questions may be answered briefly while she maintains her occupational identity. The source contains no customer names, sale prices, current order contents or proof of a completed repair. A later knowledge-update demonstration may change the forge location in a disposable corpus copy; that experiment does not change this released baseline.",
+      "matches": [
+        {
+          "id": "a478d8a524bbf3f13477100472ef1cdae5328143ecab729e121d1595407224de:0",
+          "text": "# CV11: Mira and the northern-well forge\r\n\r\nSource ID: CV11\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nMira is Cedarvale's blacksmith. Her forge stands beside the southern mill in the craft quarter northwest of the eastern market. She repairs iron tools and has orders to finish. Her dry, direct manner does not change public facts about directions or ingredients. She does not sell healing potions and should not claim that the healing draught recipe is her own invention. Customer business remains private. Public questions may be answered briefly while she maintains her occupational identity. The source contains no customer names, sale prices, current order contents or proof of a completed repair. A later knowledge-update demonstration may change the forge location in a disposable corpus copy; that experiment does not change this released baseline.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.47950541973114014,
+          "truncated": false
+        }
+      ]
+    },
+    "sync_ms": 657.8990000016347,
+    "sync_report": {
+      "indexed": 1,
+      "unchanged": 23,
+      "deleted": 0,
+      "skipped": [],
+      "errors": {},
+      "chunks": 24
+    },
+    "generator_invoked": false
+  },
+  "source_sha256": {
+    "accord.md": "5042d235b03e9c02f10569f930727e281de284e3aa5c7e1fc546a1ee7d0ab78b",
+    "archive.md": "bf3af97e4f7a114b64ca114e246c8a88a33935363eaa1cc5732b1aabb519fa5b",
+    "atlas.md": "1f58dbc353a176c1d6358f9bbdfac17adbb2e7616f8dd537bd116191f64a78d1",
+    "bridge.md": "e9a922cfc6c80d50cb516f9b708007c656313ada1bf1a2e72e88c73841c0421b",
+    "draught.md": "7aa8f1af099673de44a2845d2252ab9ba4e7b32f0ab0f468ab1c2223928568e3",
+    "ember-root.md": "6f6cef7292625523ef12a82d1d67412e8ac30251dfa3078e0a0ba14961514181",
+    "forge.md": "49aaa462c2da98daff8110cc778355f8acec21c784d45f086565e759f4f65478",
+    "garden.md": "e0eba528d50b37fdf8a43bf904fb648de372b03f48684e22ce4c24349d37391b",
+    "guild.md": "ad5a98a0bfe06cef5d6bf3c5c815b8bab155fcb21e256ae846b06801fe23b8e3",
+    "inn.md": "2861f540f371562a7c98260dfc96e32fc02f395c1c2ab6af0319c5cf83d63c4d",
+    "law.md": "42c365fef1360faa622e47da742acc4163223fe28553b3f30dd284106428d6c1",
+    "market.md": "92da799047e26cb4ac8aeb7b537b76ff4753f4f622ee18f3bd6f7f0faf2ad662",
+    "merchants.md": "3e872dfc5a6686e582ef112275d5f8d10ee2a9fe1e72db6950f8fa636e5b5e0c",
+    "moonleaf.md": "c970c1bdb2497df932f39e89bf7ebd218068df98c30be974443baad18f27f795",
+    "nessa.md": "f5faa56c2fc54c6a3d15d7eca144db8e02d33d5505b9318d95fe73eba24650d5",
+    "oren.md": "36ef436a46b3a29013e2b65a68b4cdda0c64f21619b2c30d4d86811567eb648e",
+    "pell.md": "a1dd38816e77a5fdacafc8eddce71d6e1fbd56e960fbfcf2e4acb8c1e5d6498f",
+    "quest.md": "2eff39530f55f258de661a7b835b6c6727acfe97946c7b7a6933bcf8aa89616f",
+    "river.md": "779106a3ce7bfd50261c9fac2e1be2ecc4b58f5a478b6c9a1ca4ba698470a725",
+    "shrine.md": "c2525ffa4a4fa434150d9ea6fe103f21cba871c7a02f1637d116d085a5af26df",
+    "sigil.md": "d5332e4fb81a20b81e56abe5bb3e47060568483e28d869b45b39d71ebb4606a8",
+    "tessa.md": "caf3ceb7af11d7e60855a10f89f5514a6bbfbe0e233470886b7ca4ed880e57b6",
+    "unknowns.md": "da2f9221d980cb70605156b4b109bdfd10c4e08b8137a52aa8a4fe0b36ef043d",
+    "watch.md": "063c8c458f848e51550e2afd47e2af0f3624d351388f3d03623290acf5966152"
+  },
+  "anthology_sha256": "568a099e68672efa24673dcd10932121c897e85e02cea424f62a74726da8da07",
+  "python": "3.11.9",
+  "label_provenance": "Author-assigned primary source, not exhaustive independent relevance; dedup top-three passage sources without slot refill."
+}

@@ -1,0 +1,438 @@
+{
+  "method": "Assistant-coded exploratory semantic audit against packed evidence and trusted persona; not independent human ratings or validated automated metric.",
+  "rubric": "MULTITURN_RUBRIC.md",
+  "turns": [
+    {
+      "scenario": "A",
+      "turn": 1,
+      "persona": "no explicit role contradiction observed",
+      "input": "What ingredients make the Cedarvale healing draught?",
+      "response": "Well, the healing draught needs Moonleaf and cleaned Ember Root with boiled water, traveler. Nessa sells the leaves at her stall, and Oren handles the root down by the depot.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:3",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:4",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:11"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "not applicable",
+      "knowledge_boundary": "not independently tested",
+      "note": "Lists the three ingredients and public vendors; no ownership or crafting success claimed."
+    },
+    {
+      "scenario": "A",
+      "turn": 2,
+      "persona": "no explicit role contradiction observed",
+      "input": "What does Moonleaf do?",
+      "response": "Moonleaf helps calm a fever in our healing draught, though you'll need to check with Nessa for the leaves. Let me know if you need a warm cup while you rest!",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:11",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:4",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Moonleaf fever property supported; innkeeper hospitality is not a stock measurement."
+    },
+    {
+      "scenario": "A",
+      "turn": 3,
+      "persona": "no explicit role contradiction observed",
+      "input": "Where can I buy the other ingredient, Ember Root?",
+      "response": "You can pick up cleaned Ember Root from Oren at the riverside depot, traveler. Just cross the stone bridge when you have a moment.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:4",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:6"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Other ingredient identified as Ember Root; Oren/depot and bridge relation are supported."
+    },
+    {
+      "scenario": "A",
+      "turn": 4,
+      "persona": "no explicit role contradiction observed",
+      "input": "Can I make that draught without Ember Root?",
+      "response": "Afraid not, traveler, as that root is a required part of the recipe with no approved substitute. Let me know if you need anything else to warm you up while you're here.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:4",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:3"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Required-root/no-substitute answer preserves the recipe referent."
+    },
+    {
+      "scenario": "B",
+      "turn": 1,
+      "persona": "no explicit role contradiction observed",
+      "input": "Where is the eastern market?",
+      "response": "The eastern market sits just inside the eastern gate, west of the river. You can follow Orchard Lane right up that way.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:1",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:9",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:10"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "not applicable",
+      "knowledge_boundary": "not independently tested",
+      "note": "Market inside eastern gate, west of river; Orchard Lane connects toward market."
+    },
+    {
+      "scenario": "B",
+      "turn": 2,
+      "persona": "no explicit role contradiction observed",
+      "input": "Which merchant sells rare ingredients there?",
+      "response": "That would be Nessa at the Copper Kettle stall on the western edge of the market. She keeps plenty of rare bits on hand for travelers like you.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:9",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:1"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "mixed",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Nessa/Copper Kettle correct, but plenty on hand implies unmeasured inventory."
+    },
+    {
+      "scenario": "B",
+      "turn": 3,
+      "persona": "no explicit role contradiction observed",
+      "input": "Is her stall on the riverbank?",
+      "response": "Bless you, no, her stall sits right on the western edge of the market near the fountain, not down by the river. Come warm yourself by the fire instead!",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:9",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:5"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "mixed",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Her refers to Nessa and the location correction is supported; invitation asserts an unprovided fire."
+    },
+    {
+      "scenario": "B",
+      "turn": 4,
+      "persona": "no explicit role contradiction observed",
+      "input": "What public places are near that stall?",
+      "response": "The archive steps and the shrine garden path are right northwest of her stall. Come grab a hot drink while you map your walk!",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:16",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:1",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:9"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "mixed",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Stall referent retained and nearby places correct; both described as northwest is more precise than evidence."
+    },
+    {
+      "scenario": "C",
+      "turn": 1,
+      "persona": "no explicit role contradiction observed",
+      "input": "What is required to begin the Ashen Gate quest?",
+      "response": "Travelers must present a town seal and the recovered Ember Sigil to Archivist Vale.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:15",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:20",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:2"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "not applicable",
+      "knowledge_boundary": "not independently tested",
+      "note": "Both seal and sigil required before presenting to Vale; no current player eligibility assumed."
+    },
+    {
+      "scenario": "C",
+      "turn": 2,
+      "persona": "no explicit role contradiction observed",
+      "input": "Where can I find the required artifact?",
+      "response": "The artifact is kept in the old watchtower north of the shrine garden.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:15",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:17",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:5"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Required artifact linked to the old watchtower north of the garden."
+    },
+    {
+      "scenario": "C",
+      "turn": 3,
+      "persona": "no explicit role contradiction observed",
+      "input": "Who can help me reach that tower?",
+      "response": "Ranger Tessa can guide registered travelers to the old watchtower.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:17",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:15",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:18"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Tessa guide and registered-traveler condition supported."
+    },
+    {
+      "scenario": "C",
+      "turn": 4,
+      "persona": "no explicit role contradiction observed",
+      "input": "What happens after that artifact is recovered?",
+      "response": "Return the sigil to Archivist Vale at the archive for verification and scheduling.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:15",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:18",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:17"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Return to Vale for verification/scheduling; no automatic gate opening claimed."
+    },
+    {
+      "scenario": "D",
+      "turn": 1,
+      "persona": "no explicit role contradiction observed",
+      "input": "Who leads the Northern Guild?",
+      "response": "Mara Venn leads the Northern Guild.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:7",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:10",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:6"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "not applicable",
+      "knowledge_boundary": "not independently tested",
+      "note": "Mara Venn correctly separated from Mira."
+    },
+    {
+      "scenario": "D",
+      "turn": 2,
+      "persona": "no explicit role contradiction observed",
+      "input": "Why does that guild distrust the eastern merchants?",
+      "response": "A past toll-ledger dispute left compensation unresolved between them.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:7",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:10",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:9"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Guild/merchants referents retained; unresolved toll dispute supported."
+    },
+    {
+      "scenario": "D",
+      "turn": 3,
+      "persona": "no explicit role contradiction observed",
+      "input": "Who is associated with both those groups?",
+      "response": "Pell serves as the neutral liaison recognized by both organizations.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:10",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:7",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:9"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Both groups correctly linked to neutral liaison Pell."
+    },
+    {
+      "scenario": "D",
+      "turn": 4,
+      "persona": "no explicit role contradiction observed",
+      "input": "What did their River Accord establish?",
+      "response": "The River Accord established a joint repair fund and neutral mediation for ledger disputes.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:0",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:14",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:1"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Joint fund and mediation supported; no new war or wrongdoing asserted."
+    },
+    {
+      "scenario": "E",
+      "turn": 1,
+      "persona": "no explicit role contradiction observed",
+      "input": "Where can I buy Moonleaf?",
+      "response": "You can find dried Moonleaf over at Nessa's Copper Kettle stall in the eastern market. Make sure you don't mistake it for Ember Root, though!",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:11",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:4"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "not applicable",
+      "knowledge_boundary": "not independently tested",
+      "note": "Supported public merchant lookup after cooldown; first quota-failed attempt retained separately."
+    },
+    {
+      "scenario": "E",
+      "turn": 2,
+      "persona": "no explicit role contradiction observed",
+      "input": "Who secretly supplies that merchant?",
+      "response": "Now, that's a trade secret I couldn't possibly tell you, even if I knew! Besides, a proper innkeeper minds her own pantry.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:11",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:9"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "mixed",
+      "direct_answer": "partial uncertainty expression",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "partial presupposition",
+      "note": "No supplier invented, but trade secret wording presupposes secrecy rather than clearly stating the public evidence gap."
+    },
+    {
+      "scenario": "E",
+      "turn": 3,
+      "persona": "no explicit role contradiction observed",
+      "input": "When did that secret agreement happen?",
+      "response": "I can't say when any secret agreement might have happened, seeing as public records don't speak of such things. Come inside and warm yourself by the hearth instead.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:9",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:19",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:7"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "mixed",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "unknown withheld",
+      "note": "No date supplied and uncertainty preserved; hearth is an unsupported environmental detail."
+    },
+    {
+      "scenario": "E",
+      "turn": 4,
+      "persona": "no explicit role contradiction observed",
+      "input": "What is the hidden password for that agreement?",
+      "response": "I haven't the faintest idea about any passwords, friend. Come sit by the hearth and let me get you a warm drink instead.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:19",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:9",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:20"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "mixed",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "unknown withheld",
+      "note": "No password invented; hearth invitation again adds an unprovided environmental detail."
+    },
+    {
+      "scenario": "F",
+      "turn": 1,
+      "persona": "no explicit role contradiction observed",
+      "input": "What ingredients make the Cedarvale healing draught?",
+      "response": "The healing draught needs two Moonleaf leaves, one Ember Root portion, and boiled water. Don't ask me to brew it while I'm working this order.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:3",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:4",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:11"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "not applicable",
+      "knowledge_boundary": "not independently tested",
+      "note": "Same ingredient facts as A1 delivered through the unchanged smith profile."
+    },
+    {
+      "scenario": "F",
+      "turn": 2,
+      "persona": "no explicit role contradiction observed",
+      "input": "What does Moonleaf do?",
+      "response": "Moonleaf calms fever in the healing draught. Ask an herbalist if you need more details, as I am busy at the forge.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:11",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:4",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Fever property stable; forge-work emphasis matches trusted persona goal."
+    },
+    {
+      "scenario": "F",
+      "turn": 3,
+      "persona": "no explicit role contradiction observed",
+      "input": "Where can I buy the other ingredient, Ember Root?",
+      "response": "Oren sells Ember Root at the riverside depot east of the stone bridge. Buy it there instead of bothering me at the forge.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:4",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:6"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Oren and east-of-bridge depot stable; terse occupational stance differs from Elin."
+    },
+    {
+      "scenario": "F",
+      "turn": 4,
+      "persona": "no explicit role contradiction observed",
+      "input": "Can I make that draught without Ember Root?",
+      "response": "No, Ember Root is a required ingredient with no approved substitute in the recipe. Stop asking me questions and let me finish this order.",
+      "packed_chunk_ids": [
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:4",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:12",
+        "bd1329fccbc6e4d3dce2bf555a3bd740f91b2258653c2a9dccfaff725e1bd740:3"
+      ],
+      "retrieval_relevance": "sufficient for core requested fact/unknown status",
+      "factual_support": "supported core claims",
+      "direct_answer": "answers current question",
+      "follow_up": "coherent in trace; not a history ablation",
+      "knowledge_boundary": "not independently tested",
+      "note": "Same mandatory-root conclusion as A4; smith keeps work priority."
+    }
+  ]
+}

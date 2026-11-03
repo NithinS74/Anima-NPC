@@ -69,7 +69,7 @@ def build_prompt(
     if knowledge is not None:
         data["knowledge_status"] = knowledge.status
         if knowledge.source_kind == "dialogue":
-            data["history_policy"] = "Prior NPC replies omitted: generated text is not verified world knowledge."
+            data["history_policy"] = "Prior NPC utterances are unverified conversation memory, not world facts; recall what was said and correct errors using current evidence."
         # Document text always stays in the data message; never append it to policy.
         system = (
             "Answer CURRENT untrusted_player_utterance, not a previous request. "
@@ -147,9 +147,9 @@ def build_prompt(
     for memory in reversed(situation.recent_dialogue):
         exchange = {"player": memory.player_text, "npc": memory.npc_text, "mode": memory.mode}
         if knowledge is not None and knowledge.source_kind == "dialogue":
-            # Keep referents from player turns without recycling an earlier
-            # generated assertion as evidence of the NPC's biography/world.
-            exchange = {"player": memory.player_text}
+            # Retain conversational continuity while explicitly separating prior
+            # generated words from authorized current facts and evidence IDs.
+            exchange = {"player": memory.player_text, "npc_utterance_unverified": memory.npc_text, "mode": memory.mode}
         candidate = [exchange] + history
         proposed, size, proposed_aliases = packed(candidate)
         if size > max_input_bytes:

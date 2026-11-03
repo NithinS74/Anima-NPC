@@ -108,3 +108,12 @@ def test_capacity_and_unknown_schema_fail_explicitly(tmp_path):
     with sqlite3.connect(path) as db: db.execute("PRAGMA user_version=99")
     with pytest.raises(StoreFailure, match="unsupported_state_version"):
         SocialStore(path)
+
+
+def test_game_memory_provenance_is_explicit_and_default_lab_is_preserved(state):
+    store,key,profile,initial,clock=state
+    updated,_,_=begin(state,'provenance','Hello',initial['revision'])
+    stage(store,key,'provenance',updated['revision']);store.displayed(key,'provenance')
+    assert SocialStore(store.path).load(key)['history'][0].source=='console_display'
+    assert SocialStore(store.path,memory_source='game_completed').load(key)['history'][0].source=='game_completed'
+    with pytest.raises(ValueError):SocialStore(store.path,memory_source='heard')

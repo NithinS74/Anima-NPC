@@ -1,0 +1,26 @@
+\begin{table*}[t]
+\caption{Multi-Turn Knowledge-Grounded Dialogue Evaluation. A: ingredients/Elin; B: navigation/Elin; C: quest/Daren. Full accepted replies; k is the zero-based anthology chunk ordinal. Evaluations are a disclosed assistant audit, not human scores.}
+\label{tab:dialogue1}
+\centering\small\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{>{\raggedright\arraybackslash}p{.045\textwidth}>{\raggedright\arraybackslash}p{.20\textwidth}>{\raggedright\arraybackslash}p{.17\textwidth}>{\raggedright\arraybackslash}p{.405\textwidth}>{\raggedright\arraybackslash}p{.105\textwidth}}
+\toprule
+ID & Player input & Retrieved knowledge & Actual NPC response & Evaluation \\
+\midrule
+A1 & What ingredients make the Cedarvale healing draught? & k3,4,11: Two Moonleaf leaves; root; boiled water & Well, the healing draught needs Moonleaf and cleaned Ember Root with boiled water, traveler. Nessa sells the leaves at her stall, and Oren handles the root down by the depot. & Core claims supported \\
+A2 & What does Moonleaf do? & k11,4,12: Moonleaf calms fever & Moonleaf helps calm a fever in our healing draught, though you'll need to check with Nessa for the leaves. Let me know if you need a warm cup while you rest! & Core claims supported \\
+A3 & Where can I buy the other ingredient, Ember Root? & k4,12,6: Oren; depot east of bridge & You can pick up cleaned Ember Root from Oren at the riverside depot, traveler. Just cross the stone bridge when you have a moment. & Core claims supported \\
+A4 & Can I make that draught without Ember Root? & k4,12,3: Root required; no substitute & Afraid not, traveler, as that root is a required part of the recipe with no approved substitute. Let me know if you need anything else to warm you up while you're here. & Core claims supported \\
+\midrule
+B1 & Where is the eastern market? & k1,9,10: Market inside gate, west of river & The eastern market sits just inside the eastern gate, west of the river. You can follow Orchard Lane right up that way. & Core claims supported \\
+B2 & Which merchant sells rare ingredients there? & k9,12,1: Nessa, Copper Kettle; stock unknown & That would be Nessa at the Copper Kettle stall on the western edge of the market. She keeps plenty of rare bits on hand for travelers like you. & Mixed: stock claim \\
+B3 & Is her stall on the riverbank? & k12,9,5: Stall by fountain, not riverbank & Bless you, no, her stall sits right on the western edge of the market near the fountain, not down by the river. Come warm yourself by the fire instead! & Mixed: invented fire \\
+B4 & What public places are near that stall? & k16,1,9: Archive steps; garden path nearby & The archive steps and the shrine garden path are right northwest of her stall. Come grab a hot drink while you map your walk! & Mixed: direction precision \\
+\midrule
+C1 & What is required to begin the Ashen Gate quest? & k15,20,2: Seal + sigil; present to Vale & Travelers must present a town seal and the recovered Ember Sigil to Archivist Vale. & Core claims supported \\
+C2 & Where can I find the required artifact? & k15,17,5: Sigil in old watchtower & The artifact is kept in the old watchtower north of the shrine garden. & Core claims supported \\
+C3 & Who can help me reach that tower? & k17,15,18: Tessa guides registered travelers & Ranger Tessa can guide registered travelers to the old watchtower. & Core claims supported \\
+C4 & What happens after that artifact is recovered? & k15,18,17: Return to Vale for verification & Return the sigil to Archivist Vale at the archive for verification and scheduling. & Core claims supported \\
+\bottomrule
+\end{tabular}
+\end{table*}

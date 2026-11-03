@@ -1,0 +1,72 @@
+{
+  "completed_pairs": 7,
+  "completed_response_records": 15,
+  "provider_requests": 17,
+  "provider_failures": [
+    "provider_rate_limited"
+  ],
+  "unpaired_ids": [
+    "guard-location"
+  ],
+  "semantic_grounding_scores": "Unavailable: literal target mentions are not entailment or independent human ratings.",
+  "conditions": {
+    "no_rag": {
+      "paired_n": 7,
+      "all_observed_n": 7,
+      "target_mentions": 1,
+      "target_denominator": 7,
+      "paired_response_ready": {
+        "n": 7,
+        "mean_ms": 1187.9250428571352,
+        "median_ms": 1201.423200000022,
+        "sample_sd_ms": 373.11942468468726,
+        "p95_ms": null,
+        "min_ms": 870.6598999999642,
+        "max_ms": 1947.9398999999944
+      },
+      "all_observed_response_ready": {
+        "n": 7,
+        "mean_ms": 1187.9250428571352,
+        "median_ms": 1201.423200000022,
+        "sample_sd_ms": 373.11942468468726,
+        "p95_ms": null,
+        "min_ms": 870.6598999999642,
+        "max_ms": 1947.9398999999944
+      },
+      "accepted_generated_n": 7,
+      "fallback_n": 0,
+      "repair_success_n": 1,
+      "input_tokens": 2802,
+      "output_tokens": 327
+    },
+    "rag": {
+      "paired_n": 7,
+      "all_observed_n": 8,
+      "target_mentions": 7,
+      "target_denominator": 7,
+      "paired_response_ready": {
+        "n": 7,
+        "mean_ms": 1263.6597428571333,
+        "median_ms": 1104.9388999999792,
+        "sample_sd_ms": 354.44921082605555,
+        "p95_ms": null,
+        "min_ms": 1015.418899999986,
+        "max_ms": 1994.0268000000287
+      },
+      "all_observed_response_ready": {
+        "n": 8,
+        "mean_ms": 1395.5751749999904,
+        "median_ms": 1106.0318499999937,
+        "sample_sd_ms": 496.89027354821513,
+        "p95_ms": null,
+        "min_ms": 1015.418899999986,
+        "max_ms": 2318.983199999991
+      },
+      "accepted_generated_n": 7,
+      "fallback_n": 1,
+      "repair_success_n": 0,
+      "input_tokens": 7968,
+      "output_tokens": 340
+    }
+  }
+}

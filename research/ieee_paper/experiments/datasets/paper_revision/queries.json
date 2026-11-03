@@ -1,0 +1,170 @@
+[
+  {
+    "id": "forge-1",
+    "query": "Where can I find the blacksmith Mira working?",
+    "relevant_sources": [
+      "forge.md"
+    ]
+  },
+  {
+    "id": "forge-2",
+    "query": "Who repairs iron tools rather than supplying medicine?",
+    "relevant_sources": [
+      "forge.md"
+    ]
+  },
+  {
+    "id": "healer-1",
+    "query": "Where is the healer Iona's clinic?",
+    "relevant_sources": [
+      "healer.md"
+    ]
+  },
+  {
+    "id": "healer-2",
+    "query": "What salve is used to treat burns in Cedarvale?",
+    "relevant_sources": [
+      "healer.md"
+    ]
+  },
+  {
+    "id": "inn-1",
+    "query": "Which inn has rooms for visiting travellers?",
+    "relevant_sources": [
+      "inn.md"
+    ]
+  },
+  {
+    "id": "inn-2",
+    "query": "What soup does Elin serve at the Blue Lantern?",
+    "relevant_sources": [
+      "inn.md"
+    ]
+  },
+  {
+    "id": "guard-1",
+    "query": "Who checks wagon permits at Stone Bridge?",
+    "relevant_sources": [
+      "guard.md"
+    ]
+  },
+  {
+    "id": "guard-2",
+    "query": "Can the bridge guard authorize entry to a private vault?",
+    "relevant_sources": [
+      "guard.md"
+    ]
+  },
+  {
+    "id": "history-1",
+    "query": "What event does Cedarvale's old bell commemorate?",
+    "relevant_sources": [
+      "history.md"
+    ]
+  },
+  {
+    "id": "history-2",
+    "query": "Why were the grain stores moved to higher ground?",
+    "relevant_sources": [
+      "history.md"
+    ]
+  },
+  {
+    "id": "faction-1",
+    "query": "Which group maintains the ferry warning lamps?",
+    "relevant_sources": [
+      "faction.md"
+    ]
+  },
+  {
+    "id": "faction-2",
+    "query": "What animal appears on the Riverwardens emblem?",
+    "relevant_sources": [
+      "faction.md"
+    ]
+  },
+  {
+    "id": "library-1",
+    "query": "Where does Tessa keep the village maps?",
+    "relevant_sources": [
+      "library.md"
+    ]
+  },
+  {
+    "id": "library-2",
+    "query": "What records are stored upstairs in the former watchtower?",
+    "relevant_sources": [
+      "library.md"
+    ]
+  },
+  {
+    "id": "market-1",
+    "query": "What symbol is stamped on market tokens?",
+    "relevant_sources": [
+      "market.md"
+    ]
+  },
+  {
+    "id": "market-2",
+    "query": "Where can a trader find the public weighing scales?",
+    "relevant_sources": [
+      "market.md"
+    ]
+  },
+  {
+    "id": "festival-1",
+    "query": "When is the Lantern Crossing festival celebrated?",
+    "relevant_sources": [
+      "festival.md"
+    ]
+  },
+  {
+    "id": "festival-2",
+    "query": "What do residents float along the mill channel at the festival?",
+    "relevant_sources": [
+      "festival.md"
+    ]
+  },
+  {
+    "id": "mine-1",
+    "query": "What metal comes from Amber Hollow mine?",
+    "relevant_sources": [
+      "mine.md"
+    ]
+  },
+  {
+    "id": "mine-2",
+    "query": "Why is the western mine tunnel closed?",
+    "relevant_sources": [
+      "mine.md"
+    ]
+  },
+  {
+    "id": "orchard-1",
+    "query": "What fruit grows in the western orchard?",
+    "relevant_sources": [
+      "orchard.md"
+    ]
+  },
+  {
+    "id": "orchard-2",
+    "query": "Who exchanges damaged baskets at the orchard shed?",
+    "relevant_sources": [
+      "orchard.md"
+    ]
+  },
+  {
+    "id": "ferry-1",
+    "query": "Which settlement does the village ferry reach?",
+    "relevant_sources": [
+      "ferry.md"
+    ]
+  },
+  {
+    "id": "ferry-2",
+    "query": "Who accepts copper tokens to carry carts across the river?",
+    "relevant_sources": [
+      "ferry.md"
+    ]
+  }
+]

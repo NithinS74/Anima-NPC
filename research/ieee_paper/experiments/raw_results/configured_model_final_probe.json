@@ -1,0 +1,6 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "status": "unavailable",
+  "error_code": "provider_bad_request",
+  "elapsed_s": 1.0501638999994611
+}

@@ -1,0 +1,70 @@
+{
+  "completed_scenarios": 6,
+  "accepted_generated_turns": 24,
+  "total_attempted_turns": 25,
+  "provider_requests": 25,
+  "provider_failures": [
+    "provider_rate_limited"
+  ],
+  "models": [
+    "gemini-3.5-flash-lite"
+  ],
+  "personas": [
+    "daren",
+    "elin",
+    "mira"
+  ],
+  "history_counts": {
+    "A": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "B": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "C": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "D": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "E": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "F": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "response_ready_all_attempts": {
+    "n": 25,
+    "mean_ms": 2851.4917879996938
+  },
+  "response_ready_success": {
+    "n": 24,
+    "mean_ms": 2868.460966666286,
+    "median_ms": 2913.6297999993985,
+    "sd_ms": 567.3980571214407
+  },
+  "provider_call_success": {
+    "n": 24,
+    "mean_ms": 1505.9499041672098
+  },
+  "evaluation_warning": "Qualitative assistant audit; no independent human quality/accuracy percentage."
+}

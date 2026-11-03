@@ -1,0 +1,25 @@
+{
+  "head": "ff9fd7e95beac344b43e836027bc43f3e5c7b5bc",
+  "working_tree_hashes": {
+    "src/npc/runtime/preview.py": "46acd0281e8cb5ccb2353014e91acd1333a1952b151dc2b2d5ea70c7526726fb",
+    "src/npc/context/focus.py": "a84f1fdb6f7c1aa9f8963a52af2ee26a521b4b123d23a4c57b92421af4347fa6",
+    "src/npc/context/builder.py": "5c3bd8fce5cbb1da3820a649f5e2a429441430bf8f55b8c445c8fa99693ca7fd",
+    "src/npc/behavior/policy.py": "0336c2de392e2bc1498cf106a21b00fdcc1df0a77157716c5de49820ada29b0f",
+    "src/npc/generation/prompt.py": "4def22485f59935716f96be60802542fb111a20ffe9f4e2bfa355e8a706d8b68",
+    "src/npc/generation/provider.py": "74913fa15c939402571c1609568b0800dd20881d0660965b3bb9ae9450f0ad6a",
+    "src/npc/generation/config.py": "ea0dabe3a97de41ec0db0bdde4705959d4ac8848a15848eada9621f3ea7e4166",
+    "src/npc/rag/local.py": "d3215810848843c56453cfcb2c4afe1fca9a2aa9c8b960a35d6fe98bb9c67c7e",
+    "src/npc/rag/config.py": "084e696fb6acdcba1917181648f59c11ce26c3e4312cf9c724fbcc8b337c3869",
+    "src/npc/rag/evidence.py": "de5ccb0813a9fdb09a28f17c5b08c432671d23c1a34ae4a297fef5bb09de0147",
+    "src/npc/rag/backend/service.py": "f2890a658816e2333b3f0470f100fec45c319b4f5bf82cdf36396d46f0171acf",
+    "src/npc/rag/backend/embeddings.py": "0e2cb2d9f1a1cccca112b5779d75718ef09169b09706ad7064c876347e760a96",
+    "src/npc/rag/backend/loaders.py": "515e2f2f6ace46325a274a972ee20e7ae18ba6b91325b0c34efb21a03b1f1494",
+    "src/npc/validation/response.py": "dcfc1d4c12f2a12c94d41a7f7a16466006ffeba38ccb7f1c66335e202c24ff22",
+    "src/npc/state/social_store.py": "3ea10976756d82d79a1ceb5439ef124bfd1995edc826d78d234fdf9580206552",
+    "src/npc/contracts/context.py": "1ce4c33304a4e77d3a3f7314bcbb0980a9c6f54e34bce194bcd995abaee194cc",
+    "src/npc/adapters/skyrim/bridge.py": "382a2df1796f96a218a5710e23b505c01cd9f507b690b50375a13d09936e6063",
+    "src/npc/adapters/skyrim/protocol.py": "f2368eae365557ba7df242d33d1596ce922061d851f493eb836fae2fac10d95b",
+    "src/npc/adapters/skyrim/native/plugin.cpp": "d5a52d3dc3b3a626502ec604930f907c50e0589da1923085491c5328eccbe465",
+    "src/npc/adapters/skyrim/speech.py": "5d58f38dc7ad3beba4c316e74a9886a9e8e45122d9c1369184fe8c77cf45b986"
+  }
+}

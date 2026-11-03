@@ -1,0 +1,7 @@
+# Cedarvale multi-turn evaluation collection
+
+24 original fictional Markdown source documents, each with a stable CV source ID and title. No external game lore or real medical guidance. Public knowledge excludes private records and explicitly documents unknowns. The four-question conversations are sequential; A/F repeat identical inputs with two unchanged real village persona profiles. Iona is excluded because her actual profile is a space-station registrar.
+
+queries.json fixes one primary relevant source per retrieval query before execution. Some facts overlap across documents; these primary labels are author-assigned rather than exhaustive/independently adjudicated relevance, which must be disclosed. Report source-level rank metrics and their single-relevant-source ceiling. Do not infer semantic correctness from keyword matching.
+
+The actual LocalRetriever binds one file per NPC. The harness deterministically concatenates these exact 24 documents, in filename order, into public_reference.md in a separate index for dialogue; it does not choose sources by question or inject expected answers. Report 24 authored documents separately from one physical anthology and its measured chunk count. The independent source-file benchmark uses the same authored text with different chunk boundaries. Original section IDs remain in passage text; the evidence source field is the anthology path, not a fabricated per-document source.

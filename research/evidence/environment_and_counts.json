@@ -1,0 +1,38 @@
+{
+  "python": "3.11.9",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "packages": {
+    "pydantic": "2.14.2",
+    "httpx": "0.28.1",
+    "chromadb": "1.5.9",
+    "onnxruntime": "1.23.2",
+    "numpy": "2.4.6",
+    "pytest": "9.2.0",
+    "pytest-asyncio": "1.4.1.post1",
+    "pypdf": "6.21.4",
+    "fastapi": "0.162.0"
+  },
+  "tests_by_group": {
+    "cv.backend.tests": 26,
+    "tests.contracts.test_context_contracts": 32,
+    "tests.integration.rag": 13,
+    "tests.integration.test_context_preview": 5,
+    "tests.integration.test_dialogue_preview": 5,
+    "tests.integration.test_npc_lab": 16,
+    "tests.integration.test_rag_context": 13,
+    "tests.integration.test_social_lab": 5,
+    "tests.unit.adapters": 29,
+    "tests.unit.behavior": 24,
+    "tests.unit.context": 65,
+    "tests.unit.generation": 50,
+    "tests.unit.lab": 66,
+    "tests.unit.rag": 45,
+    "tests.unit.runtime": 19,
+    "tests.unit.state": 8,
+    "tests.unit.test_anima_bootstrap": 15,
+    "tests.unit.test_runtime_assets": 12,
+    "tests.unit.test_setup_environment": 5,
+    "tests.unit.validation": 23,
+    "tests.unit.vision": 16
+  }
+}

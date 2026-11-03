@@ -1,0 +1,17 @@
+{
+  "pages": 7,
+  "compiled_from_exact_extracted_zip": true,
+  "all_page_text_matches": true,
+  "all_page_pixels_match": true,
+  "page_pixel_sha256": [
+    "e94efa1ab0a8ef8d2a456e98b68efb997ea53fccb045a2b11d060af7987ad1b4",
+    "9ad30ce5114757a3148efc34080900c6d95ce1d1469a05d4280e6fdec81826ea",
+    "f42f6d08d3f165b0132a77b7f86cf2c297664ad4deded5692d254b493a83313a",
+    "4d77de63d59fd4d89dff06df58b2cacbc667e1101148a37d7c889660621c016e",
+    "aee4b26ddeb5afc84881c215692a45869d5fd63b761d76e9cb790a5762f31825",
+    "04a7325d7d3bc9f0101600223f5fdbb915fd63ef05df78c30846d9f9ad7f5ce7",
+    "e0b14842acbda87b8483503e1e6cfce4ea3e1ad2fe3a0f17bde7e1b7cafad651"
+  ],
+  "pdf_sha256": "cabcad4b7e81ea02033281ff71a756d562efc4fcedb5374e5bd19b5cd4755456",
+  "zip_sha256": "c5435062c95731ab54fcf2086f613f33193bc328c2f42469f26b3f45f10a62a9"
+}

@@ -73,7 +73,7 @@ class DialogueMemory(Contract):
     player_text: Annotated[str, Field(strict=True, max_length=4000)]
     npc_text: Annotated[str, Field(strict=True, max_length=2000)]
     mode: Literal["speech", "silence", "end"] = "speech"
-    source: Literal["console_display"] = "console_display"
+    source: Literal["console_display", "game_completed"] = "console_display"
 
 
 class SocialAppraisal(Contract):

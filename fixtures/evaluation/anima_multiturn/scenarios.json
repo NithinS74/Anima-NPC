@@ -1,0 +1,140 @@
+[
+  {
+    "id": "A",
+    "title": "Ingredients",
+    "persona_id": "elin",
+    "turns": [
+      {
+        "turn": 1,
+        "input": "What ingredients make the Cedarvale healing draught?"
+      },
+      {
+        "turn": 2,
+        "input": "What does Moonleaf do?"
+      },
+      {
+        "turn": 3,
+        "input": "Where can I buy the other ingredient, Ember Root?"
+      },
+      {
+        "turn": 4,
+        "input": "Can I make that draught without Ember Root?"
+      }
+    ]
+  },
+  {
+    "id": "B",
+    "title": "Navigation",
+    "persona_id": "elin",
+    "turns": [
+      {
+        "turn": 1,
+        "input": "Where is the eastern market?"
+      },
+      {
+        "turn": 2,
+        "input": "Which merchant sells rare ingredients there?"
+      },
+      {
+        "turn": 3,
+        "input": "Is her stall on the riverbank?"
+      },
+      {
+        "turn": 4,
+        "input": "What public places are near that stall?"
+      }
+    ]
+  },
+  {
+    "id": "C",
+    "title": "Quest sequence",
+    "persona_id": "daren",
+    "turns": [
+      {
+        "turn": 1,
+        "input": "What is required to begin the Ashen Gate quest?"
+      },
+      {
+        "turn": 2,
+        "input": "Where can I find the required artifact?"
+      },
+      {
+        "turn": 3,
+        "input": "Who can help me reach that tower?"
+      },
+      {
+        "turn": 4,
+        "input": "What happens after that artifact is recovered?"
+      }
+    ]
+  },
+  {
+    "id": "D",
+    "title": "Factions and history",
+    "persona_id": "daren",
+    "turns": [
+      {
+        "turn": 1,
+        "input": "Who leads the Northern Guild?"
+      },
+      {
+        "turn": 2,
+        "input": "Why does that guild distrust the eastern merchants?"
+      },
+      {
+        "turn": 3,
+        "input": "Who is associated with both those groups?"
+      },
+      {
+        "turn": 4,
+        "input": "What did their River Accord establish?"
+      }
+    ]
+  },
+  {
+    "id": "E",
+    "title": "Knowledge boundaries",
+    "persona_id": "elin",
+    "turns": [
+      {
+        "turn": 1,
+        "input": "Where can I buy Moonleaf?"
+      },
+      {
+        "turn": 2,
+        "input": "Who secretly supplies that merchant?"
+      },
+      {
+        "turn": 3,
+        "input": "When did that secret agreement happen?"
+      },
+      {
+        "turn": 4,
+        "input": "What is the hidden password for that agreement?"
+      }
+    ]
+  },
+  {
+    "id": "F",
+    "title": "Second-persona replay",
+    "persona_id": "mira",
+    "turns": [
+      {
+        "turn": 1,
+        "input": "What ingredients make the Cedarvale healing draught?"
+      },
+      {
+        "turn": 2,
+        "input": "What does Moonleaf do?"
+      },
+      {
+        "turn": 3,
+        "input": "Where can I buy the other ingredient, Ember Root?"
+      },
+      {
+        "turn": 4,
+        "input": "Can I make that draught without Ember Root?"
+      }
+    ]
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "pages": 5,
+  "abstract_words": 173,
+  "bibliography_entries": 8,
+  "cited_keys": [
+    "callison2022",
+    "es2024",
+    "hu2022",
+    "karpukhin2020",
+    "lewis2020",
+    "liu2024",
+    "park2023",
+    "shao2023"
+  ],
+  "undefined_citations": [],
+  "undefined_references": [],
+  "numbered_sections": 8,
+  "authors_and_usns_present": true,
+  "pdf_sha256": "8ce483af7b7c830a7c0a9f33366994de74244a2e7bb75c60156825acc9fc0663",
+  "source_zip_sha256": "8c0f8ad7fb93485af9ca5afffc35330cad1bfca3f2a978bb7f5a5ab6dd7ec429",
+  "zip_members": [
+    "main.tex",
+    "references.bib",
+    "README.md",
+    "validate_and_package.py",
+    "figures/model_agnostic_architecture.svg",
+    "figures/rag_orchestration_pipeline.svg",
+    "figures/system_architecture.svg",
+    "figures/model_agnostic_architecture.pdf",
+    "figures/rag_orchestration_pipeline.pdf",
+    "figures/system_architecture.pdf",
+    "figure_sources/generate_figures.py"
+  ],
+  "underfull_vbox_count": 1,
+  "overfull_boxes": 0,
+  "font_shape_warnings": 0,
+  "limitations": [
+    "Offline functional evidence only; no current semantic-quality or model-latency experiment.",
+    "Reviewer report is explicitly a self-review, not independent peer review."
+  ]
+}

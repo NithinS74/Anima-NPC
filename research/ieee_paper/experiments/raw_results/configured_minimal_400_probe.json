@@ -1,0 +1,12 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "status": "completed",
+  "reply": {
+    "content": "{\n  \"mode\": \"standard\",\n  \"text\": \"ready\"\n}",
+    "model": "gemini-3.5-flash-lite",
+    "finish_reason": "stop",
+    "input_tokens": 14,
+    "output_tokens": 19
+  },
+  "elapsed_s": 26.124435799996718
+}

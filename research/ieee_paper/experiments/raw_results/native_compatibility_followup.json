@@ -1,0 +1,37 @@
+{
+  "plugin_version": "0.2.0",
+  "runtime": "1.7.104.0",
+  "dll_sha256": "0fa77c42d0b9a42f012223cf3d6e47ff9a8eed63f68a4b7b12331f4ecf9e3360",
+  "test": "offline authored greeting, Hello -> What do you need?",
+  "receipts": [
+    {
+      "kind": "delivery",
+      "captured_at": "2026-11-03T05:14:57.276762+00:00",
+      "delivery_id": "25ee1b90130342eaaaa62d641b6b49d5",
+      "status": "started"
+    },
+    {
+      "kind": "delivery",
+      "captured_at": "2026-11-03T05:14:57.998924+00:00",
+      "delivery_id": "25ee1b90130342eaaaa62d641b6b49d5",
+      "status": "interrupted"
+    },
+    {
+      "kind": "delivery",
+      "captured_at": "2026-11-03T05:16:18.568217+00:00",
+      "delivery_id": "f7557716ca5944b38945b476583e1788",
+      "status": "started"
+    },
+    {
+      "kind": "delivery",
+      "captured_at": "2026-11-03T05:16:20.627733+00:00",
+      "delivery_id": "f7557716ca5944b38945b476583e1788",
+      "status": "completed"
+    }
+  ],
+  "limitations": [
+    "No old-runtime live run",
+    "Voice and live model/RAG unverified",
+    "Capture obscured; publication screenshot pending"
+  ]
+}

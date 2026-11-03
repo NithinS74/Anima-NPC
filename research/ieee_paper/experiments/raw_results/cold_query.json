@@ -1,0 +1,10 @@
+{
+  "first_query_in_fresh_process_ms": 257.94889999815496,
+  "embedding_ms": 225.84679999999935,
+  "vector_query_ms": 31.407500006025657,
+  "sources": [
+    "forge.md",
+    "healer.md",
+    "inn.md"
+  ]
+}

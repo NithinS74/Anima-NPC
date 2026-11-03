@@ -20,7 +20,10 @@ class StateConflict(StoreFailure):
 
 
 class SocialStore:
-    def __init__(self, path: Path, *, clock=time, max_bytes=250 * 1024 * 1024):
+    def __init__(self, path: Path, *, clock=time, max_bytes=250 * 1024 * 1024, memory_source="console_display"):
+        if memory_source not in {"console_display", "game_completed"}:
+            raise ValueError("unsupported dialogue memory provenance")
+        self.memory_source = memory_source
         self.path, self.clock, self.max_bytes = Path(path), clock, max_bytes
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self._connection() as db:
@@ -78,7 +81,7 @@ class SocialStore:
         history = db.execute("SELECT request_id,player_text,npc_text,mode FROM social_turn WHERE scope_key=? AND displayed=1 ORDER BY sequence DESC LIMIT 8", (key,)).fetchall()
         return dict(relationship=Relationship.model_validate_json(row["relationship"]), mood=row["mood"],
                     revision=row["revision"], last_gain=row["last_gain"],
-                    history=tuple(DialogueMemory(request_id=r["request_id"], player_text=r["player_text"], npc_text=r["npc_text"] or "", mode=r["mode"]) for r in reversed(history)))
+                    history=tuple(DialogueMemory(request_id=r["request_id"], player_text=r["player_text"], npc_text=r["npc_text"] or "", mode=r["mode"], source=self.memory_source) for r in reversed(history)))
 
     def ensure(self, key: str, initial: Relationship, mood: str):
         with self._transaction() as db:

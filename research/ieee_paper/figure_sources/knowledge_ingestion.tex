@@ -1,0 +1,19 @@
+\documentclass[border=4pt]{standalone}
+\input{diagram_styles.tex}
+\begin{document}
+\begin{tikzpicture}
+\node[storage,text width=2.25cm] (docs) at (0,0) {Game documents\\bytes + source};
+\node[retrieval,text width=2.25cm] (extract) at (2.8,0) {Text extraction\\format loaders};
+\node[retrieval,text width=2.25cm] (chunk) at (5.6,0) {Token-offset chunks\\220 / overlap 32};
+\node[retrieval,text width=2.25cm] (embed) at (5.6,-1.5) {CPU MiniLM\\384-D vectors};
+\node[storage,text width=2.25cm] (store) at (2.8,-1.5) {Chroma upsert\\source / revision};
+\node[storage,text width=2.25cm] (manifest) at (0,-1.5) {Publish manifest\\after file succeeds};
+\node[context,text width=7.8cm] (ready) at (2.8,-3.35) {Retrieval uses committed revisions; failed replacements retain prior data.\\Knowledge changes do not invoke generator training.};
+\draw[flow] (docs) -- (extract);
+\draw[flow] (extract) -- (chunk);
+\draw[flow] (chunk) -- (embed);
+\draw[flow] (embed) -- (store);
+\draw[flow] (store) -- (manifest);
+\draw[flow] (manifest.south) -- ++(0,-.25) -| (ready.north);
+\end{tikzpicture}
+\end{document}

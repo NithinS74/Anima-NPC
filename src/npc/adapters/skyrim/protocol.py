@@ -8,7 +8,7 @@ from pydantic import Field, StrictInt, field_validator
 
 from npc.contracts.context import (
     Contract, ContextScenario, Identifier, ObservedFact, Persona, PlayerInput,
-    Scope, StateSnapshot, TurnInput,
+    Scope, StateSnapshot, TurnInput, NpcState,
 )
 
 Text = Annotated[str, Field(strict=True, max_length=2000)]
@@ -74,8 +74,9 @@ class GameEvent(Contract):
     state_revision: Annotated[StrictInt, Field(ge=0)] = 0
     captured_at_ms: Annotated[StrictInt, Field(ge=0)]
     game_pid: Annotated[StrictInt, Field(gt=0)]
-    kind: Literal["start", "snapshot", "end", "listen_start", "listen_stop", "delivery"]
+    kind: Literal["start", "snapshot", "end", "listen_start", "listen_stop", "delivery", "player_text"]
     snapshot: GameSnapshot | None = None
+    text: Annotated[str, Field(strict=True, min_length=1, max_length=4000)] | None = None
     delivery_id: Identifier | None = None
     status: Literal["started", "completed", "interrupted", "failed"] | None = None
 
@@ -120,6 +121,7 @@ class Settings(Contract):
     rag_config: str | None = None
     provider_profile: str = "configs/providers/offline.yaml"
     audio_root: str = "output/pipeline/audio"
+    state_db: str | None = "output/skyrim/social.sqlite3"
     port: int = Field(default=8768, ge=1024, le=65535)
     timeout_s: float = Field(default=30, ge=1, le=60)
     capture_screenshots: bool = True
@@ -160,7 +162,7 @@ def profile_for(snapshot: GameSnapshot, profiles: dict[str, NpcProfile]) -> NpcP
 
 
 def canonical_scenario(event: GameEvent, speech: SpeechInput, profile: NpcProfile,
-                       world_id: str, revision: int, *, now: datetime | None = None) -> ContextScenario:
+                       world_id: str, revision: int, *, now: datetime | None = None, social_state=None) -> ContextScenario:
     """Small executable core view; full game context travels beside it to the pipeline."""
     data = event.snapshot
     if data is None:
@@ -195,6 +197,10 @@ def canonical_scenario(event: GameEvent, speech: SpeechInput, profile: NpcProfil
                      player_input=PlayerInput(text=speech.text, source=speech.source,
                                               confidence=speech.confidence), facts=tuple(facts))
     state = StateSnapshot(scope=scope, npc_id=npc, player_id=player,
-                          storage_revision=revision, dialogue_revision=revision, turn_epoch=revision,
-                          persona=profile.persona)
+                          storage_revision=social_state["revision"] if social_state else revision,
+                          dialogue_revision=revision, turn_epoch=revision,
+                          persona=profile.persona,
+                          **({"relationship": social_state["relationship"], "recent_dialogue": social_state["history"],
+                              "npc_state": NpcState(observed_at=now, ttl_ms=60000, mood=social_state["mood"])}
+                             if social_state else {}))
     return ContextScenario(now=now, turn=turn, snapshot=state)

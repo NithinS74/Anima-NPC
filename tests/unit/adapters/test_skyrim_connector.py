@@ -534,3 +534,258 @@ def test_capture_vlm_rag_generation_delivery_roundtrip(tmp_path, attach):
             assert bridge.session.delivery_status == "completed"
         finally: await bridge.close()
     asyncio.run(run())
+
+
+def test_anima_logs_correlated_input_staging_and_native_receipts(tmp_path, caplog, monkeypatch):
+    import logging
+    from npc.adapters.skyrim.diagnostics import LOGGER
+    from npc.generation.provider import OfflineProvider
+    from npc.runtime.preview import PreviewRunner
+    monkeypatch.setattr(LOGGER, "propagate", False)
+    monkeypatch.setattr(LOGGER, "handlers", [caplog.handler])
+    caplog.set_level(logging.INFO, logger=LOGGER.name)
+    async def run():
+        bridge = Bridge(settings(tmp_path, pipeline_mode="preview"), root=tmp_path,
+                        runner=PreviewRunner(OfflineProvider()))
+        try:
+            await ready(bridge)
+            turn = speech().model_copy(update={"text": "HELLO"})
+            await bridge.player_input(turn)
+            await bridge.session.turn_task
+            await bridge.player_input(turn)  # Idempotent input is not logged twice.
+            command = bridge.command("session-a")
+            assert command["text"] == "What do you need?"
+            staged = [r.getMessage() for r in caplog.records if r.getMessage().startswith("OUTPUT_STAGED")]
+            assert len(staged) == 1 and 'delivered="False"' in staged[0]
+            assert not any(r.getMessage().startswith("NATIVE_ACK") for r in caplog.records)
+            await bridge.game_event(event("delivery", 2, delivery_id=command["delivery_id"], status="started"))
+            await bridge.game_event(event("delivery", 3, delivery_id=command["delivery_id"], status="completed"))
+            await bridge.game_event(event("delivery", 3, delivery_id=command["delivery_id"], status="completed"))
+            with pytest.raises(ConnectionError):
+                await bridge.result(result().model_copy(update={"request_id": "stale"}))
+            await bridge.game_event(event("end", 4))
+        finally:
+            await bridge.close()
+    asyncio.run(run())
+    lines = [r.getMessage() for r in caplog.records]
+    assert sum(x.startswith("PLAYER_INPUT") for x in lines) == 1
+    assert any('route="authored"' in x and 'calls="0"' in x for x in lines)
+    acks = [x for x in lines if x.startswith("NATIVE_ACK")]
+    assert len(acks) == 2
+    assert 'status="started"' in acks[0] and 'status="completed"' in acks[1]
+    assert all('heard="unverified"' in x and 'request="input-a"' in x for x in acks)
+    assert any(x.startswith("SESSION_CLOSED") for x in lines)
+
+
+def test_anima_send_text_targets_active_session_and_preserves_case(tmp_path):
+    from npc.adapters.skyrim.__main__ import send_text
+    observed = []
+    def handle(request):
+        observed.append(request)
+        if request.url.path == "/v1/health":
+            return httpx.Response(200, json={"session_id": "actual-session"})
+        body = json.loads(request.content)
+        assert body["text"] == "HELLO" and body["session_id"] == "actual-session"
+        assert body["source"] == "text" and body["input_id"]
+        return httpx.Response(202, json={"status": "pending", "request_id": body["input_id"]})
+    with httpx.Client(base_url="http://127.0.0.1:8768", transport=httpx.MockTransport(handle)) as client:
+        reply = send_text(settings(tmp_path), "HELLO", client=client)
+    assert reply["status"] == "pending"
+    assert [r.url.path for r in observed] == ["/v1/health", "/v1/player-input"]
+
+
+@pytest.mark.parametrize("health_status,session,error", [(200, None, ValueError), (503, "session", httpx.HTTPStatusError)])
+def test_anima_send_text_does_not_post_without_healthy_session(tmp_path, health_status, session, error):
+    from npc.adapters.skyrim.__main__ import send_text
+    observed = []
+    def handle(request):
+        observed.append(request.method)
+        return httpx.Response(health_status, json={"session_id": session})
+    with httpx.Client(base_url="http://127.0.0.1:8768", transport=httpx.MockTransport(handle)) as client:
+        with pytest.raises(error): send_text(settings(tmp_path), "HELLO", client=client)
+    assert observed == ["GET"]
+
+
+def test_anima_send_text_reports_bridge_rejection(tmp_path):
+    from npc.adapters.skyrim.__main__ import send_text
+    def handle(request):
+        return httpx.Response(200, json={"session_id": "session"}) if request.method == "GET" else httpx.Response(409)
+    with httpx.Client(base_url="http://127.0.0.1:8768", transport=httpx.MockTransport(handle)) as client:
+        with pytest.raises(httpx.HTTPStatusError): send_text(settings(tmp_path), "HELLO", client=client)
+
+
+def test_native_text_entry_is_correlated_and_deduplicated(tmp_path):
+    from npc.generation.provider import OfflineProvider
+    from npc.runtime.preview import PreviewRunner
+    async def run():
+        b=Bridge(settings(tmp_path,pipeline_mode="preview"),root=tmp_path,runner=PreviewRunner(OfflineProvider()))
+        try:
+            await ready(b)
+            e=event("player_text",2,text="HELLO")
+            await b.game_event(e);await b.session.turn_task
+            command=b.command("session-a")
+            assert command['request_id']==e.event_id and command['text']=='What do you need?'
+            assert (await b.game_event(e))['status']=='duplicate'
+            assert len(b.session.inputs)==1
+            with pytest.raises(ConnectionError):await b.game_event(event("player_text",3,text=" "))
+        finally:await b.close()
+    asyncio.run(run())
+
+
+def test_mounted_speech_accepts_bounded_microphone_wav(tmp_path):
+    from fastapi.testclient import TestClient
+    from npc.adapters.skyrim.server import create_app
+    from npc.adapters.skyrim.speech import create_speech_app
+    class Engine:
+        async def transcribe(self,raw):
+            assert len(raw)>256*1024
+            return {"text":"Hello","confidence":.8}
+    b=Bridge(settings(tmp_path),root=tmp_path)
+    app=create_app(b);app.mount('/v1/speech',create_speech_app(Engine()))
+    with TestClient(app) as c:
+        r=c.post('/v1/speech/stt',content=wav(10),headers={'content-type':'audio/wav'})
+        assert r.status_code==200 and r.json()['text']=='Hello'
+        assert c.post('/v1/game/event',content=wav(10),headers={'content-type':'audio/wav'}).status_code==415
+
+
+def test_game_memory_commits_only_completed_and_survives_menu_close(tmp_path):
+    from npc.generation.provider import OfflineProvider
+    from npc.runtime.preview import PreviewRunner
+    from npc.contracts.context import DialogueMemory
+    observed=[]
+    class Runner:
+        async def run(self,scenario,**kwargs):
+            observed.append(scenario)
+            return await PreviewRunner(OfflineProvider()).run(scenario,**kwargs)
+    async def run():
+        b=Bridge(settings(tmp_path,pipeline_mode="preview"),root=tmp_path,runner=Runner())
+        try:
+            await ready(b)
+            await b.player_input(speech().model_copy(update={"text":"Hello"}));await b.session.turn_task
+            key=b.session.social_key
+            assert b.state_store.load(key)['history']==()
+            command=b.command('session-a')
+            await b.game_event(event('delivery',2,delivery_id=command['delivery_id'],status='completed'))
+            history=b.state_store.load(key)['history']
+            assert len(history)==1 and history[0].source=='game_completed'
+            assert history[0].npc_text=='What do you need?'
+            await b.game_event(event('end',3))
+            await b.game_event(event('start',1,event_id='reopen',session_id='session-b'))
+            await b.session.context_task
+            await b.player_input(SpeechInput(session_id='session-b',input_id='followup',text='What did I just ask?'))
+            await b.session.turn_task
+            assert observed[-1].snapshot.recent_dialogue==history
+            assert observed[-1].snapshot.storage_revision>observed[0].snapshot.storage_revision
+            assert observed[-1].snapshot.npc_state is not None
+            command=b.command('session-b')
+            await b.game_event(event('delivery',2,session_id='session-b',delivery_id=command['delivery_id'],status='failed'))
+            assert len(b.state_store.load(key)['history'])==1
+        finally:await b.close()
+    asyncio.run(run())
+
+
+def test_changed_input_id_is_rejected_without_second_social_effect(tmp_path):
+    async def run():
+        b=Bridge(settings(tmp_path),root=tmp_path)
+        try:
+            await pending(b);key=b.session.social_key;before=b.state_store.load(key)
+            with pytest.raises(ConnectionError,match='different content'):
+                await b.player_input(speech().model_copy(update={'text':'different'}))
+            assert b.state_store.load(key)['revision']==before['revision']
+        finally:await b.close()
+    asyncio.run(run())
+
+
+def test_native_text_barge_in_cancels_generation_without_session_loss(tmp_path):
+    from npc.generation.provider import OfflineProvider
+    from npc.runtime.preview import PreviewRunner
+    entered=asyncio.Event()
+    class Runner:
+        calls=0
+        async def run(self,scenario,**kwargs):
+            self.calls+=1
+            if self.calls==1:
+                entered.set();await asyncio.sleep(30)
+            return await PreviewRunner(OfflineProvider()).run(scenario,**kwargs)
+    async def run():
+        b=Bridge(settings(tmp_path,pipeline_mode='preview'),root=tmp_path,runner=Runner())
+        try:
+            await ready(b);await b.player_input(speech());await entered.wait()
+            await b.game_event(event('player_text',2,text='HELLO'))
+            await b.session.turn_task
+            assert b.session.event.session_id=='session-a'
+            assert b.session.inputs['input-a']=='cancelled'
+            assert b.command('session-a')['text']=='What do you need?'
+            assert b.command('session-a')['request_id']=='event-2'
+            assert b.state_store.load(b.session.social_key)['history']==()
+        finally:await b.close()
+    asyncio.run(run())
+
+
+def test_late_completed_receipt_after_cancel_does_not_commit_memory(tmp_path):
+    from npc.generation.provider import OfflineProvider
+    from npc.runtime.preview import PreviewRunner
+    async def run():
+        b=Bridge(settings(tmp_path,pipeline_mode='preview'),root=tmp_path,runner=PreviewRunner(OfflineProvider()))
+        try:
+            await ready(b)
+            await b.player_input(speech().model_copy(update={'text':'Hello'}));await b.session.turn_task
+            old=dict(b.command('session-a'));key=b.session.social_key
+            b.invalidate(b.session)
+            await b.player_input(speech().model_copy(update={'input_id':'new','text':'HELLO'}),interrupt=True)
+            await b.session.turn_task
+            newer=dict(b.command('session-a'))
+            await b.game_event(event('delivery',2,delivery_id=old['delivery_id'],status='completed'))
+            assert b.command('session-a')['delivery_id']==newer['delivery_id']
+            assert b.state_store.load(key)['history']==()
+            assert old['delivery_id'] not in b.session.cancelled_deliveries
+            await b.game_event(event('delivery',3,delivery_id=newer['delivery_id'],status='completed'))
+            assert [h.request_id for h in b.state_store.load(key)['history']]==['new']
+        finally:await b.close()
+    asyncio.run(run())
+
+
+def test_rapid_three_turn_barge_in_waits_for_old_cleanup(tmp_path):
+    from npc.generation.provider import OfflineProvider
+    from npc.runtime.preview import PreviewRunner
+    async def run():
+        entered=asyncio.Event();cleanup=asyncio.Event();finished=asyncio.Event();calls=[]
+        class Runner:
+            async def run(self,scenario,**kwargs):
+                calls.append(scenario.turn.request_id)
+                if len(calls)==1:
+                    entered.set()
+                    try:await asyncio.sleep(30)
+                    finally:
+                        await cleanup.wait();finished.set()
+                return await PreviewRunner(OfflineProvider()).run(scenario,**kwargs)
+        b=Bridge(settings(tmp_path,pipeline_mode='preview'),root=tmp_path,runner=Runner())
+        try:
+            await ready(b);await b.player_input(speech());await entered.wait()
+            await b.game_event(event('player_text',2,text='HELLO'))
+            await b.game_event(event('player_text',3,text='HELLO'))
+            await asyncio.sleep(.01)
+            assert calls==['input-a']
+            cleanup.set();await b.session.turn_task
+            assert finished.is_set() and calls==['input-a','event-3']
+            assert b.command('session-a')['request_id']=='event-3'
+        finally:cleanup.set();await b.close()
+    asyncio.run(run())
+
+
+def test_store_stage_failure_never_exposes_game_command(tmp_path,monkeypatch):
+    from npc.generation.provider import OfflineProvider
+    from npc.runtime.preview import PreviewRunner
+    from npc.state.social_store import StoreFailure
+    async def run():
+        b=Bridge(settings(tmp_path,pipeline_mode='preview'),root=tmp_path,runner=PreviewRunner(OfflineProvider()))
+        try:
+            await ready(b)
+            def fail(*args):raise StoreFailure('test_storage_failure')
+            monkeypatch.setattr(b.state_store,'stage_preview',fail)
+            await b.player_input(speech().model_copy(update={'text':'Hello'}));await b.session.turn_task
+            assert b.command('session-a')=={'kind':'idle'}
+            assert b.state_store.load(b.session.social_key)['history']==()
+            assert b.session.inputs['input-a']=='failed'
+        finally:await b.close()
+    asyncio.run(run())

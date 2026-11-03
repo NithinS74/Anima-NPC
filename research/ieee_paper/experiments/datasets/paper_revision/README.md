@@ -1,0 +1,5 @@
+# Cedarvale controlled retrieval corpus
+
+Original educational fiction authored for this experiment on 2026-11-02; not Skyrim data, player records or an external benchmark. Twelve short public documents, each containing one coherent topic. Twenty-four queries and single-source relevance labels were written before running retrieval. Labels are author-assigned from the document semantics; they are NOT independent human judgments. No retriever output was used to define gold. Exact dataset hashes are saved with results.
+
+This small controlled set measures dense-search behavior on paraphrases. It cannot establish general game-domain relevance or semantic NPC quality. With one relevant source per query, P@3 has a maximum of 1/3. Missing positions count incorrect. Recall@3 and reciprocal rank have ceiling 1. Hold labels fixed across runs; independent relevance adjudication and a larger natural corpus remain pending. Generation condition prompts/rubrics are supplied for future matched RAG/no-RAG runs and independent human evaluation, not scored responses.

@@ -1,0 +1,62 @@
+{
+  "False": {
+    "n": 7,
+    "matches": 1,
+    "mean_ms": 1187.9250428571352,
+    "median_ms": 1201.423200000022,
+    "sample_sd_ms": 373.11942468468726
+  },
+  "True": {
+    "n": 7,
+    "matches": 7,
+    "mean_ms": 1263.6597428571333,
+    "median_ms": 1104.9388999999792,
+    "sample_sd_ms": 354.44921082605555
+  },
+  "distinct_model_inputs": 8,
+  "personas": [
+    "Daren",
+    "Elin",
+    "Iona",
+    "Mira"
+  ],
+  "provider_requests": 17,
+  "accepted_generated": 14,
+  "fallbacks": 1,
+  "all_14_full_responses_verbatim": true,
+  "retrieval_declared": {
+    "p1": 1.0,
+    "p3": 0.3333333333333333,
+    "r3": 1.0,
+    "rr": 1.0
+  },
+  "retrieval_queries": 24,
+  "retrieval_recomputed": {
+    "p1": 1.0,
+    "p3": 0.3333333333333333,
+    "r3": 1.0,
+    "rr": 1.0
+  },
+  "warm_latency_recomputed": {
+    "embedding_ms": {
+      "n": 30,
+      "mean_ms": 16.48068333330836,
+      "median_ms": 16.587250000156928,
+      "sample_sd_ms": 1.719466384902973
+    },
+    "vector_query_ms": {
+      "n": 30,
+      "mean_ms": 2.1679900004528463,
+      "median_ms": 2.1490500002983026,
+      "sample_sd_ms": 0.4254905290198276
+    },
+    "retrieval_ms": {
+      "n": 30,
+      "mean_ms": 19.959930000186432,
+      "median_ms": 19.833700000162935,
+      "sample_sd_ms": 1.8863378537760547
+    }
+  },
+  "all_original_experiments_preserved": true,
+  "new_live_runs_this_revision": 0
+}

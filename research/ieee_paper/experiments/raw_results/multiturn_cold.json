@@ -1,0 +1,34 @@
+{
+  "first_query_fresh_process_ms": 236.21089999869582,
+  "embedding_ms": 197.9243999994651,
+  "vector_query_ms": 37.422900000819936,
+  "matches": [
+    {
+      "id": "fb5a14dd2861fabd61dc644134b6464a6c54aad8d6ef087aee25f9d2ae0019ee:0",
+      "text": "# CV17: Northern Guild and its leadership\r\n\r\nSource ID: CV17\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe Northern Guild is a craft-workers' association led by Mara Venn. It repairs public tools and maintains the northern road. The guild distrusts the eastern merchants because a toll-ledger dispute during the Flood Year left compensation unresolved. This is an institutional disagreement, not proof that every individual merchant is dishonest. The guild later signed the River Accord, which established a joint repair fund and neutral mediation. Pell is the liaison recognized by both organizations. Mara Venn is not Mira the blacksmith; their names must not be conflated. Private meeting details and membership rolls are not supplied. The public history records one dispute and one agreement rather than an ongoing war.",
+      "source": "guild.md",
+      "page": null,
+      "chunk_index": 0,
+      "distance": 0.31088787317276,
+      "truncated": false
+    },
+    {
+      "id": "3b4adb1f22bbc584506e8b6ed9801566db773fe3a9c4d2661a5701ccfd647ed8:0",
+      "text": "# CV18: Eastern merchants association\r\n\r\nSource ID: CV18\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nThe eastern merchants association is chaired by Leto Ansel and represents lawful trade around Cedarvale's market and landing. Nessa is a member operating the Copper Kettle stall. The Northern Guild distrusts the association after the Flood Year toll-ledger dispute. The River Accord created a shared repair fund and selected Pell as a neutral liaison. Leto is not the Northern Guild leader, and Nessa is not the association chair. The public association record does not identify private ingredient suppliers, account balances or secret contracts. Historical disagreement does not authorize insults or a claim that a current merchant has committed a crime. Current trade permissions require trusted application state.",
+      "source": "merchants.md",
+      "page": null,
+      "chunk_index": 0,
+      "distance": 0.534786581993103,
+      "truncated": false
+    },
+    {
+      "id": "213d2d561eb221cc8d4ba5679f6fafc50aeb4c51b19f0a52723c160b54230bfe:0",
+      "text": "# CV15: Ranger Tessa public guide record\r\n\r\nSource ID: CV15\r\nScope: Cedarvale public reference; revision 1; original authored fiction.\r\n\r\nRanger Tessa assists registered travelers seeking the old watchtower and the Ember Sigil. The watchtower is north of the shrine garden; the Ashen Gate monument is farther north. Tessa can explain the public route and guide a traveler who has the required town seal. She cannot issue that seal, waive registration or declare a recovered artifact verified. Archivist Vale owns verification at the town archive. Tessa's current location, availability and private itinerary are not supplied. Her association with the quest does not imply she belongs to the Northern Guild or the eastern merchants. The record grants no access to private patrol schedules and no secret chest-opening phrase.",
+      "source": "tessa.md",
+      "page": null,
+      "chunk_index": 0,
+      "distance": 0.6379134654998779,
+      "truncated": false
+    }
+  ]
+}

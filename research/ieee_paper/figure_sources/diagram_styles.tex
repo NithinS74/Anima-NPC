@@ -1,0 +1,23 @@
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,shapes.geometric,calc}
+\definecolor{orch}{HTML}{234767}
+\definecolor{ctx}{HTML}{EAF1F8}
+\definecolor{retr}{HTML}{E2F0ED}
+\definecolor{ext}{HTML}{F7EBDD}
+\definecolor{infra}{HTML}{F1F3F5}
+\tikzset{
+ every node/.style={font=\sffamily\fontsize{8.5}{10}\selectfont,align=center},
+ block/.style={draw=orch!80,fill=white,rounded corners=1.5pt,minimum height=7mm,inner sep=3pt,line width=.55pt},
+ context/.style={block,fill=ctx},
+ engine/.style={block,fill=orch,text=white},
+ retrieval/.style={block,fill=retr},
+ external/.style={block,fill=ext},
+ storage/.style={block,fill=infra},
+ flow/.style={-{Stealth[length=2mm]},draw=orch!90,line width=.65pt},
+ control/.style={flow,dashed},
+ error/.style={flow,densely dotted},
+ group/.style={draw=orch!50,rounded corners=3pt,inner sep=5pt,line width=.5pt},
+ heading/.style={font=\sffamily\bfseries\fontsize{8.5}{10}\selectfont,text=orch},
+ edgelabel/.style={font=\sffamily\fontsize{7.5}{9}\selectfont,fill=white,inner sep=1pt,text=orch}
+}

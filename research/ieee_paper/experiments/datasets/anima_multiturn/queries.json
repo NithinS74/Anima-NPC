@@ -1,0 +1,170 @@
+[
+  {
+    "id": "R01",
+    "query": "Which bank of the River Lume contains Cedarvale?",
+    "relevant_sources": [
+      "atlas.md"
+    ]
+  },
+  {
+    "id": "R02",
+    "query": "What does Moonleaf do in the fictional draught?",
+    "relevant_sources": [
+      "moonleaf.md"
+    ]
+  },
+  {
+    "id": "R03",
+    "query": "What is Ember Root used for?",
+    "relevant_sources": [
+      "ember-root.md"
+    ]
+  },
+  {
+    "id": "R04",
+    "query": "Which ingredients and quantities make the Cedarvale healing draught?",
+    "relevant_sources": [
+      "draught.md"
+    ]
+  },
+  {
+    "id": "R05",
+    "query": "Who must approve picking leaves from the shrine beds?",
+    "relevant_sources": [
+      "garden.md"
+    ]
+  },
+  {
+    "id": "R06",
+    "query": "Who runs the Copper Kettle stall and what does it sell?",
+    "relevant_sources": [
+      "nessa.md"
+    ]
+  },
+  {
+    "id": "R07",
+    "query": "Where does Oren sell cleaned root portions?",
+    "relevant_sources": [
+      "oren.md"
+    ]
+  },
+  {
+    "id": "R08",
+    "query": "What places surround the eastern market fountain?",
+    "relevant_sources": [
+      "market.md"
+    ]
+  },
+  {
+    "id": "R09",
+    "query": "Where is the public landing relative to the bridge?",
+    "relevant_sources": [
+      "river.md"
+    ]
+  },
+  {
+    "id": "R10",
+    "query": "What public food service does Elin provide at her inn?",
+    "relevant_sources": [
+      "inn.md"
+    ]
+  },
+  {
+    "id": "R11",
+    "query": "Where is Mira based and what does she repair?",
+    "relevant_sources": [
+      "forge.md"
+    ]
+  },
+  {
+    "id": "R12",
+    "query": "What is Daren's occupational role?",
+    "relevant_sources": [
+      "watch.md"
+    ]
+  },
+  {
+    "id": "R13",
+    "query": "What are the prerequisites to begin the Ashen Gate quest?",
+    "relevant_sources": [
+      "quest.md"
+    ]
+  },
+  {
+    "id": "R14",
+    "query": "What is the Ember Sigil and where is it stored?",
+    "relevant_sources": [
+      "sigil.md"
+    ]
+  },
+  {
+    "id": "R15",
+    "query": "Who guides registered travelers to the old watchtower?",
+    "relevant_sources": [
+      "tessa.md"
+    ]
+  },
+  {
+    "id": "R16",
+    "query": "Who verifies the recovered artifact at the archive?",
+    "relevant_sources": [
+      "archive.md"
+    ]
+  },
+  {
+    "id": "R17",
+    "query": "Who leads the Northern Guild?",
+    "relevant_sources": [
+      "guild.md"
+    ]
+  },
+  {
+    "id": "R18",
+    "query": "Who chairs the eastern merchants association?",
+    "relevant_sources": [
+      "merchants.md"
+    ]
+  },
+  {
+    "id": "R19",
+    "query": "Which mediator is recognized by both trading groups?",
+    "relevant_sources": [
+      "pell.md"
+    ]
+  },
+  {
+    "id": "R20",
+    "query": "What did the River Accord establish after the Flood Year?",
+    "relevant_sources": [
+      "accord.md"
+    ]
+  },
+  {
+    "id": "R21",
+    "query": "Which personal records are excluded from public access?",
+    "relevant_sources": [
+      "law.md"
+    ]
+  },
+  {
+    "id": "R22",
+    "query": "What papers are inspected for wagons crossing the stone bridge?",
+    "relevant_sources": [
+      "bridge.md"
+    ]
+  },
+  {
+    "id": "R23",
+    "query": "Where is the shrine relative to the market and archive?",
+    "relevant_sources": [
+      "shrine.md"
+    ]
+  },
+  {
+    "id": "R24",
+    "query": "Is a date for a secret ingredient supply agreement documented?",
+    "relevant_sources": [
+      "unknowns.md"
+    ]
+  }
+]

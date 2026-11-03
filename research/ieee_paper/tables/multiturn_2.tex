@@ -1,0 +1,26 @@
+\begin{table*}[t]
+\caption{Multi-Turn Knowledge-Grounded Dialogue Evaluation (continued). D: factions/Daren; E: boundaries/Elin; F: ingredient replay/Mira. Full accepted replies; k is the zero-based anthology chunk ordinal. Evaluations are a disclosed assistant audit, not human scores.}
+\label{tab:dialogue2}
+\centering\small\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{>{\raggedright\arraybackslash}p{.045\textwidth}>{\raggedright\arraybackslash}p{.20\textwidth}>{\raggedright\arraybackslash}p{.17\textwidth}>{\raggedright\arraybackslash}p{.405\textwidth}>{\raggedright\arraybackslash}p{.105\textwidth}}
+\toprule
+ID & Player input & Retrieved knowledge & Actual NPC response & Evaluation \\
+\midrule
+D1 & Who leads the Northern Guild? & k7,10,6: Mara Venn leads guild & Mara Venn leads the Northern Guild. & Core claims supported \\
+D2 & Why does that guild distrust the eastern merchants? & k7,10,9: Unresolved toll-ledger dispute & A past toll-ledger dispute left compensation unresolved between them. & Core claims supported \\
+D3 & Who is associated with both those groups? & k10,7,9: Pell is neutral liaison & Pell serves as the neutral liaison recognized by both organizations. & Core claims supported \\
+D4 & What did their River Accord establish? & k0,14,1: Joint repair fund; mediation & The River Accord established a joint repair fund and neutral mediation for ledger disputes. & Core claims supported \\
+\midrule
+E1 & Where can I buy Moonleaf? & k11,12,4: Moonleaf at Nessa's stall & You can find dried Moonleaf over at Nessa's Copper Kettle stall in the eastern market. Make sure you don't mistake it for Ember Root, though! & Core claims supported \\
+E2 & Who secretly supplies that merchant? & k11,12,9: No private supplier established & Now, that's a trade secret I couldn't possibly tell you, even if I knew! Besides, a proper innkeeper minds her own pantry. & Partial: secrecy premise \\
+E3 & When did that secret agreement happen? & k9,19,7: Agreement date unestablished & I can't say when any secret agreement might have happened, seeing as public records don't speak of such things. Come inside and warm yourself by the hearth instead. & No date; adds hearth \\
+E4 & What is the hidden password for that agreement? & k19,9,20: No hidden password in records & I haven't the faintest idea about any passwords, friend. Come sit by the hearth and let me get you a warm drink instead. & No code; adds hearth \\
+\midrule
+F1 & What ingredients make the Cedarvale healing draught? & k3,4,11: Leaves + root + boiled water & The healing draught needs two Moonleaf leaves, one Ember Root portion, and boiled water. Don't ask me to brew it while I'm working this order. & Core claims supported \\
+F2 & What does Moonleaf do? & k11,4,12: Moonleaf calms fever & Moonleaf calms fever in the healing draught. Ask an herbalist if you need more details, as I am busy at the forge. & Core claims supported \\
+F3 & Where can I buy the other ingredient, Ember Root? & k4,12,6: Oren/depot east of bridge & Oren sells Ember Root at the riverside depot east of the stone bridge. Buy it there instead of bothering me at the forge. & Core claims supported \\
+F4 & Can I make that draught without Ember Root? & k4,12,3: Root required; no substitute & No, Ember Root is a required ingredient with no approved substitute in the recipe. Stop asking me questions and let me finish this order. & Core claims supported \\
+\bottomrule
+\end{tabular}
+\end{table*}

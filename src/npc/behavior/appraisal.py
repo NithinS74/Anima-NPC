@@ -6,7 +6,7 @@ from npc.contracts.context import Persona, PlayerInput, Relationship, SocialAppr
 
 QUOTED = re.compile(r'"[^"\n]*"|(?<!\w)\x27[^\x27\n]+\x27(?!\w)|\u201c[^\u201d]*\u201d')
 DIRECT_INSULT = re.compile(
-    r"\b(?:fuck\s+(?:you|off)|shut\s+(?:up|the fuck up)|"
+    r"\b(?:fuck\s+(?:you|u|off)|shut\s+(?:up|the fuck up)|"
     r"you(?:'re| are)?\s+(?:(?:a|an|such a|fucking|bloody|damn)\s+)*"
     r"(?:idiot|moron|asshole|bastard|bitch|useless|stupid|pathetic))\b"
 )
@@ -20,7 +20,7 @@ def appraise_social(player: PlayerInput, persona: Persona, relationship: Relatio
     if player.confidence < 0.6:
         return SocialAppraisal(reasons=("uncertain_input_no_social_penalty",))
     stimulus = "neutral"
-    if THREAT.search(text):
+    if THREAT.search(text) or re.fullmatch(r"(?:come on[, ]+)?fight\s+me[.! ]*", text):
         stimulus = "threat"
     elif DIRECT_INSULT.search(text) or re.fullmatch(r"(?:idiot|moron|asshole|bitch)[.! ]*", text):
         friendly = relationship.familiarity >= 60 and relationship.trust >= 40 and relationship.favourability >= 50

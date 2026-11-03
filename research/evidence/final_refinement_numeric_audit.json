@@ -1,0 +1,39 @@
+{
+  "paired_summary_matches_raw": true,
+  "warm_recalculation": {
+    "embedding_ms": {
+      "n": 30,
+      "mean_ms": 16.48068333330836,
+      "median_ms": 16.587250000156928,
+      "sample_sd_ms": 1.719466384902973,
+      "p95_ms": 19.0394999954151
+    },
+    "vector_query_ms": {
+      "n": 30,
+      "mean_ms": 2.1679900004528463,
+      "median_ms": 2.1490500002983026,
+      "sample_sd_ms": 0.4254905290198276,
+      "p95_ms": 2.870600001187995
+    },
+    "retrieval_ms": {
+      "n": 30,
+      "mean_ms": 19.959930000186432,
+      "median_ms": 19.833700000162935,
+      "sample_sd_ms": 1.8863378537760547,
+      "p95_ms": 23.00219999597175
+    }
+  },
+  "first_use_ms": 257.94889999815496,
+  "rank_metrics": {
+    "p1": 1.0,
+    "p3": 0.3333333333333333,
+    "r3": 1.0,
+    "rr": 1.0
+  },
+  "rank_metrics_recalculated_from_returns": {
+    "p1": 1,
+    "p3": 0.3333333333333333,
+    "r3": 1.0,
+    "rr": 1.0
+  }
+}

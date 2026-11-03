@@ -12,9 +12,16 @@ Skyrim does not expose a definitive "everything this NPC knows" field. The paylo
 
 ## Build and installation
 
-The initial plugin explicitly targets **SkyrimSE.exe 1.6.318.0**, the executable inspected in this workspace. Other runtimes are rejected, including 1.7.104. Use the matching SKSE loader and Address Library file `Data/SKSE/Plugins/versionlib-1-6-318-0.bin`. A download named for a different runtime is not proof of compatibility. Mantella, SkyUI, UIExtensions and a Mantella ESP are not dependencies of this connector.
+The 0.2.0 plugin explicitly supports **SkyrimSE.exe 1.6.318.0 and 1.7.104.0** from one x64 DLL. Other runtimes remain rejected. Use the matching SKSE loader and Address Library for the selected executable:
 
-Build with the project Python and a Windows x64 Visual Studio C++ toolchain:
+| Runtime | Required Address Library | Header format | Verification |
+|---|---|---:|---|
+| 1.6.318.0 | `Data/SKSE/Plugins/versionlib-1-6-318-0.bin` | 2 | Native allowlist/metadata/library checks; separate live run still required |
+| 1.7.104.0 | `Data/SKSE/Plugins/versionlib-1-7-104-0.bin` | 5 | Live load, Jenassa context and authored text delivery started/completed; see current review |
+
+A pinned modern CommonLibSSE-NG supplies version-aware native layouts and both Address Library readers. Metadata uses an exact version list rather than generic version independence: old SKSE rejects the newer `StructsPost629` flag, and this plugin does use native structures. A matching-file/header preflight runs before SKSE initialization; CommonLib validates and resolves the complete library afterward. Merely bypassing a version guard is not compatibility. See [dual-runtime plan](plans/I19-dual-skyrim-runtime.md) and [current review](reviews/2026-11-03-dual-skyrim-runtime.md). Mantella, SkyUI, UIExtensions and a Mantella ESP are not dependencies of this connector.
+
+Build with the project Python, CMake, and an x64 MSVC toolchain with C++23 support (Visual Studio 2022 17.14 or newer). The IDE alone does not install its C++/Windows SDK components:
 
 ```powershell
 # First build only: download the pinned source dependencies if missing.
@@ -23,9 +30,9 @@ Build with the project Python and a Windows x64 Visual Studio C++ toolchain:
 .\.venv\Scripts\python.exe scripts/build_skyrim_connector.py
 ```
 
-Build tools are separate from Python runtime dependencies. The build accepts CMake on PATH or the project-local `output/build-tools/cmake/data/bin/cmake.exe`. The latter can be prepared with `python -m pip install --target output/build-tools cmake==3.31.6`. For VS 2022 use `--generator "Visual Studio 17 2022"` with a fresh build directory. Pinned sources are recorded in `configs/skyrim/native-dependencies.json`; modified dependency checkouts are rejected rather than overwritten.
+Build tools are separate from Python runtime dependencies. The build accepts CMake on PATH or the project-local `output/build-tools/cmake/data/bin/cmake.exe`. The latter can be prepared with `python -m pip install --target output/build-tools cmake==3.31.6`. Visual Studio 2022 is the default generator. For an already configured compiler environment, `--generator Ninja --build-dir output/skyrim-build-dual` uses a separate Release tree. Keep distinct build trees for different generators/toolchains. Pinned sources are recorded in `configs/skyrim/native-dependencies.json`; modified dependency checkouts are rejected rather than overwritten.
 
-The build packages `output/skyrim-mod/AnimaConnector.zip`, including DLL/INI, source license notices, runtime target and DLL hash. Install it as a separate mod-manager mod, or copy the ZIP's `SKSE` directory into Skyrim's `Data` directory. It has no ESP to enable. The build script does not change the game installation. Keep a separate test save. Uninstall by removing only `AnimaConnector.dll`, `AnimaConnector.ini` and this connector's generated `Data/Sound/Voice/AnimaConnector` directory.
+The build packages `output/skyrim-mod/AnimaConnector.zip`, including DLL/INI, source license notices, both runtime targets, per-runtime verification status and DLL hash. Build/test success never automatically marks either runtime live-verified. Native source and dependency licenses are included; the previous dependency pins are retained in `configs/skyrim/native-dependencies.legacy-1.6.318.json` as provenance for the original source baseline, not as a drop-in dependency set for 0.2.0. Install it as a separate mod-manager mod, or copy the ZIP's `SKSE` directory into Skyrim's `Data` directory. It has no ESP to enable. The build script does not change the game installation. Keep a separate test save. Uninstall by removing only `AnimaConnector.dll`, `AnimaConnector.ini` and this connector's generated `Data/Sound/Voice/AnimaConnector` directory.
 
 ## Start the bridge
 
@@ -103,3 +110,18 @@ The handoff inbox stops admission at 4,096 retained event files; archive process
 Game object access is on the engine task thread; HTTP runs on a worker. Queues, requests, payloads, turns, microphone time, screenshots and output size are bounded. Commands carry session/NPC identity, state revision, delivery ID and start expiry. Native dedup prevents repeated polling from replaying speech. Combat/menu close/load changes stop output. Late callbacks are rejected; an expired command requests stop rather than assuming it was heard. Acknowledgements are best effort and do not establish word-level heard portions.
 
 Offline tests use fake game/capture/model/device boundaries. They verify mapping, actor identity, visibility, context-before-turn, stale state, callbacks, duplicate/expired commands, file containment and cleanup. No real microphone, Skyrim launch or paid model call runs in these tests. Live readiness requires opening one conversation, checking exported topics/responses and frame, submitting one text/STT utterance, hearing/watching one response, and testing menu close/combat/load interruption.
+
+
+## Identifying Anima output alongside other mods
+
+Start `run_skyrim_connector.bat --log-file output/skyrim/anima-console.log` in a visible terminal. Every diagnostic has a timestamp and `[ANIMA]` label. Startup lists provider profile and RAG/STT/TTS availability. The default offline profile is scripted, not a live language model. A Mantella.exe window, its speech recognition and its synthesized responses belong to Mantella; Anima neither consumes nor relabels them.
+
+With normal NPC dialogue open, use another terminal to submit directly to Anima:
+
+```powershell
+.\.venv\Scripts\python.exe -m npc.adapters.skyrim --say "HELLO"
+```
+
+`PLAYER_INPUT` records accepted text, `PIPELINE_RESULT` distinguishes authored/model/fallback routes and model call count, and `OUTPUT_STAGED` records the accepted text awaiting the game. Only `NATIVE_ACK` represents the native receiver's started/completed/interrupted/failed status. Completion is not proof of hearing. Session/request/delivery IDs correlate the stages. Rejected/duplicate inputs are not relabelled as new successful turns. Uppercase greetings currently use the same case-insensitive authored greeting policy; no shout-sensitive behavior is claimed.
+
+The optional local log includes dialogue text; keep it private unless selected for publication. Text fields are escaped to one line and capped at 1024 characters. File output rotates at 1 MiB with two backups. Full prompts, provider keys and raw responses are not logged. No per-frame snapshots or command polls are printed. Close/reopen NPC dialogue after restarting the bridge to establish a fresh session.

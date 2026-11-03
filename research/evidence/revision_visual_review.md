@@ -1,0 +1,5 @@
+﻿# Revised final visual review
+
+2026-11-03. Inspected PNG renders of all five pages of the exact revised paper.pdf after title/author metadata, scientific results, TikZ grouping/spacing and final functional-count corrections. Checked title/USNs, both columns, three native diagram captions, two quantitative tables, eight references and complete results/limitations text. No overlapping figure nodes, clipped page text, missing references or font substitution remains. Three underfull paragraph notices and two float-related underfull vertical boxes remain; the corresponding pages were inspected and no margin/font/spacing manipulation was introduced to suppress them. The fourth compiled native ingestion diagram is supplied as a supplementary editable asset because Figure 1 already includes offline ingestion.
+
+Source ZIP was independently extracted and rebuilt; all normalized page text and title metadata match. Final validation hashes are in revision_document_validation.json; rebuild proof is in revision_zip_rebuild_verification.json. No genuine Anima game screenshot was available, and no synthetic replacement was created.

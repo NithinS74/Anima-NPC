@@ -1,7 +1,9 @@
 {
-  "CommonLibSSE-NG": {"url": "https://github.com/CharmedBaryon/CommonLibSSE-NG.git", "commit": "c4ab853d095e81e3390b282d7ba01ab2f24ebf25"},
-  "spdlog": {"url": "https://github.com/gabime/spdlog.git", "commit": "7e635fca68d014934b4af8a1cf874f63989352b7"},
-  "json": {"url": "https://github.com/nlohmann/json.git", "commit": "9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03"},
-  "rapidcsv": {"url": "https://github.com/d99kris/rapidcsv.git", "commit": "a98b85e663114b8fdc9c0dc03abf22c296f38241"},
-  "fmt": {"url": "https://github.com/fmtlib/fmt.git", "commit": "f5e54359df4c26b6230fc61d38aa294581393084"}
+  "CommonLibSSE-NG": {"url": "https://github.com/alandtse/CommonLibSSE-NG.git", "commit": "8eaddedd1542290701ccb0e9e88b2af8b3cea597"},
+  "spdlog": {"url": "https://github.com/gabime/spdlog.git", "commit": "79524ddd08a4ec981b7fea76afd08ee05f83755d"},
+  "json": {"url": "https://github.com/nlohmann/json.git", "commit": "55f93686c01528224f448c19128836e7df245f72"},
+  "rapidcsv": {"url": "https://github.com/d99kris/rapidcsv.git", "commit": "cbd8a0a937b249cc07e2db3bfa9cd2cc1689708f"},
+  "fmt": {"url": "https://github.com/fmtlib/fmt.git", "commit": "1be298e1bd68957e4cd352e1f676f00e07dcfb57"},
+  "DirectXTK": {"url": "https://github.com/microsoft/DirectXTK.git", "commit": "5a8f5d01cc1328e6451b588617c9985fa5a2a8ab"},
+  "DirectXMath": {"url": "https://github.com/microsoft/DirectXMath.git", "commit": "93e6399d6d15e1e57f80b5cea04d5a8eb892d693"}
 }

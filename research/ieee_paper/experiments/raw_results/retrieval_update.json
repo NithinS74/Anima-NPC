@@ -1,0 +1,1502 @@
+{
+  "baseline": "ff9fd7e",
+  "run_id": "primary",
+  "corpus_documents": 12,
+  "corpus_chunks": 12,
+  "query_count": 24,
+  "dataset_sha256": "9d12b5480fcc878cc56014a824cfe81e78846b07c49b89b22a4765a9bd20b5e8",
+  "corpus_sha256": {
+    "faction.md": "9b907bdd0d574efdb82f7b2667b0cb80cece412105f140fa5a61a7a544ab4ec4",
+    "ferry.md": "aed0b141466d9d008281e082da410e75eaf370a5b8a1e46b52e925a680f31641",
+    "festival.md": "be85530e19fc39f92eb11fa79fadbf97c58ca06c7120835979fe1439db44d2fd",
+    "forge.md": "d011d8a68e86acecf5360efb57a4214df5b6f1a9361112998bad67ac02c00af3",
+    "guard.md": "76370758e42e8f1290434678a1dfe02858cafc2a0e97098c1aee4a86ef5873d4",
+    "healer.md": "b945ca7a29d879ed05bab55b8645258e4dbf79ef822c5fa4a4a49b48eb11c803",
+    "history.md": "12081bc1c3a54985528fab89dcce63fbc5ba69b5a9fe8612bcb357bbac7e40e9",
+    "inn.md": "40dec84b601cb48376038696783f97708097ccf0cef3dc03c1aa6807bbde57e6",
+    "library.md": "382309c425590616fd14f169a9bbd002acdeeb89e37aeef1791e3a0bbcbc80fc",
+    "market.md": "9e8ab2560af835f0c8418d73cef79ad9ba0e7cb502344e38e7c8d11de2300034",
+    "mine.md": "061760e6400817895722906bd979bd419a57d2fd905b535f4cb75abcebd3baf0",
+    "orchard.md": "5bc2da7a73b4b4599b0dc2ce5b5753474c80bf0a1f4d6d45593b90cf0b43b78a"
+  },
+  "encoder": "all-MiniLM-L6-v2-onnx-v1",
+  "encoder_provider": "CPUExecutionProvider",
+  "chunk_tokens": 220,
+  "overlap_tokens": 32,
+  "top_k": 3,
+  "label_provenance": "Author-assigned before retrieval; no independent human adjudication",
+  "indexing_ms_including_first_model_load": 769.4033999941894,
+  "rank_metrics_macro": {
+    "p1": 1.0,
+    "p3": 0.3333333333333333,
+    "r3": 1.0,
+    "rr": 1.0
+  },
+  "retrieval_queries": [
+    {
+      "id": "forge-1",
+      "query": "Where can I find the blacksmith Mira working?",
+      "relevant_sources": [
+        "forge.md"
+      ],
+      "ranked_sources": [
+        "forge.md",
+        "healer.md",
+        "inn.md"
+      ],
+      "matches": [
+        {
+          "id": "6973db03173a8a3c5eed4c725b081d774385667dd370f46522f2abb6ff346ecc:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.3224288821220398,
+          "truncated": false
+        },
+        {
+          "id": "b822433fee33e1c340a93e48a57b675990845bbc9c3a208cb9a1ccf800001dcb:0",
+          "text": "Iona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.",
+          "source": "healer.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6896499395370483,
+          "truncated": false
+        },
+        {
+          "id": "6fb4be971f2d9f29d9274eca4e3d2a91631f51aa287d5de6d9c4787779a53fe4:0",
+          "text": "Elin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.",
+          "source": "inn.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6931802034378052,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 27.28219999698922,
+      "embedding_ms": 14.3473999996786,
+      "vector_query_ms": 4.7481000001425855,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "forge-2",
+      "query": "Who repairs iron tools rather than supplying medicine?",
+      "relevant_sources": [
+        "forge.md"
+      ],
+      "ranked_sources": [
+        "forge.md",
+        "healer.md",
+        "mine.md"
+      ],
+      "matches": [
+        {
+          "id": "6973db03173a8a3c5eed4c725b081d774385667dd370f46522f2abb6ff346ecc:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5477390289306641,
+          "truncated": false
+        },
+        {
+          "id": "b822433fee33e1c340a93e48a57b675990845bbc9c3a208cb9a1ccf800001dcb:0",
+          "text": "Iona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.",
+          "source": "healer.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7559577822685242,
+          "truncated": false
+        },
+        {
+          "id": "a81e2297241f991cf9a881289f27bae3721a4dc38c198eb7d97f22f1c324a4fa:0",
+          "text": "Amber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.",
+          "source": "mine.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7892153263092041,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.69309999892721,
+      "embedding_ms": 15.063099999679253,
+      "vector_query_ms": 2.5128999986918643,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "healer-1",
+      "query": "Where is the healer Iona's clinic?",
+      "relevant_sources": [
+        "healer.md"
+      ],
+      "ranked_sources": [
+        "healer.md",
+        "forge.md",
+        "library.md"
+      ],
+      "matches": [
+        {
+          "id": "b822433fee33e1c340a93e48a57b675990845bbc9c3a208cb9a1ccf800001dcb:0",
+          "text": "Iona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.",
+          "source": "healer.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.20238769054412842,
+          "truncated": false
+        },
+        {
+          "id": "6973db03173a8a3c5eed4c725b081d774385667dd370f46522f2abb6ff346ecc:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4818565845489502,
+          "truncated": false
+        },
+        {
+          "id": "a7406709bd1e93119b8a9f6875bcce777c1ad95dc1997bb3b1e1f7926df4d0e6:0",
+          "text": "The village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.",
+          "source": "library.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6796777248382568,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 21.588100004009902,
+      "embedding_ms": 18.27449999836972,
+      "vector_query_ms": 2.3043999972287565,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "healer-2",
+      "query": "What salve is used to treat burns in Cedarvale?",
+      "relevant_sources": [
+        "healer.md"
+      ],
+      "ranked_sources": [
+        "healer.md",
+        "market.md",
+        "ferry.md"
+      ],
+      "matches": [
+        {
+          "id": "b822433fee33e1c340a93e48a57b675990845bbc9c3a208cb9a1ccf800001dcb:0",
+          "text": "Iona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.",
+          "source": "healer.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4657931327819824,
+          "truncated": false
+        },
+        {
+          "id": "ae8994b2026885e273e0caea4a3abc202098ba262a17bf363a8f48dbd2a70adf:0",
+          "text": "Cedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6240874528884888,
+          "truncated": false
+        },
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.655695915222168,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 21.244199997454416,
+      "embedding_ms": 16.930799996771384,
+      "vector_query_ms": 2.8833999967901036,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "inn-1",
+      "query": "Which inn has rooms for visiting travellers?",
+      "relevant_sources": [
+        "inn.md"
+      ],
+      "ranked_sources": [
+        "inn.md",
+        "library.md",
+        "festival.md"
+      ],
+      "matches": [
+        {
+          "id": "6fb4be971f2d9f29d9274eca4e3d2a91631f51aa287d5de6d9c4787779a53fe4:0",
+          "text": "Elin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.",
+          "source": "inn.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.495489239692688,
+          "truncated": false
+        },
+        {
+          "id": "a7406709bd1e93119b8a9f6875bcce777c1ad95dc1997bb3b1e1f7926df4d0e6:0",
+          "text": "The village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.",
+          "source": "library.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6808583736419678,
+          "truncated": false
+        },
+        {
+          "id": "44e76818d1591db0c575e4f52e5eadac37ff75ea21e72a95d23fe342189a2b45:0",
+          "text": "The Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.",
+          "source": "festival.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.8124174475669861,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.57100000011269,
+      "embedding_ms": 14.19020000321325,
+      "vector_query_ms": 1.1704999997164123,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "inn-2",
+      "query": "What soup does Elin serve at the Blue Lantern?",
+      "relevant_sources": [
+        "inn.md"
+      ],
+      "ranked_sources": [
+        "inn.md",
+        "festival.md",
+        "forge.md"
+      ],
+      "matches": [
+        {
+          "id": "6fb4be971f2d9f29d9274eca4e3d2a91631f51aa287d5de6d9c4787779a53fe4:0",
+          "text": "Elin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.",
+          "source": "inn.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.3181709051132202,
+          "truncated": false
+        },
+        {
+          "id": "44e76818d1591db0c575e4f52e5eadac37ff75ea21e72a95d23fe342189a2b45:0",
+          "text": "The Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.",
+          "source": "festival.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.706366777420044,
+          "truncated": false
+        },
+        {
+          "id": "6973db03173a8a3c5eed4c725b081d774385667dd370f46522f2abb6ff346ecc:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7283847332000732,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.834800001059193,
+      "embedding_ms": 15.633299997716676,
+      "vector_query_ms": 2.0719999956781976,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "guard-1",
+      "query": "Who checks wagon permits at Stone Bridge?",
+      "relevant_sources": [
+        "guard.md"
+      ],
+      "ranked_sources": [
+        "guard.md",
+        "faction.md",
+        "ferry.md"
+      ],
+      "matches": [
+        {
+          "id": "7ddd024e6c37fb60006a74eef95b371f1bf6efc01972414663d9836e8a3d3f8d:0",
+          "text": "Daren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.",
+          "source": "guard.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.3482205867767334,
+          "truncated": false
+        },
+        {
+          "id": "e75e4436d69007a08eb129ba0f332def7c1096c3ce265966c982357de9799249:0",
+          "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.",
+          "source": "faction.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6088123321533203,
+          "truncated": false
+        },
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6595426797866821,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 21.098799996252637,
+      "embedding_ms": 16.780199999629986,
+      "vector_query_ms": 2.7027000032830983,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "guard-2",
+      "query": "Can the bridge guard authorize entry to a private vault?",
+      "relevant_sources": [
+        "guard.md"
+      ],
+      "ranked_sources": [
+        "guard.md",
+        "faction.md",
+        "ferry.md"
+      ],
+      "matches": [
+        {
+          "id": "7ddd024e6c37fb60006a74eef95b371f1bf6efc01972414663d9836e8a3d3f8d:0",
+          "text": "Daren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.",
+          "source": "guard.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.36888086795806885,
+          "truncated": false
+        },
+        {
+          "id": "e75e4436d69007a08eb129ba0f332def7c1096c3ce265966c982357de9799249:0",
+          "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.",
+          "source": "faction.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7713347673416138,
+          "truncated": false
+        },
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.8392980694770813,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.940100002510007,
+      "embedding_ms": 15.8307000019704,
+      "vector_query_ms": 1.684000002569519,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "history-1",
+      "query": "What event does Cedarvale's old bell commemorate?",
+      "relevant_sources": [
+        "history.md"
+      ],
+      "ranked_sources": [
+        "history.md",
+        "market.md",
+        "ferry.md"
+      ],
+      "matches": [
+        {
+          "id": "8f08ce70fc1402e3f608dcd246251412d14479ab96c41ea2d10a1bdd99034605:0",
+          "text": "Cedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.",
+          "source": "history.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.3348192572593689,
+          "truncated": false
+        },
+        {
+          "id": "ae8994b2026885e273e0caea4a3abc202098ba262a17bf363a8f48dbd2a70adf:0",
+          "text": "Cedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6295796632766724,
+          "truncated": false
+        },
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6477950811386108,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 20.11960000527324,
+      "embedding_ms": 16.80750000377884,
+      "vector_query_ms": 2.348800000618212,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "history-2",
+      "query": "Why were the grain stores moved to higher ground?",
+      "relevant_sources": [
+        "history.md"
+      ],
+      "ranked_sources": [
+        "history.md",
+        "orchard.md",
+        "market.md"
+      ],
+      "matches": [
+        {
+          "id": "8f08ce70fc1402e3f608dcd246251412d14479ab96c41ea2d10a1bdd99034605:0",
+          "text": "Cedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.",
+          "source": "history.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6015347838401794,
+          "truncated": false
+        },
+        {
+          "id": "c2afa28f989804ce4eefbb04c0acde4163dfa144320e81ee5bd2ae2f7a3dd9c0:0",
+          "text": "The western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+          "source": "orchard.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6967321038246155,
+          "truncated": false
+        },
+        {
+          "id": "ae8994b2026885e273e0caea4a3abc202098ba262a17bf363a8f48dbd2a70adf:0",
+          "text": "Cedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.739514946937561,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 17.520100002002437,
+      "embedding_ms": 14.306500001112,
+      "vector_query_ms": 1.8439000050420873,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "faction-1",
+      "query": "Which group maintains the ferry warning lamps?",
+      "relevant_sources": [
+        "faction.md"
+      ],
+      "ranked_sources": [
+        "faction.md",
+        "festival.md",
+        "ferry.md"
+      ],
+      "matches": [
+        {
+          "id": "e75e4436d69007a08eb129ba0f332def7c1096c3ce265966c982357de9799249:0",
+          "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.",
+          "source": "faction.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.43301689624786377,
+          "truncated": false
+        },
+        {
+          "id": "44e76818d1591db0c575e4f52e5eadac37ff75ea21e72a95d23fe342189a2b45:0",
+          "text": "The Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.",
+          "source": "festival.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.57200026512146,
+          "truncated": false
+        },
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6870365142822266,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 22.666100005153567,
+      "embedding_ms": 18.360200003371574,
+      "vector_query_ms": 2.770099999906961,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "faction-2",
+      "query": "What animal appears on the Riverwardens emblem?",
+      "relevant_sources": [
+        "faction.md"
+      ],
+      "ranked_sources": [
+        "faction.md",
+        "market.md",
+        "ferry.md"
+      ],
+      "matches": [
+        {
+          "id": "e75e4436d69007a08eb129ba0f332def7c1096c3ce265966c982357de9799249:0",
+          "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.",
+          "source": "faction.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.34576672315597534,
+          "truncated": false
+        },
+        {
+          "id": "ae8994b2026885e273e0caea4a3abc202098ba262a17bf363a8f48dbd2a70adf:0",
+          "text": "Cedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7299865484237671,
+          "truncated": false
+        },
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7382693290710449,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.266300001414493,
+      "embedding_ms": 14.538500006892718,
+      "vector_query_ms": 2.3695999989286065,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "library-1",
+      "query": "Where does Tessa keep the village maps?",
+      "relevant_sources": [
+        "library.md"
+      ],
+      "ranked_sources": [
+        "library.md",
+        "healer.md",
+        "forge.md"
+      ],
+      "matches": [
+        {
+          "id": "a7406709bd1e93119b8a9f6875bcce777c1ad95dc1997bb3b1e1f7926df4d0e6:0",
+          "text": "The village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.",
+          "source": "library.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.48901158571243286,
+          "truncated": false
+        },
+        {
+          "id": "b822433fee33e1c340a93e48a57b675990845bbc9c3a208cb9a1ccf800001dcb:0",
+          "text": "Iona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.",
+          "source": "healer.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6299972534179688,
+          "truncated": false
+        },
+        {
+          "id": "6973db03173a8a3c5eed4c725b081d774385667dd370f46522f2abb6ff346ecc:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6382560133934021,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.57600000180537,
+      "embedding_ms": 13.686199999938253,
+      "vector_query_ms": 1.6017000016290694,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "library-2",
+      "query": "What records are stored upstairs in the former watchtower?",
+      "relevant_sources": [
+        "library.md"
+      ],
+      "ranked_sources": [
+        "library.md",
+        "history.md",
+        "inn.md"
+      ],
+      "matches": [
+        {
+          "id": "a7406709bd1e93119b8a9f6875bcce777c1ad95dc1997bb3b1e1f7926df4d0e6:0",
+          "text": "The village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.",
+          "source": "library.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.39082008600234985,
+          "truncated": false
+        },
+        {
+          "id": "8f08ce70fc1402e3f608dcd246251412d14479ab96c41ea2d10a1bdd99034605:0",
+          "text": "Cedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.",
+          "source": "history.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6188886165618896,
+          "truncated": false
+        },
+        {
+          "id": "6fb4be971f2d9f29d9274eca4e3d2a91631f51aa287d5de6d9c4787779a53fe4:0",
+          "text": "Elin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.",
+          "source": "inn.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7227768898010254,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 22.303500001726206,
+      "embedding_ms": 20.290799999202136,
+      "vector_query_ms": 1.3335000039660372,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "market-1",
+      "query": "What symbol is stamped on market tokens?",
+      "relevant_sources": [
+        "market.md"
+      ],
+      "ranked_sources": [
+        "market.md",
+        "ferry.md",
+        "festival.md"
+      ],
+      "matches": [
+        {
+          "id": "ae8994b2026885e273e0caea4a3abc202098ba262a17bf363a8f48dbd2a70adf:0",
+          "text": "Cedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5555112361907959,
+          "truncated": false
+        },
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7268511056900024,
+          "truncated": false
+        },
+        {
+          "id": "44e76818d1591db0c575e4f52e5eadac37ff75ea21e72a95d23fe342189a2b45:0",
+          "text": "The Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.",
+          "source": "festival.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7857233285903931,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 19.67490000242833,
+      "embedding_ms": 16.97969999804627,
+      "vector_query_ms": 1.7595999961486086,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "market-2",
+      "query": "Where can a trader find the public weighing scales?",
+      "relevant_sources": [
+        "market.md"
+      ],
+      "ranked_sources": [
+        "market.md",
+        "ferry.md",
+        "orchard.md"
+      ],
+      "matches": [
+        {
+          "id": "ae8994b2026885e273e0caea4a3abc202098ba262a17bf363a8f48dbd2a70adf:0",
+          "text": "Cedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4400557279586792,
+          "truncated": false
+        },
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.8031319975852966,
+          "truncated": false
+        },
+        {
+          "id": "c2afa28f989804ce4eefbb04c0acde4163dfa144320e81ee5bd2ae2f7a3dd9c0:0",
+          "text": "The western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+          "source": "orchard.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.811030387878418,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.778499993961304,
+      "embedding_ms": 13.983199998619966,
+      "vector_query_ms": 1.760600003763102,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "festival-1",
+      "query": "When is the Lantern Crossing festival celebrated?",
+      "relevant_sources": [
+        "festival.md"
+      ],
+      "ranked_sources": [
+        "festival.md",
+        "history.md",
+        "faction.md"
+      ],
+      "matches": [
+        {
+          "id": "44e76818d1591db0c575e4f52e5eadac37ff75ea21e72a95d23fe342189a2b45:0",
+          "text": "The Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.",
+          "source": "festival.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.24620163440704346,
+          "truncated": false
+        },
+        {
+          "id": "8f08ce70fc1402e3f608dcd246251412d14479ab96c41ea2d10a1bdd99034605:0",
+          "text": "Cedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.",
+          "source": "history.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7123236656188965,
+          "truncated": false
+        },
+        {
+          "id": "e75e4436d69007a08eb129ba0f332def7c1096c3ce265966c982357de9799249:0",
+          "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.",
+          "source": "faction.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7154067754745483,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.393899997638073,
+      "embedding_ms": 14.46109999960754,
+      "vector_query_ms": 1.2274999971850775,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "festival-2",
+      "query": "What do residents float along the mill channel at the festival?",
+      "relevant_sources": [
+        "festival.md"
+      ],
+      "ranked_sources": [
+        "festival.md",
+        "faction.md",
+        "inn.md"
+      ],
+      "matches": [
+        {
+          "id": "44e76818d1591db0c575e4f52e5eadac37ff75ea21e72a95d23fe342189a2b45:0",
+          "text": "The Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.",
+          "source": "festival.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.39048707485198975,
+          "truncated": false
+        },
+        {
+          "id": "e75e4436d69007a08eb129ba0f332def7c1096c3ce265966c982357de9799249:0",
+          "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.",
+          "source": "faction.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6318747997283936,
+          "truncated": false
+        },
+        {
+          "id": "6fb4be971f2d9f29d9274eca4e3d2a91631f51aa287d5de6d9c4787779a53fe4:0",
+          "text": "Elin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.",
+          "source": "inn.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6438413262367249,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 16.226400002778973,
+      "embedding_ms": 12.983099994016811,
+      "vector_query_ms": 2.30089999968186,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "mine-1",
+      "query": "What metal comes from Amber Hollow mine?",
+      "relevant_sources": [
+        "mine.md"
+      ],
+      "ranked_sources": [
+        "mine.md",
+        "market.md",
+        "forge.md"
+      ],
+      "matches": [
+        {
+          "id": "a81e2297241f991cf9a881289f27bae3721a4dc38c198eb7d97f22f1c324a4fa:0",
+          "text": "Amber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.",
+          "source": "mine.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.3617100119590759,
+          "truncated": false
+        },
+        {
+          "id": "ae8994b2026885e273e0caea4a3abc202098ba262a17bf363a8f48dbd2a70adf:0",
+          "text": "Cedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.589248538017273,
+          "truncated": false
+        },
+        {
+          "id": "6973db03173a8a3c5eed4c725b081d774385667dd370f46522f2abb6ff346ecc:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.743445873260498,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 20.358300003863405,
+      "embedding_ms": 16.0288999977638,
+      "vector_query_ms": 2.6221000007353723,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "mine-2",
+      "query": "Why is the western mine tunnel closed?",
+      "relevant_sources": [
+        "mine.md"
+      ],
+      "ranked_sources": [
+        "mine.md",
+        "guard.md",
+        "inn.md"
+      ],
+      "matches": [
+        {
+          "id": "a81e2297241f991cf9a881289f27bae3721a4dc38c198eb7d97f22f1c324a4fa:0",
+          "text": "Amber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.",
+          "source": "mine.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.41649651527404785,
+          "truncated": false
+        },
+        {
+          "id": "7ddd024e6c37fb60006a74eef95b371f1bf6efc01972414663d9836e8a3d3f8d:0",
+          "text": "Daren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.",
+          "source": "guard.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7310637831687927,
+          "truncated": false
+        },
+        {
+          "id": "6fb4be971f2d9f29d9274eca4e3d2a91631f51aa287d5de6d9c4787779a53fe4:0",
+          "text": "Elin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.",
+          "source": "inn.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7915405035018921,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 19.318200000270735,
+      "embedding_ms": 16.455799996037968,
+      "vector_query_ms": 1.537899996037595,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "orchard-1",
+      "query": "What fruit grows in the western orchard?",
+      "relevant_sources": [
+        "orchard.md"
+      ],
+      "ranked_sources": [
+        "orchard.md",
+        "inn.md",
+        "forge.md"
+      ],
+      "matches": [
+        {
+          "id": "c2afa28f989804ce4eefbb04c0acde4163dfa144320e81ee5bd2ae2f7a3dd9c0:0",
+          "text": "The western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+          "source": "orchard.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.31004583835601807,
+          "truncated": false
+        },
+        {
+          "id": "6fb4be971f2d9f29d9274eca4e3d2a91631f51aa287d5de6d9c4787779a53fe4:0",
+          "text": "Elin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.",
+          "source": "inn.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5875371694564819,
+          "truncated": false
+        },
+        {
+          "id": "6973db03173a8a3c5eed4c725b081d774385667dd370f46522f2abb6ff346ecc:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.7948789596557617,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 21.573699996224605,
+      "embedding_ms": 16.961000001174398,
+      "vector_query_ms": 1.5726999990874901,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "orchard-2",
+      "query": "Who exchanges damaged baskets at the orchard shed?",
+      "relevant_sources": [
+        "orchard.md"
+      ],
+      "ranked_sources": [
+        "orchard.md",
+        "inn.md",
+        "history.md"
+      ],
+      "matches": [
+        {
+          "id": "c2afa28f989804ce4eefbb04c0acde4163dfa144320e81ee5bd2ae2f7a3dd9c0:0",
+          "text": "The western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+          "source": "orchard.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.3468809723854065,
+          "truncated": false
+        },
+        {
+          "id": "6fb4be971f2d9f29d9274eca4e3d2a91631f51aa287d5de6d9c4787779a53fe4:0",
+          "text": "Elin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.",
+          "source": "inn.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6555602550506592,
+          "truncated": false
+        },
+        {
+          "id": "8f08ce70fc1402e3f608dcd246251412d14479ab96c41ea2d10a1bdd99034605:0",
+          "text": "Cedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.",
+          "source": "history.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6744828224182129,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 20.281899996916763,
+      "embedding_ms": 16.426499998487998,
+      "vector_query_ms": 2.0798999976250343,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "ferry-1",
+      "query": "Which settlement does the village ferry reach?",
+      "relevant_sources": [
+        "ferry.md"
+      ],
+      "ranked_sources": [
+        "ferry.md",
+        "faction.md",
+        "forge.md"
+      ],
+      "matches": [
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4728456139564514,
+          "truncated": false
+        },
+        {
+          "id": "e75e4436d69007a08eb129ba0f332def7c1096c3ce265966c982357de9799249:0",
+          "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.",
+          "source": "faction.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6231914758682251,
+          "truncated": false
+        },
+        {
+          "id": "6973db03173a8a3c5eed4c725b081d774385667dd370f46522f2abb6ff346ecc:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6573858261108398,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 17.57250000082422,
+      "embedding_ms": 13.888499997847248,
+      "vector_query_ms": 2.0737000013468787,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    },
+    {
+      "id": "ferry-2",
+      "query": "Who accepts copper tokens to carry carts across the river?",
+      "relevant_sources": [
+        "ferry.md"
+      ],
+      "ranked_sources": [
+        "ferry.md",
+        "market.md",
+        "faction.md"
+      ],
+      "matches": [
+        {
+          "id": "8786942400599b198412e79379a8fbabd37e191ae8005a1cd5c8c699f12f4553:0",
+          "text": "The Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.",
+          "source": "ferry.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.4757581353187561,
+          "truncated": false
+        },
+        {
+          "id": "ae8994b2026885e273e0caea4a3abc202098ba262a17bf363a8f48dbd2a70adf:0",
+          "text": "Cedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.",
+          "source": "market.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.5695053935050964,
+          "truncated": false
+        },
+        {
+          "id": "e75e4436d69007a08eb129ba0f332def7c1096c3ce265966c982357de9799249:0",
+          "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.",
+          "source": "faction.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.6122483015060425,
+          "truncated": false
+        }
+      ],
+      "retrieval_ms": 18.771099996229168,
+      "embedding_ms": 14.827400002104696,
+      "vector_query_ms": 2.3956000004545785,
+      "metrics": {
+        "p1": 1.0,
+        "p3": 0.3333333333333333,
+        "r3": 1.0,
+        "rr": 1.0
+      }
+    }
+  ],
+  "warm_queries": [
+    {
+      "query_id": "forge-1",
+      "retrieval_ms": 18.065899996145163,
+      "embedding_ms": 14.51219999580644,
+      "vector_query_ms": 2.0750000039697625
+    },
+    {
+      "query_id": "forge-2",
+      "retrieval_ms": 20.94990000477992,
+      "embedding_ms": 18.15100000385428,
+      "vector_query_ms": 2.0800000056624413
+    },
+    {
+      "query_id": "healer-1",
+      "retrieval_ms": 17.05230000516167,
+      "embedding_ms": 13.620599995192606,
+      "vector_query_ms": 2.4396000007982366
+    },
+    {
+      "query_id": "healer-2",
+      "retrieval_ms": 21.52570000180276,
+      "embedding_ms": 17.180199996801093,
+      "vector_query_ms": 2.6854000025196
+    },
+    {
+      "query_id": "inn-1",
+      "retrieval_ms": 24.83329999813577,
+      "embedding_ms": 20.71339999383781,
+      "vector_query_ms": 2.485799996065907
+    },
+    {
+      "query_id": "inn-2",
+      "retrieval_ms": 18.413600002531894,
+      "embedding_ms": 15.601899998728186,
+      "vector_query_ms": 1.3527999981306493
+    },
+    {
+      "query_id": "guard-1",
+      "retrieval_ms": 18.885299999965355,
+      "embedding_ms": 15.022100000351202,
+      "vector_query_ms": 2.870900003472343
+    },
+    {
+      "query_id": "guard-2",
+      "retrieval_ms": 23.00219999597175,
+      "embedding_ms": 19.0394999954151,
+      "vector_query_ms": 2.180299998144619
+    },
+    {
+      "query_id": "history-1",
+      "retrieval_ms": 20.792000002984423,
+      "embedding_ms": 16.55149999714922,
+      "vector_query_ms": 2.700899996852968
+    },
+    {
+      "query_id": "history-2",
+      "retrieval_ms": 21.420500001113396,
+      "embedding_ms": 17.167300000437535,
+      "vector_query_ms": 2.7798000010079704
+    },
+    {
+      "query_id": "faction-1",
+      "retrieval_ms": 22.223600004508626,
+      "embedding_ms": 18.06570000189822,
+      "vector_query_ms": 2.6434999963385053
+    },
+    {
+      "query_id": "faction-2",
+      "retrieval_ms": 20.963299997674767,
+      "embedding_ms": 17.022200001520105,
+      "vector_query_ms": 2.374000003328547
+    },
+    {
+      "query_id": "library-1",
+      "retrieval_ms": 19.738900002266746,
+      "embedding_ms": 17.082900005334523,
+      "vector_query_ms": 1.6336999979102984
+    },
+    {
+      "query_id": "library-2",
+      "retrieval_ms": 17.034099997545127,
+      "embedding_ms": 13.905799998610746,
+      "vector_query_ms": 2.3218999995151535
+    },
+    {
+      "query_id": "market-1",
+      "retrieval_ms": 21.13649999955669,
+      "embedding_ms": 18.10239999758778,
+      "vector_query_ms": 1.7861000014818273
+    },
+    {
+      "query_id": "market-2",
+      "retrieval_ms": 18.197500001406297,
+      "embedding_ms": 15.287900001567323,
+      "vector_query_ms": 1.957099993887823
+    },
+    {
+      "query_id": "festival-1",
+      "retrieval_ms": 19.92150000296533,
+      "embedding_ms": 15.478000001166947,
+      "vector_query_ms": 2.870600001187995
+    },
+    {
+      "query_id": "festival-2",
+      "retrieval_ms": 20.630399994843174,
+      "embedding_ms": 16.84940000268398,
+      "vector_query_ms": 2.3970000038389117
+    },
+    {
+      "query_id": "mine-1",
+      "retrieval_ms": 17.151399995782413,
+      "embedding_ms": 14.497900003334507,
+      "vector_query_ms": 1.6497000033268705
+    },
+    {
+      "query_id": "mine-2",
+      "retrieval_ms": 18.551900000602473,
+      "embedding_ms": 14.702100001159124,
+      "vector_query_ms": 2.309100003913045
+    },
+    {
+      "query_id": "orchard-1",
+      "retrieval_ms": 19.033199998375494,
+      "embedding_ms": 16.124300003866665,
+      "vector_query_ms": 1.549299995531328
+    },
+    {
+      "query_id": "orchard-2",
+      "retrieval_ms": 20.79750000120839,
+      "embedding_ms": 18.372700003965292,
+      "vector_query_ms": 1.7477000001235865
+    },
+    {
+      "query_id": "ferry-1",
+      "retrieval_ms": 22.458899999037385,
+      "embedding_ms": 18.372700003965292,
+      "vector_query_ms": 1.817800002754666
+    },
+    {
+      "query_id": "ferry-2",
+      "retrieval_ms": 21.162099998036865,
+      "embedding_ms": 18.295599998964462,
+      "vector_query_ms": 2.117800002451986
+    },
+    {
+      "query_id": "forge-1",
+      "retrieval_ms": 20.610799998394214,
+      "embedding_ms": 17.192399995110463,
+      "vector_query_ms": 2.4002999998629093
+    },
+    {
+      "query_id": "forge-2",
+      "retrieval_ms": 19.74589999736054,
+      "embedding_ms": 16.586500001722015,
+      "vector_query_ms": 1.781699997081887
+    },
+    {
+      "query_id": "healer-1",
+      "retrieval_ms": 17.81460000347579,
+      "embedding_ms": 14.11559999542078,
+      "vector_query_ms": 2.5008000011439435
+    },
+    {
+      "query_id": "healer-2",
+      "retrieval_ms": 18.70259999850532,
+      "embedding_ms": 15.022500003396999,
+      "vector_query_ms": 2.0384000017656945
+    },
+    {
+      "query_id": "inn-1",
+      "retrieval_ms": 18.28139999997802,
+      "embedding_ms": 15.196200001810212,
+      "vector_query_ms": 1.72720000409754
+    },
+    {
+      "query_id": "inn-2",
+      "retrieval_ms": 19.7011000054772,
+      "embedding_ms": 16.58799999859184,
+      "vector_query_ms": 1.7654999974183738
+    }
+  ],
+  "warm_latency": {
+    "retrieval_ms": {
+      "n": 30,
+      "mean_ms": 19.959930000186432,
+      "median_ms": 19.833700000162935,
+      "sample_sd_ms": 1.8863378537760547,
+      "p95_ms": 23.00219999597175,
+      "min_ms": 17.034099997545127,
+      "max_ms": 24.83329999813577
+    },
+    "embedding_ms": {
+      "n": 30,
+      "mean_ms": 16.48068333330836,
+      "median_ms": 16.587250000156928,
+      "sample_sd_ms": 1.719466384902973,
+      "p95_ms": 19.0394999954151,
+      "min_ms": 13.620599995192606,
+      "max_ms": 20.71339999383781
+    },
+    "vector_query_ms": {
+      "n": 30,
+      "mean_ms": 2.1679900004528463,
+      "median_ms": 2.1490500002983026,
+      "sample_sd_ms": 0.4254905290198276,
+      "p95_ms": 2.870600001187995,
+      "min_ms": 1.3527999981306493,
+      "max_ms": 2.870900003472343
+    }
+  },
+  "knowledge_update": {
+    "write_ms": 0.3806000022450462,
+    "sync_ms": 216.59850000287406,
+    "sync_report": {
+      "indexed": 1,
+      "unchanged": 11,
+      "deleted": 0,
+      "skipped": [],
+      "errors": {},
+      "chunks": 12
+    },
+    "before": {
+      "query": "Where is Mira's forge?",
+      "context": "[1] forge.md\nMira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+      "matches": [
+        {
+          "id": "6973db03173a8a3c5eed4c725b081d774385667dd370f46522f2abb6ff346ecc:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.33268260955810547,
+          "truncated": false
+        }
+      ]
+    },
+    "after": {
+      "query": "Where is Mira's forge?",
+      "context": "[1] forge.md\nMira is the village blacksmith. Her forge stands beside the southern mill. She repairs iron tools but does not sell healing potions.",
+      "matches": [
+        {
+          "id": "27131604e4621b68f26e8f174bc81639ca54f05aa692e65969cd63c7493cfa1a:0",
+          "text": "Mira is the village blacksmith. Her forge stands beside the southern mill. She repairs iron tools but does not sell healing potions.",
+          "source": "forge.md",
+          "page": null,
+          "chunk_index": 0,
+          "distance": 0.3372945785522461,
+          "truncated": false
+        }
+      ]
+    },
+    "generator_invoked": false,
+    "answer_correctness": "unmeasured; no generated answer",
+    "training_step": false
+  },
+  "environment": {
+    "python": "3.11.9",
+    "os": "Windows-10-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 191 Stepping 2, GenuineIntel"
+  },
+  "limitations": [
+    "Small authored fiction; not Skyrim or independent gold.",
+    "No semantic generation or in-game latency measured."
+  ]
+}

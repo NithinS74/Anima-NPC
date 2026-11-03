@@ -1,0 +1,6 @@
+{
+  "captured": false,
+  "method": "existing connector capture_client",
+  "reason": "Skyrim is not the foreground visible window",
+  "ui_runtimes": "Both failed to initialize: Windows sandbox setup refresh error."
+}

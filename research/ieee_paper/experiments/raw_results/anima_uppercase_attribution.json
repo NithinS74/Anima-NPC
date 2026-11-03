@@ -1,0 +1,24 @@
+{
+  "system": "Anima",
+  "runtime": "1.7.104.0",
+  "npc": "Whiterun Guard",
+  "input": "HELLO",
+  "output": "What do you need?",
+  "route": "authored",
+  "model_calls": 0,
+  "tts_configured": false,
+  "rag_configured": false,
+  "native_receipts": [
+    "started",
+    "completed"
+  ],
+  "request_id": "f69ad4b4c654433d8f767c1deab817ae",
+  "log_lines": [
+    "13:24:57 [ANIMA] PLAYER_INPUT session=\"14420-1793692151689-6-7\" request=\"f69ad4b4c654433d8f767c1deab817ae\" npc=\"ref:0003706a\" source=\"text\" text=\"HELLO\"",
+    "13:24:57 [ANIMA] PIPELINE_RESULT session=\"14420-1793692151689-6-7\" request=\"f69ad4b4c654433d8f767c1deab817ae\" route=\"authored\" status=\"authored_success\" model=\"None\" calls=\"0\"",
+    "13:24:57 [ANIMA] OUTPUT_STAGED session=\"14420-1793692151689-6-7\" request=\"f69ad4b4c654433d8f767c1deab817ae\" delivery=\"d094cf26dd1d4d87b76401f3b5231837\" npc=\"ref:0003706a\" mode=\"speech\" text=\"What do you need?\" audio=\"False\" delivered=\"False\"",
+    "13:24:58 [ANIMA] NATIVE_ACK session=\"14420-1793692151689-6-7\" request=\"f69ad4b4c654433d8f767c1deab817ae\" delivery=\"d094cf26dd1d4d87b76401f3b5231837\" status=\"started\" heard=\"unverified\"",
+    "13:25:00 [ANIMA] NATIVE_ACK session=\"14420-1793692151689-6-7\" request=\"f69ad4b4c654433d8f767c1deab817ae\" delivery=\"d094cf26dd1d4d87b76401f3b5231837\" status=\"completed\" heard=\"unverified\""
+  ],
+  "limitations": "Native lifecycle receipts do not establish audible speech or independent perception. Mantella HELLO/no need to shout is excluded."
+}

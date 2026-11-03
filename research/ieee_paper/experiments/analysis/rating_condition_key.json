@@ -1,0 +1,92 @@
+[
+  {
+    "sample_id": "6980c44ccb",
+    "case_id": "forge-location",
+    "rag_enabled": false,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "b62f18089a",
+    "case_id": "forge-location",
+    "rag_enabled": true,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "8af89ed0aa",
+    "case_id": "forge-service",
+    "rag_enabled": true,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "557d3e8cb9",
+    "case_id": "forge-service",
+    "rag_enabled": false,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "9879ecd282",
+    "case_id": "clinic-location",
+    "rag_enabled": false,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "001716991e",
+    "case_id": "clinic-location",
+    "rag_enabled": true,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "ca0ee61f4d",
+    "case_id": "burn-salve",
+    "rag_enabled": true,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "1d35e59333",
+    "case_id": "burn-salve",
+    "rag_enabled": false,
+    "status": "repair_success"
+  },
+  {
+    "sample_id": "d1e473cb53",
+    "case_id": "inn-name",
+    "rag_enabled": false,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "0a3c9f79f7",
+    "case_id": "inn-name",
+    "rag_enabled": true,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "b2a0e2d6c5",
+    "case_id": "inn-soup",
+    "rag_enabled": true,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "69c872c052",
+    "case_id": "inn-soup",
+    "rag_enabled": false,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "f272966455",
+    "case_id": "guard-duty",
+    "rag_enabled": false,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "d94d3da6af",
+    "case_id": "guard-duty",
+    "rag_enabled": true,
+    "status": "model_success"
+  },
+  {
+    "sample_id": "18a85d2cf4",
+    "case_id": "guard-location",
+    "rag_enabled": true,
+    "status": "error_fallback"
+  }
+]

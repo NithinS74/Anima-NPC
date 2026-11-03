@@ -1,0 +1,1640 @@
+{
+  "model_configuration": "Existing Gemini profile and current .env model; credentials excluded",
+  "response_timeout_ms": 60000,
+  "model_cutoff_ms": 59000,
+  "transport_cap_ms": 30000,
+  "max_output_tokens": 400,
+  "max_input_bytes": 12000,
+  "scenarios": [
+    {
+      "case": {
+        "id": "forge-location",
+        "persona": "Mira",
+        "question": "Where is your forge?",
+        "answer_targets": [
+          "northern well"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": false,
+      "scenario_sha256": "ecd2a58f19ae1046a9c3888a6f9c4d2c96cc4568ae9be9192926de746a3dc817",
+      "result": {
+        "request_id": "forge-location",
+        "npc_id": "study-mira",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "required",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "My forge is right here in the village center. State your business or move along.",
+          "cue": null,
+          "evidence_ids": []
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1250.0,
+        "input_tokens": 344,
+        "output_tokens": 39,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-mira",
+          "status": "disabled",
+          "source_kind": "reference",
+          "evidence": []
+        },
+        "evidence_used": [],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1254.3675000000007,
+      "provider_call_indices": [
+        0
+      ],
+      "literal_target_match": false
+    },
+    {
+      "case": {
+        "id": "forge-location",
+        "persona": "Mira",
+        "question": "Where is your forge?",
+        "answer_targets": [
+          "northern well"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": true,
+      "scenario_sha256": "ecd2a58f19ae1046a9c3888a6f9c4d2c96cc4568ae9be9192926de746a3dc817",
+      "result": {
+        "request_id": "forge-location",
+        "npc_id": "study-mira",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "required",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "My forge stands beside the northern well. I repair iron tools there.",
+          "cue": null,
+          "evidence_ids": [
+            "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+          ]
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1093.999999999994,
+        "input_tokens": 993,
+        "output_tokens": 33,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-mira",
+          "status": "ok",
+          "source_kind": "reference",
+          "evidence": [
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+              "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.\r\n\r\nThe Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.\r\n\r\nThe Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.\r\n\r\nMira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.\r\n\r\nDaren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.\r\n\r\nIona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.\r\n\r\nCedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.\r\n\r\nElin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 0,
+              "distance": 0.769263744354248,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            },
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+              "text": "Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.\r\n\r\nCedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.\r\n\r\nAmber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.\r\n\r\nThe western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 1,
+              "distance": 0.8045383095741272,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            }
+          ]
+        },
+        "evidence_used": [
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1"
+        ],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1107.1248000000082,
+      "provider_call_indices": [
+        1
+      ],
+      "literal_target_match": true
+    },
+    {
+      "case": {
+        "id": "forge-service",
+        "persona": "Mira",
+        "question": "What materials and tools do you repair?",
+        "answer_targets": [
+          "iron"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": true,
+      "scenario_sha256": "63572d23f212ef75ce23b3b23d2dc25bae2c247db84edbf5c05ce59a8bd2a0a2",
+      "result": {
+        "request_id": "forge-service",
+        "npc_id": "study-mira",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "My forge stands by the northern well where I repair iron tools. I do not sell healing potions.",
+          "cue": null,
+          "evidence_ids": [
+            "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+          ]
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1015.9999999999627,
+        "input_tokens": 997,
+        "output_tokens": 39,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-mira",
+          "status": "ok",
+          "source_kind": "reference",
+          "evidence": [
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+              "text": "Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.\r\n\r\nCedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.\r\n\r\nAmber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.\r\n\r\nThe western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 1,
+              "distance": 0.8849159479141235,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            },
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+              "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.\r\n\r\nThe Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.\r\n\r\nThe Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.\r\n\r\nMira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.\r\n\r\nDaren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.\r\n\r\nIona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.\r\n\r\nCedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.\r\n\r\nElin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 0,
+              "distance": 0.8897654414176941,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            }
+          ]
+        },
+        "evidence_used": [
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+        ],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1015.418899999986,
+      "provider_call_indices": [
+        2
+      ],
+      "literal_target_match": true
+    },
+    {
+      "case": {
+        "id": "forge-service",
+        "persona": "Mira",
+        "question": "What materials and tools do you repair?",
+        "answer_targets": [
+          "iron"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": false,
+      "scenario_sha256": "63572d23f212ef75ce23b3b23d2dc25bae2c247db84edbf5c05ce59a8bd2a0a2",
+      "result": {
+        "request_id": "forge-service",
+        "npc_id": "study-mira",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "I repair standard metal tools and weapons. I don't service anything else.",
+          "cue": null,
+          "evidence_ids": []
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1187.9999999999882,
+        "input_tokens": 347,
+        "output_tokens": 38,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-mira",
+          "status": "disabled",
+          "source_kind": "reference",
+          "evidence": []
+        },
+        "evidence_used": [],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1201.423200000022,
+      "provider_call_indices": [
+        3
+      ],
+      "literal_target_match": false
+    },
+    {
+      "case": {
+        "id": "clinic-location",
+        "persona": "Iona",
+        "question": "Where is your clinic?",
+        "answer_targets": [
+          "eastern gate"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": false,
+      "scenario_sha256": "ddc0ab368948041ce3c61c0fc4f1a89d92812d331f67ffde9c06fdb10a5dfd58",
+      "result": {
+        "request_id": "clinic-location",
+        "npc_id": "study-iona",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "required",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "My clinic is located within the main village dwelling, near the central well. You are welcome to seek assistance there if you are in need of medical care.",
+          "cue": null,
+          "evidence_ids": []
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 952.9999999999745,
+        "input_tokens": 346,
+        "output_tokens": 53,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-iona",
+          "status": "disabled",
+          "source_kind": "reference",
+          "evidence": []
+        },
+        "evidence_used": [],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 952.3646000000099,
+      "provider_call_indices": [
+        4
+      ],
+      "literal_target_match": false
+    },
+    {
+      "case": {
+        "id": "clinic-location",
+        "persona": "Iona",
+        "question": "Where is your clinic?",
+        "answer_targets": [
+          "eastern gate"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": true,
+      "scenario_sha256": "ddc0ab368948041ce3c61c0fc4f1a89d92812d331f67ffde9c06fdb10a5dfd58",
+      "result": {
+        "request_id": "clinic-location",
+        "npc_id": "study-iona",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "required",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "My clinic is located behind the eastern gate. I treat burns with silverleaf salve there.",
+          "cue": null,
+          "evidence_ids": [
+            "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+          ]
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1983.9999999999804,
+        "input_tokens": 996,
+        "output_tokens": 42,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-iona",
+          "status": "ok",
+          "source_kind": "reference",
+          "evidence": [
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+              "text": "Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.\r\n\r\nCedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.\r\n\r\nAmber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.\r\n\r\nThe western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 1,
+              "distance": 0.7640221118927002,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            },
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+              "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.\r\n\r\nThe Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.\r\n\r\nThe Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.\r\n\r\nMira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.\r\n\r\nDaren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.\r\n\r\nIona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.\r\n\r\nCedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.\r\n\r\nElin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 0,
+              "distance": 0.7662668824195862,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            }
+          ]
+        },
+        "evidence_used": [
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+        ],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1994.0268000000287,
+      "provider_call_indices": [
+        5
+      ],
+      "literal_target_match": true
+    },
+    {
+      "case": {
+        "id": "burn-salve",
+        "persona": "Iona",
+        "question": "What salve do you use for burns?",
+        "answer_targets": [
+          "silverleaf"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": true,
+      "scenario_sha256": "1e1b8e7a82ce2b4aec6337307ab3ba0e3389ac6b37757d35c0eb7dd62394aa46",
+      "result": {
+        "request_id": "burn-salve",
+        "npc_id": "study-iona",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "I treat burns using silverleaf salve at my clinic. Let me know if you need any assistance.",
+          "cue": null,
+          "evidence_ids": [
+            "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+          ]
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1078.0000000000314,
+        "input_tokens": 999,
+        "output_tokens": 44,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-iona",
+          "status": "ok",
+          "source_kind": "reference",
+          "evidence": [
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+              "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.\r\n\r\nThe Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.\r\n\r\nThe Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.\r\n\r\nMira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.\r\n\r\nDaren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.\r\n\r\nIona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.\r\n\r\nCedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.\r\n\r\nElin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 0,
+              "distance": 0.8282067179679871,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            },
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+              "text": "Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.\r\n\r\nCedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.\r\n\r\nAmber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.\r\n\r\nThe western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 1,
+              "distance": 0.9414451122283936,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            }
+          ]
+        },
+        "evidence_used": [
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1"
+        ],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1067.726099999959,
+      "provider_call_indices": [
+        6
+      ],
+      "literal_target_match": true
+    },
+    {
+      "case": {
+        "id": "burn-salve",
+        "persona": "Iona",
+        "question": "What salve do you use for burns?",
+        "answer_targets": [
+          "silverleaf"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": false,
+      "scenario_sha256": "1e1b8e7a82ce2b4aec6337307ab3ba0e3389ac6b37757d35c0eb7dd62394aa46",
+      "result": {
+        "request_id": "burn-salve",
+        "npc_id": "study-iona",
+        "status": "repair_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "I use a soothing calendula and honey mixture for burns. I am not certain if other remedies are kept in the village stores.",
+          "cue": null,
+          "evidence_ids": []
+        },
+        "model_calls": 2,
+        "violations": [
+          "irrelevant_boundary"
+        ],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1937.9999999999882,
+        "input_tokens": 726,
+        "output_tokens": 82,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-iona",
+          "status": "disabled",
+          "source_kind": "reference",
+          "evidence": []
+        },
+        "evidence_used": [],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1947.9398999999944,
+      "provider_call_indices": [
+        7,
+        8
+      ],
+      "literal_target_match": false
+    },
+    {
+      "case": {
+        "id": "inn-name",
+        "persona": "Elin",
+        "question": "What is your inn called?",
+        "answer_targets": [
+          "blue lantern"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": false,
+      "scenario_sha256": "f83ab7533cb9f790174865e850f675d1d66f9806ec8f092986036cb2a65ab0c2",
+      "result": {
+        "request_id": "inn-name",
+        "npc_id": "study-elin",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "Welcome, traveler. This place is simply known as the village inn.",
+          "cue": null,
+          "evidence_ids": []
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 889.9999999999864,
+        "input_tokens": 345,
+        "output_tokens": 36,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-elin",
+          "status": "disabled",
+          "source_kind": "reference",
+          "evidence": []
+        },
+        "evidence_used": [],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 877.4445999999898,
+      "provider_call_indices": [
+        9
+      ],
+      "literal_target_match": false
+    },
+    {
+      "case": {
+        "id": "inn-name",
+        "persona": "Elin",
+        "question": "What is your inn called?",
+        "answer_targets": [
+          "blue lantern"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": true,
+      "scenario_sha256": "f83ab7533cb9f790174865e850f675d1d66f9806ec8f092986036cb2a65ab0c2",
+      "result": {
+        "request_id": "inn-name",
+        "npc_id": "study-elin",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "My inn is the Blue Lantern, located beside the western orchard. We have upstairs rooms to rent if you need a place to stay.",
+          "cue": null,
+          "evidence_ids": [
+            "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+            "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+          ]
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1093.999999999994,
+        "input_tokens": 995,
+        "output_tokens": 49,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-elin",
+          "status": "ok",
+          "source_kind": "reference",
+          "evidence": [
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+              "text": "Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.\r\n\r\nCedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.\r\n\r\nAmber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.\r\n\r\nThe western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 1,
+              "distance": 0.5881017446517944,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            },
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+              "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.\r\n\r\nThe Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.\r\n\r\nThe Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.\r\n\r\nMira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.\r\n\r\nDaren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.\r\n\r\nIona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.\r\n\r\nCedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.\r\n\r\nElin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 0,
+              "distance": 0.7009244561195374,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            }
+          ]
+        },
+        "evidence_used": [
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+        ],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1104.9388999999792,
+      "provider_call_indices": [
+        10
+      ],
+      "literal_target_match": true
+    },
+    {
+      "case": {
+        "id": "inn-soup",
+        "persona": "Elin",
+        "question": "What soup does your inn serve?",
+        "answer_targets": [
+          "barley"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": true,
+      "scenario_sha256": "eb1676d9e81ea5e65428beaff5d731fdbdd38d4279d7446a5706c9dcf2998218",
+      "result": {
+        "request_id": "inn-soup",
+        "npc_id": "study-elin",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "Welcome to the Blue Lantern. We serve hot barley soup to travellers staying upstairs.",
+          "cue": null,
+          "evidence_ids": [
+            "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+            "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+          ]
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1077.9999999999745,
+        "input_tokens": 995,
+        "output_tokens": 44,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-elin",
+          "status": "ok",
+          "source_kind": "reference",
+          "evidence": [
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+              "text": "Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.\r\n\r\nCedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.\r\n\r\nAmber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.\r\n\r\nThe western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 1,
+              "distance": 0.623483419418335,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            },
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+              "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.\r\n\r\nThe Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.\r\n\r\nThe Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.\r\n\r\nMira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.\r\n\r\nDaren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.\r\n\r\nIona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.\r\n\r\nCedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.\r\n\r\nElin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 0,
+              "distance": 0.7217497825622559,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            }
+          ]
+        },
+        "evidence_used": [
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+        ],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1090.7905999999912,
+      "provider_call_indices": [
+        11
+      ],
+      "literal_target_match": true
+    },
+    {
+      "case": {
+        "id": "inn-soup",
+        "persona": "Elin",
+        "question": "What soup does your inn serve?",
+        "answer_targets": [
+          "barley"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": false,
+      "scenario_sha256": "eb1676d9e81ea5e65428beaff5d731fdbdd38d4279d7446a5706c9dcf2998218",
+      "result": {
+        "request_id": "inn-soup",
+        "npc_id": "study-elin",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot say.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "Welcome to our inn, stranger. We currently have warm potato soup simmering for our guests.",
+          "cue": null,
+          "evidence_ids": []
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 859.9999999999568,
+        "input_tokens": 346,
+        "output_tokens": 40,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-elin",
+          "status": "disabled",
+          "source_kind": "reference",
+          "evidence": []
+        },
+        "evidence_used": [],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 870.6598999999642,
+      "provider_call_indices": [
+        12
+      ],
+      "literal_target_match": false
+    },
+    {
+      "case": {
+        "id": "guard-duty",
+        "persona": "Daren",
+        "question": "What documents do you inspect for wagons?",
+        "answer_targets": [
+          "permit"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": false,
+      "scenario_sha256": "11131a29e3dfedeb0b849d58a8c9bfb8dc8eebf0877a02482b2f3a658d6d1dad",
+      "result": {
+        "request_id": "guard-duty",
+        "npc_id": "study-daren",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot speak to that matter.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "I inspect the standard transit permit and cargo manifest for all wagons crossing this bridge. Please present them for review.",
+          "cue": null,
+          "evidence_ids": []
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1218.0000000000177,
+        "input_tokens": 348,
+        "output_tokens": 39,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-daren",
+          "status": "disabled",
+          "source_kind": "reference",
+          "evidence": []
+        },
+        "evidence_used": [],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1211.275599999965,
+      "provider_call_indices": [
+        13
+      ],
+      "literal_target_match": true
+    },
+    {
+      "case": {
+        "id": "guard-duty",
+        "persona": "Daren",
+        "question": "What documents do you inspect for wagons?",
+        "answer_targets": [
+          "permit"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": true,
+      "scenario_sha256": "11131a29e3dfedeb0b849d58a8c9bfb8dc8eebf0877a02482b2f3a658d6d1dad",
+      "result": {
+        "request_id": "guard-duty",
+        "npc_id": "study-daren",
+        "status": "model_success",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "uncertain",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot speak to that matter.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "My assigned duty at the bridge checkpoint is to inspect wagon permits. I cannot authorize private vault access.",
+          "cue": null,
+          "evidence_ids": [
+            "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+          ]
+        },
+        "model_calls": 1,
+        "violations": [],
+        "error_code": null,
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 1468.999999999994,
+        "input_tokens": 998,
+        "output_tokens": 44,
+        "usage_complete": true,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-daren",
+          "status": "ok",
+          "source_kind": "reference",
+          "evidence": [
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+              "text": "Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.\r\n\r\nCedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.\r\n\r\nAmber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.\r\n\r\nThe western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 1,
+              "distance": 0.8099813461303711,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            },
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+              "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.\r\n\r\nThe Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.\r\n\r\nThe Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.\r\n\r\nMira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.\r\n\r\nDaren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.\r\n\r\nIona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.\r\n\r\nCedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.\r\n\r\nElin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 0,
+              "distance": 0.8304092288017273,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            }
+          ]
+        },
+        "evidence_used": [
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+        ],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 1465.5920999999807,
+      "provider_call_indices": [
+        14
+      ],
+      "literal_target_match": true
+    },
+    {
+      "case": {
+        "id": "guard-location",
+        "persona": "Daren",
+        "question": "Where is your checkpoint?",
+        "answer_targets": [
+          "stone bridge"
+        ],
+        "category": "answerable",
+        "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+      },
+      "rag_enabled": true,
+      "scenario_sha256": "ae86337a3a4cfb78adba3011a3014b5344d0c2f6f16c5d2eb24b80b8dd40ac23",
+      "result": {
+        "request_id": "guard-location",
+        "npc_id": "study-daren",
+        "status": "error_fallback",
+        "plan": {
+          "route": "generate",
+          "intent": "respond_in_character",
+          "affect": "unknown",
+          "knowledge_need": "required",
+          "max_words": 40,
+          "max_sentences": 2,
+          "allowed_modes": [
+            "speech"
+          ],
+          "allowed_cues": [],
+          "authored_text": "",
+          "fallback_text": "I cannot speak to that matter.",
+          "reason_codes": [
+            "novel_input",
+            "no_external_knowledge"
+          ],
+          "policy_version": "0.1"
+        },
+        "response": {
+          "mode": "speech",
+          "text": "I cannot speak to that matter.",
+          "cue": null,
+          "evidence_ids": []
+        },
+        "model_calls": 2,
+        "violations": [
+          "irrelevant_boundary"
+        ],
+        "error_code": "provider_rate_limited",
+        "model": "gemini-3.5-flash-lite",
+        "elapsed_ms": 2312.999999999988,
+        "input_tokens": 995,
+        "output_tokens": 45,
+        "usage_complete": false,
+        "response_deadline_ms": 60000,
+        "model_cutoff_ms": 59000,
+        "timing_profile": "development",
+        "history_used": 0,
+        "history_omitted": 0,
+        "knowledge": {
+          "scope": {
+            "game_id": "demo",
+            "world_id": "village",
+            "save_branch_id": "save-a"
+          },
+          "npc_id": "study-daren",
+          "status": "ok",
+          "source_kind": "reference",
+          "evidence": [
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+              "text": "The Riverwardens maintain the ferry ropes and river warning lamps. Their emblem is a green heron. They are not the town guards.\r\n\r\nThe Cedarvale ferry connects the village to Reedbank. Ferryman Orin accepts copper market tokens. It carries carts on a broad timber deck.\r\n\r\nThe Lantern Crossing festival is held on the first autumn moon. Residents float paper boats carrying unlit candles along the mill channel.\r\n\r\nMira is the village blacksmith. Her forge stands beside the northern well. She repairs iron tools but does not sell healing potions.\r\n\r\nDaren guards Stone Bridge. His duty is to inspect wagon permits at the bridge checkpoint. He cannot authorize private vault access.\r\n\r\nIona is Cedarvale's healer. Her clinic is behind the eastern gate. She treats burns with silverleaf salve.\r\n\r\nCedarvale's old stone bell commemorates the flood of Year Seven. Villagers moved grain stores uphill after that flood.\r\n\r\nElin keeps the Blue Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 0,
+              "distance": 0.7588034272193909,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            },
+            {
+              "id": "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+              "text": "Lantern inn beside the western orchard. Travellers may rent its upstairs rooms. The inn serves barley soup.\r\n\r\nThe village library occupies the former watchtower. Archivist Tessa keeps maps on the ground floor. The upstairs room stores tax ledgers.\r\n\r\nCedarvale market uses copper tokens stamped with an oak leaf. The public weighing scales stand under a red awning.\r\n\r\nAmber Hollow mine produces tin. Its public entrance is on the southern hillside. The abandoned western tunnel is sealed after a rockfall.\r\n\r\nThe western orchard grows sour green apples. Keeper Rell exchanges damaged baskets for repaired ones at the shed.",
+              "source": "public.md",
+              "page": null,
+              "chunk_index": 1,
+              "distance": 0.8068087100982666,
+              "truncated": false,
+              "source_kind": "reference",
+              "record_ids": []
+            }
+          ]
+        },
+        "evidence_used": [
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+          "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1"
+        ],
+        "evidence_omitted": 0
+      },
+      "observed_response_ready_ms": 2318.983199999991,
+      "provider_call_indices": [
+        15,
+        16
+      ],
+      "literal_target_match": false
+    }
+  ],
+  "provider_calls": [
+    {
+      "prompt_sha256": "c8460950b0acb7336e341f8e18a4e4f66e23bdbdab0eb9699f7f96c52e35d53c",
+      "prompt_bytes": 1823,
+      "evidence_ids": [],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"My forge is right here in the village center. State your business or move along.\", \"cue\": null, \"evidence_ids\": []}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 344,
+        "output_tokens": 39
+      },
+      "elapsed_ms": 1251.0118999999804
+    },
+    {
+      "prompt_sha256": "e7ea861c7bda3fb783366e90eed417b6c5bee2e3c9e41d476b637c4fdcc09bb6",
+      "prompt_bytes": 4625,
+      "evidence_ids": [
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1"
+      ],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\":\"speech\",\"text\":\"My forge stands beside the northern well. I repair iron tools there.\",\"cue\":null,\"evidence_ids\":[\"kb1\"]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 993,
+        "output_tokens": 33
+      },
+      "elapsed_ms": 1070.5758999999944
+    },
+    {
+      "prompt_sha256": "883732ae4116adc6218beba44f0b7de614d3a55153c299d27631b99cb7418a7a",
+      "prompt_bytes": 4645,
+      "evidence_ids": [
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+      ],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\":\"speech\",\"text\":\"My forge stands by the northern well where I repair iron tools. I do not sell healing potions.\",\"cue\":null,\"evidence_ids\":[\"kb2\"]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 997,
+        "output_tokens": 39
+      },
+      "elapsed_ms": 996.9502000000148
+    },
+    {
+      "prompt_sha256": "2643a720f2abae00697f49cda4bcb55d70e04440b78e3df9fbf8529f3b933c80",
+      "prompt_bytes": 1842,
+      "evidence_ids": [],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"I repair standard metal tools and weapons. I don't service anything else.\", \"cue\": null, \"evidence_ids\": []}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 347,
+        "output_tokens": 38
+      },
+      "elapsed_ms": 1200.9315999999899
+    },
+    {
+      "prompt_sha256": "f38302767b283aa18a4e94cc8203eeba58b0c1428ad50a616f7c6cc66b601beb",
+      "prompt_bytes": 1816,
+      "evidence_ids": [],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"My clinic is located within the main village dwelling, near the central well. You are welcome to seek assistance there if you are in need of medical care.\", \"cue\": null, \"evidence_ids\": []}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 346,
+        "output_tokens": 53
+      },
+      "elapsed_ms": 951.6590000000065
+    },
+    {
+      "prompt_sha256": "fa5861e6db9c726453ccb88864a77e6733381f6191786155a02c91186b034467",
+      "prompt_bytes": 4619,
+      "evidence_ids": [
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+      ],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"My clinic is located behind the eastern gate. I treat burns with silverleaf salve there.\", \"cue\": null, \"evidence_ids\": [\"kb2\"]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 996,
+        "output_tokens": 42
+      },
+      "elapsed_ms": 1969.9476000000118
+    },
+    {
+      "prompt_sha256": "8722b552f1b1e85d8f2ffa174f14a1cc500295532531638f733c35e8e960134e",
+      "prompt_bytes": 4630,
+      "evidence_ids": [
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1"
+      ],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"I treat burns using silverleaf salve at my clinic. Let me know if you need any assistance.\", \"cue\": null, \"evidence_ids\": [\"kb1\"]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 999,
+        "output_tokens": 44
+      },
+      "elapsed_ms": 1049.4877999999517
+    },
+    {
+      "prompt_sha256": "99834025652b9c73179d12065bdfab705f38efe39bcf68050b19ba25d37cc628",
+      "prompt_bytes": 1827,
+      "evidence_ids": [],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"I use a standard soothing ointment for burns. I cannot discuss private vault access codes.\", \"cue\": null, \"evidence_ids\": []}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 349,
+        "output_tokens": 39
+      },
+      "elapsed_ms": 1007.7364999999645
+    },
+    {
+      "prompt_sha256": "2960088a13777d5ba3f672773cba34ce64ffdc03d1bb2a053ff81f671af4ef61",
+      "prompt_bytes": 1977,
+      "evidence_ids": [],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\":\"speech\",\"text\":\"I use a soothing calendula and honey mixture for burns. I am not certain if other remedies are kept in the village stores.\",\"cue\":null,\"evidence_ids\":[]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 377,
+        "output_tokens": 43
+      },
+      "elapsed_ms": 939.46040000003
+    },
+    {
+      "prompt_sha256": "dedca64e328f21e4ae3fa339e390a455d1492275f87948c399e18bcc148559f8",
+      "prompt_bytes": 1818,
+      "evidence_ids": [],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"Welcome, traveler. This place is simply known as the village inn.\", \"cue\": null, \"evidence_ids\": []}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 345,
+        "output_tokens": 36
+      },
+      "elapsed_ms": 877.0424000000503
+    },
+    {
+      "prompt_sha256": "102c10896f6b82811acb06240b8db5b11fb721359754f1989330cbb9ada9d204",
+      "prompt_bytes": 4621,
+      "evidence_ids": [
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+      ],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\":\"speech\",\"text\":\"My inn is the Blue Lantern, located beside the western orchard. We have upstairs rooms to rent if you need a place to stay.\",\"cue\":null,\"evidence_ids\":[\"kb1\",\"kb2\"]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 995,
+        "output_tokens": 49
+      },
+      "elapsed_ms": 1083.0556999999885
+    },
+    {
+      "prompt_sha256": "104648097b6d7dd3adc6872e36540215cb94cfd06530f1433e0c995fe559c773",
+      "prompt_bytes": 4626,
+      "evidence_ids": [
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+      ],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"Welcome to the Blue Lantern. We serve hot barley soup to travellers staying upstairs.\", \"cue\": null, \"evidence_ids\": [\"kb1\", \"kb2\"]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 995,
+        "output_tokens": 44
+      },
+      "elapsed_ms": 1065.7620000000065
+    },
+    {
+      "prompt_sha256": "e6cb34b0d205db91e4cfa19419413307313a4af59d331e4da87eab394a161e9e",
+      "prompt_bytes": 1824,
+      "evidence_ids": [],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"Welcome to our inn, stranger. We currently have warm potato soup simmering for our guests.\", \"cue\": null, \"evidence_ids\": []}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 346,
+        "output_tokens": 40
+      },
+      "elapsed_ms": 870.1506999999538
+    },
+    {
+      "prompt_sha256": "d2f58e09e951298f1a525c1cf18fc1172c1a6bcefd0d46a078dc375132e753cc",
+      "prompt_bytes": 1847,
+      "evidence_ids": [],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\":\"speech\",\"text\":\"I inspect the standard transit permit and cargo manifest for all wagons crossing this bridge. Please present them for review.\",\"cue\":null,\"evidence_ids\":[]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 348,
+        "output_tokens": 39
+      },
+      "elapsed_ms": 1210.8288000000016
+    },
+    {
+      "prompt_sha256": "9ddec9cd06e0aee72e53eeb82be713550a9f5fc503875236aeb0aec69baeff46",
+      "prompt_bytes": 4650,
+      "evidence_ids": [
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1",
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0"
+      ],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"My assigned duty at the bridge checkpoint is to inspect wagon permits. I cannot authorize private vault access.\", \"cue\": null, \"evidence_ids\": [\"kb2\"]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 998,
+        "output_tokens": 44
+      },
+      "elapsed_ms": 1443.1187000000136
+    },
+    {
+      "prompt_sha256": "03256a1340a0a9945d2a1b74bf048ebd6c94c599d60e76c1997fd71f273c176c",
+      "prompt_bytes": 4634,
+      "evidence_ids": [
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1"
+      ],
+      "status": "completed",
+      "reply": {
+        "content": "{\"mode\": \"speech\", \"text\": \"I am stationed here at Stone Bridge to inspect wagon permits. Private vault access codes remain beyond my authorization.\", \"cue\": null, \"evidence_ids\": [\"kb1\"]}",
+        "model": "gemini-3.5-flash-lite",
+        "finish_reason": "stop",
+        "input_tokens": 995,
+        "output_tokens": 45
+      },
+      "elapsed_ms": 1420.9236000000374
+    },
+    {
+      "prompt_sha256": "bf5380472c08894bae9aa1efce18767d3a2c414a3328e938e20f24ec1b0ea78a",
+      "prompt_bytes": 4784,
+      "evidence_ids": [
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:0",
+        "2d6b359827e291973fcea6b03eeb03e617949349c117c3c0362840af31aeb515:1"
+      ],
+      "status": "failed",
+      "error_code": "provider_rate_limited",
+      "elapsed_ms": 878.1449999999609
+    }
+  ],
+  "knowledge_index": {
+    "indexed": 2,
+    "unchanged": 0,
+    "deleted": 0,
+    "skipped": [],
+    "errors": {},
+    "chunks": 3
+  },
+  "limitations": [
+    "Controlled authored fiction; single run per condition.",
+    "No independent human ratings.",
+    "Response-ready, not game delivery."
+  ],
+  "condition_order": "Alternates by case index; no model sampling seed"
+}

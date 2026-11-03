@@ -81,16 +81,21 @@ def test_all_evidence_omitted_is_explicitly_empty_in_provider_data(scenario):
 
 
 @pytest.mark.parametrize("status", ["ok", "empty"])
-def test_dialogue_context_does_not_recycle_old_npc_claims_as_knowledge(scenario, status):
+def test_dialogue_context_retains_replies_only_as_unverified_memory(scenario, status):
     situation = build_situation(scenario.turn, scenario.snapshot, scenario.now)
     situation = situation.model_copy(update={"recent_dialogue": (
         DialogueMemory(request_id="old", player_text="Who is Taren?", npc_text="PRIVATE_UNSUPPORTED_FRIENDSHIP"),)})
     supplied = knowledge(situation, source_kind="dialogue", status=status)
     prompt = build_prompt(situation, choose_plan(situation), knowledge=supplied, max_input_bytes=5000)
     text = "".join(m.content for m in prompt.messages)
-    assert "PRIVATE_UNSUPPORTED_FRIENDSHIP" not in text
-    assert "Who is Taren?" in text
-    assert "Prior NPC replies omitted" in text
+    data = json.loads(prompt.messages[1].content)
+    assert data["untrusted_displayed_dialogue"] == [{"player": "Who is Taren?", "npc_utterance_unverified": "PRIVATE_UNSUPPORTED_FRIENDSHIP", "mode": "speech"}]
+    assert "PRIVATE_UNSUPPORTED_FRIENDSHIP" not in prompt.messages[0].content
+    assert "PRIVATE_UNSUPPORTED_FRIENDSHIP" not in json.dumps(data.get("observations", []))
+    assert "PRIVATE_UNSUPPORTED_FRIENDSHIP" not in json.dumps(data.get("retrieved_evidence", []))
+    assert all("PRIVATE_UNSUPPORTED_FRIENDSHIP" not in e.text for e in prompt.evidence)
+    assert "not world facts" in data["history_policy"]
+    assert data["untrusted_player_utterance"] == situation.player_input.text
     assert situation.recent_dialogue[0].npc_text == "PRIVATE_UNSUPPORTED_FRIENDSHIP"
     # Normal reference sources keep the existing conversation-memory behavior.
     reference = supplied.model_copy(update={"source_kind": "reference"})

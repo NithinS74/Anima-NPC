@@ -1,0 +1,11 @@
+# Anima console attribution implementation self-review
+
+Plan: [I20](../plans/I20-anima-console-attribution.md). Labelled self-review using develop-npc-component/review-npc-design; no independent agent review.
+
+Implemented bounded single-line timestamped [ANIMA] diagnostics for accepted input, preview route/status/model calls, staged output, native receipt and session lifecycle. Input/response fields are JSON-escaped and capped; optional log rotates at 1 MiB with two backups. Owned handlers are removed/closed on normal CLI/server exit or reconfiguration. No new dependencies, provider changes, protocol/native ABI changes, artificial NPC dialogue prefixes or third-party mod edits. --say targets only Anima's loopback active session and fails when missing/rejected; it does not start another provider/server.
+
+Checks: focused adapter/diagnostic suite 35 passed. Full project offline regression 520 passed in19.74s, output/skyrim-mod/anima-console-regression.xml. Unit cases cover uppercase authored response, dedup, staging vs native ack, receipt correlation, stale callback, terminal injection/size/rotation/reconfiguration, active-session posting and no-session/HTTP failures. Initial tests assumed resource close emitted a game end event and inherited server logging handlers; explicit end and isolated capture fixtures fixed those assumptions without changing response expectations.
+
+Live: only the verified old Anima port owner was replaced by a visible console; game and Mantella stayed running. The new console records the Whiterun Guard session, HELLO input f69ad4b4c654433d8f767c1deab817ae, authored_success/calls0, output What do you need?, and started/completed receipts at13:24:58/13:25:00 local time. A second direct submission was accepted separately. The screenshot supplied by the user shows Mantella.exe producing No need to shout; it is excluded from Anima results. Current Anima profile is offline with RAG/STT/TTS disabled. No live inference/voice or caps-sensitive behavior is claimed.
+
+Verdict: go for identifiable console diagnostics and direct text submission. Clear original game screenshot and actual generated-game evaluation remain separate unfulfilled research gates; the comparison table uses existing real-model controlled outputs, not Mantella or invented chronological improvements.

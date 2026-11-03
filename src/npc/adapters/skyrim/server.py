@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from .bridge import Bridge, ConnectionError
+from .assets import MAX_WAV_BYTES
 from .protocol import GameEvent, PipelineResult, SpeechInput
 
 
@@ -22,12 +23,15 @@ def create_app(bridge: Bridge):
         if request.client and request.client.host not in {"127.0.0.1", "::1", "testclient"}:
             return JSONResponse({"error": "loopback_only"}, status_code=403)
         if request.method == "POST":
-            if request.headers.get("content-type", "").split(";")[0] != "application/json":
+            microphone = request.url.path == "/v1/speech/stt"
+            expected_type = "audio/wav" if microphone else "application/json"
+            limit = MAX_WAV_BYTES if microphone else 256 * 1024
+            if request.headers.get("content-type", "").split(";")[0] != expected_type:
                 return JSONResponse({"error": "application_json_required"}, status_code=415)
             data = bytearray()
             async for chunk in request.stream():
                 data.extend(chunk)
-                if len(data) > 256 * 1024:
+                if len(data) > limit:
                     return JSONResponse({"error": "payload_too_large"}, status_code=413)
             request._body = bytes(data)
         return await call_next(request)

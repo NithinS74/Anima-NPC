@@ -1,0 +1,6 @@
+{
+  "model": "gemini-2.5-flash-lite",
+  "status": "unavailable",
+  "error_code": "provider_not_found",
+  "elapsed_s": 0.6338107000046875
+}

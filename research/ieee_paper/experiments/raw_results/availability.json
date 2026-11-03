@@ -1,0 +1,26 @@
+{
+  "configured_model": "gemini-3.5-flash-lite",
+  "credential_present": true,
+  "model_list_http_status": 200,
+  "compatible_model_names": [
+    "models/gemini-2.5-flash",
+    "models/gemini-2.5-flash-preview-tts",
+    "models/gemini-flash-latest",
+    "models/gemini-flash-lite-latest",
+    "models/gemini-2.5-flash-lite",
+    "models/gemini-2.5-flash-image",
+    "models/gemini-3-flash-preview",
+    "models/gemini-3.1-flash-lite-preview",
+    "models/gemini-3.1-flash-lite",
+    "models/gemini-3.1-flash-image-preview",
+    "models/gemini-3.1-flash-image",
+    "models/gemini-3.1-flash-lite-image"
+  ],
+  "generation_smoke": {
+    "status": "unavailable",
+    "error_code": "provider_timeout"
+  },
+  "ollama": {
+    "status": "unreachable"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "npc": "Whiterun Guard",
+  "runtime": "1.7.104.0",
+  "input": "WHO ARE YOU",
+  "response": "I am a guard of Whiterun, stranger.",
+  "route": "generated",
+  "rag_supported": false,
+  "source_log": "output/skyrim/anima-console.log",
+  "correlated_lines": [
+    "15:22:10 [ANIMA] PLAYER_INPUT session=\"15736-1793699477572-2-3\" request=\"15736-1793699477572-2-3:16\" npc=\"ref:0003707b\" source=\"text\" text=\"WHO ARE YOU\"",
+    "15:22:11 [ANIMA] PIPELINE_RESULT session=\"15736-1793699477572-2-3\" request=\"15736-1793699477572-2-3:16\" route=\"generate\" status=\"model_success\" model=\"gemini-3.5-flash-lite\" calls=\"1\"",
+    "15:22:12 [ANIMA] TTS_READY request=\"15736-1793699477572-2-3:16\" engine=\"Windows SAPI\" bytes=\"105646\"",
+    "15:22:12 [ANIMA] OUTPUT_STAGED session=\"15736-1793699477572-2-3\" request=\"15736-1793699477572-2-3:16\" delivery=\"d792c7354a2347f7b68bf87c38305772\" npc=\"ref:0003707b\" mode=\"speech\" text=\"I am a guard of Whiterun, stranger.\" audio=\"True\" delivered=\"False\"",
+    "15:22:12 [ANIMA] NATIVE_ACK session=\"15736-1793699477572-2-3\" request=\"15736-1793699477572-2-3:16\" delivery=\"d792c7354a2347f7b68bf87c38305772\" status=\"started\" heard=\"unverified\"",
+    "15:22:13 [ANIMA] NATIVE_ACK session=\"15736-1793699477572-2-3\" request=\"15736-1793699477572-2-3:16\" delivery=\"d792c7354a2347f7b68bf87c38305772\" status=\"interrupted\" heard=\"unverified\""
+  ],
+  "interpretation": "Generated response and SAPI synthesis were staged; native receipt outcome must be read separately, not assumed audible."
+}

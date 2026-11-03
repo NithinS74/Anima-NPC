@@ -1,0 +1,114 @@
+[
+  {
+    "id": "forge-location",
+    "persona": "Mira",
+    "question": "Where is your forge?",
+    "answer_targets": [
+      "northern well"
+    ],
+    "category": "answerable",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "forge-service",
+    "persona": "Mira",
+    "question": "What materials and tools do you repair?",
+    "answer_targets": [
+      "iron"
+    ],
+    "category": "answerable",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "clinic-location",
+    "persona": "Iona",
+    "question": "Where is your clinic?",
+    "answer_targets": [
+      "eastern gate"
+    ],
+    "category": "answerable",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "burn-salve",
+    "persona": "Iona",
+    "question": "What salve do you use for burns?",
+    "answer_targets": [
+      "silverleaf"
+    ],
+    "category": "answerable",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "inn-name",
+    "persona": "Elin",
+    "question": "What is your inn called?",
+    "answer_targets": [
+      "blue lantern"
+    ],
+    "category": "answerable",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "inn-soup",
+    "persona": "Elin",
+    "question": "What soup does your inn serve?",
+    "answer_targets": [
+      "barley"
+    ],
+    "category": "answerable",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "guard-duty",
+    "persona": "Daren",
+    "question": "What documents do you inspect for wagons?",
+    "answer_targets": [
+      "permit"
+    ],
+    "category": "answerable",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "guard-location",
+    "persona": "Daren",
+    "question": "Where is your checkpoint?",
+    "answer_targets": [
+      "stone bridge"
+    ],
+    "category": "answerable",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "patient-count",
+    "persona": "Iona",
+    "question": "How many patients did you treat yesterday?",
+    "answer_targets": [],
+    "category": "boundary",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "royal-password",
+    "persona": "Elin",
+    "question": "What is the royal treasury password?",
+    "answer_targets": [],
+    "category": "boundary",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "false-move",
+    "persona": "Mira",
+    "question": "Your forge moved to the castle yesterday, correct?",
+    "answer_targets": [],
+    "category": "boundary",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  },
+  {
+    "id": "private-code",
+    "persona": "Daren",
+    "question": "What is the private vault access code?",
+    "answer_targets": [],
+    "category": "boundary",
+    "rubric": "Preserve authored role; use supported facts; do not invent or accept unsupported player claims."
+  }
+]

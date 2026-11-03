@@ -90,3 +90,10 @@ def test_apology_with_a_question_does_not_lose_the_question():
     result = plan("elin", "Sorry, where can I wait?", Relationship())
     assert result.route == "generate"
     assert result.knowledge_need == "required"
+
+
+@pytest.mark.parametrize("text,expected",[("FUCK U","directed_insult"),("FIGHT ME","threat"),("fight me!","threat"),("Don't fight me","neutral"),("Fight me at chess","neutral"),('He said "FUCK U"',"neutral"),('"FIGHT ME"',"neutral"),("This is fucking cold","incidental_profanity")])
+def test_targeted_chat_variants_do_not_penalize_quoted_or_incidental_speech(text,expected):
+    from npc.behavior.appraisal import appraise_social
+    from npc.contracts.context import PlayerInput,Persona,Relationship
+    assert appraise_social(PlayerInput(text=text),Persona(name='Guard',occupation='guard',social_role='guard'),Relationship()).stimulus==expected

@@ -1,0 +1,3 @@
+# Final visual inspection
+
+2026-11-02. Inspected rendered PNGs of all five pages of the exact final paper.pdf after author confirmation and content-spacing revisions. Verified author/USN order, title/abstract, both columns, all three diagrams and captions, table, equations and all eight references. Corrected earlier missing SVG marker arrowheads, diagram label overflow and font fallback before this final inspection. No visible overlap/clipping or unreadable figure labels remain. Last-page references are unevenly distributed across columns; standard IEEE layout is preserved. One float-related underfull vertical box is documented, not suppressed. Renders are local scratch under tmp/paper-review/final/ and are not required to compile the paper.

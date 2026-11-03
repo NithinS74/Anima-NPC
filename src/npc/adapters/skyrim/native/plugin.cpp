@@ -2,6 +2,9 @@
 #include <RE/Skyrim.h>
 #include <SKSE/SKSE.h>
 #include <Windows.h>
+#ifdef GetObject
+#undef GetObject
+#endif
 #include <winhttp.h>
 #include <nlohmann/json.hpp>
 #include <spdlog/sinks/basic_file_sink.h>
@@ -15,6 +18,10 @@
 #include <thread>
 #include <unordered_set>
 #include "delivery.h"
+#include "runtime_support.h"
+#include "version_metadata.h"
+#include "ui_state.h"
+#include "audio_state.h"
 
 using json = nlohmann::json;
 using Clock = std::chrono::steady_clock;
@@ -67,7 +74,8 @@ public:
 };
 struct HttpError : std::runtime_error {
     DWORD status;
-    explicit HttpError(DWORD value) : std::runtime_error(std::format("bridge HTTP {}", value)), status(value) {}
+    bool resync;
+    HttpError(DWORD value, bool reset) : std::runtime_error(std::format("bridge HTTP {}", value)), status(value), resync(reset) {}
 };
 class DialogueLock {
     CRITICAL_SECTION* section;
@@ -78,18 +86,17 @@ public:
 
 void BuildVoice(RE::BSSoundHandle& sound, const char* path)
 {
-    // Engine entry points documented by CommonLibSSE-NG (MIT), upstream b93280e.
-    // 3.7.0 has the ABI types but predates these two convenience wrappers.
     RE::BSResource::ID resource{};
-    using Resolve = void (*)(RE::BSResource::ID*, const char*);
-    REL::Relocation<Resolve> resolve{REL::RelocationID{68635, 69979}};
-    resolve(&resource, path);
-    using Build = void (*)(RE::BSAudioManager*, RE::BSSoundHandle&, const RE::BSResource::ID&, std::uint32_t, std::uint32_t);
-    REL::Relocation<Build> build{REL::RelocationID{66402, 67664}};
-    build(RE::BSAudioManager::GetSingleton(), sound, resource, 0x1A, 0);
+    resource.GenerateFromPath(path);
+    RE::BSAudioManager::GetSingleton()->GetSoundHandleByFile(sound, resource, 0x1A, 128);
+    if (!sound.IsValid()) return;
+    sound.SetVolume(1.0F);
+    if (auto defaults = RE::BGSDefaultObjectManager::GetSingleton())
+        if (auto output = defaults->GetObject<RE::BGSSoundOutput>(RE::DEFAULT_OBJECT::kDialogueOutputModel3D))
+            sound.SetOutputModel(output);
 }
 
-class Connector final : public RE::BSTEventSink<RE::MenuOpenCloseEvent>, public RE::BSTEventSink<RE::InputEvent*> {
+class Connector final : public RE::BSTEventSink<RE::MenuOpenCloseEvent>, public RE::BSTEventSink<RE::InputEvent*>, public RE::BSTEventSink<SKSE::ModCallbackEvent> {
 public:
     static Connector& Get() { static auto* instance = new Connector; return *instance; }
     void Initialize()
@@ -97,6 +104,8 @@ public:
         auto path = std::filesystem::absolute("Data/SKSE/Plugins/AnimaConnector.ini").wstring();
         port = static_cast<INTERNET_PORT>(GetPrivateProfileIntW(L"Connection", L"Port", 8768, path.c_str()));
         pttKey = GetPrivateProfileIntW(L"Connection", L"PushToTalkKey", 66, path.c_str());
+        menuKey = GetPrivateProfileIntW(L"Connection", L"ConversationMenuKey", 65, path.c_str());
+        SKSE::GetModCallbackEventSource()->AddEventSink(this);
         animateMouth = GetPrivateProfileIntW(L"Connection", L"AnimateMouth", 1, path.c_str()) != 0;
         ResetEpoch();
         RE::UI::GetSingleton()->AddEventSink<RE::MenuOpenCloseEvent>(this);
@@ -124,30 +133,152 @@ public:
         if (!events || session.empty()) return RE::BSEventNotifyControl::kContinue;
         for (auto event = *events; event; event = event->next) {
             auto button = event->AsButtonEvent();
-            if (!button || event->GetDevice() != RE::INPUT_DEVICE::kKeyboard || button->idCode != pttKey) continue;
+            if (!button || event->GetDevice() != RE::INPUT_DEVICE::kKeyboard) continue;
+            if (button->idCode == menuKey && button->IsDown()) { OpenUi(anima::Panel::options); continue; }
+            if (button->idCode != pttKey || RE::UI::GetSingleton()->IsMenuOpen("CustomMenu")) continue;
             if (button->IsDown()) {
-                Stop("interrupted"); listening = true; Queue(Event("listen_start"));
+                if (!BargeIn()) continue; listening = true; Notify("ANIMA: listening while F8 is held..."); Queue(Event("listen_start"));
             } else if (button->IsUp() && listening) {
-                listening = false; Queue(Event("listen_stop"));
+                listening = false; Notify("ANIMA: transcribing..."); Queue(Event("listen_stop"));
             }
+        }
+        return RE::BSEventNotifyControl::kContinue;
+    }
+    RE::BSEventNotifyControl ProcessEvent(const SKSE::ModCallbackEvent* event, RE::BSTEventSource<SKSE::ModCallbackEvent>*) override
+    {
+        if (!event) return RE::BSEventNotifyControl::kContinue;
+        const std::string name = event->eventName.c_str(), text = event->strArg.c_str();
+        if ((name.starts_with("UIListMenu_") || name.starts_with("UITextEntryMenu_")) && text.size() <= 4000) {
+            std::scoped_lock lock(mutex);
+            if (uiEvents.size() < 8) uiEvents.push_back({{"name", name}, {"text", text}});
         }
         return RE::BSEventNotifyControl::kContinue;
     }
 private:
     std::atomic_bool taskPending{false}, resync{false};
     std::mutex mutex;
-    std::deque<json> outgoing, commands;
+    std::deque<json> outgoing, commands, uiEvents;
+    anima::UiState uiState;
+    std::atomic<anima::Panel> uiRenderPanel{anima::Panel::none};
+    std::atomic_uint64_t uiRenderGeneration{0}, uiProbeGeneration{0};
+    std::atomic_bool uiTaskPending{false}, uiFilled{false};
+    int nextUi = -1;
+    Clock::time_point uiOpenedAt;
     std::string workerSession, session, epoch, lastSnapshot, delivery, subtitleText;
     RE::ActorHandle speaker;
     RE::BSSoundHandle sound;
+    anima::AudioState audioState;
+    std::int64_t audioStartExpiry = 0;
     std::unordered_set<std::string> seen;
     std::uint64_t serial = 0, sequence = 0, snapshotSequence = 0;
     INTERNET_PORT port = 8768;
-    std::uint32_t pttKey = 66;
+    std::uint32_t pttKey = 66, menuKey = 65;
     bool open = false, listening = false, animateMouth = true, audioStarted = false, endAfter = false, mouthOwned = false;
     float originalMouth = 0;
     std::vector<float> mouth;
     Clock::time_point openedAt, lastCapture, playbackStart, playbackEnd;
+
+    void Notify(const char* text)
+    {
+        auto vm = RE::BSScript::Internal::VirtualMachine::GetSingleton();
+        RE::BSTSmartPointer<RE::BSScript::IStackCallbackFunctor> callback;
+        if (vm) vm->DispatchStaticCall("Debug", "Notification", RE::MakeFunctionArguments(RE::BSFixedString(text)), callback);
+    }
+    bool CallUi(const char* function, const char* movie = nullptr)
+    {
+        auto vm = RE::BSScript::Internal::VirtualMachine::GetSingleton();
+        RE::BSTSmartPointer<RE::BSScript::IStackCallbackFunctor> callback;
+        return vm && vm->DispatchStaticCall("UI", function,
+            movie ? RE::MakeFunctionArguments(RE::BSFixedString(movie), std::int32_t(0)) : RE::MakeFunctionArguments(), callback);
+    }
+    void OpenUi(anima::Panel panel)
+    {
+        if (!open || session.empty() || RE::UI::GetSingleton()->IsMenuOpen("CustomMenu")) return;
+        if (!uiState.Open(session, panel)) return;
+        uiOpenedAt = Clock::now();
+        uiRenderPanel = panel; uiRenderGeneration = uiState.generation; uiFilled = false;
+        if (!CallUi("OpenCustomMenu", panel == anima::Panel::text ? "textentrymenu" : "listmenu")) {
+            CancelUi(); Notify("ANIMA: UIExtensions menu unavailable.");
+        } else {
+            Notify(panel == anima::Panel::text ? "ANIMA: type a message, Enter sends, Escape cancels." : "ANIMA conversation controls");
+            SKSE::log::info("ANIMA menu opened; session={}", session);
+        }
+    }
+    void CancelUi()
+    {
+        uiState.Cancel(); uiRenderPanel = anima::Panel::none; uiRenderGeneration = uiState.generation; uiFilled = false;
+    }
+    void RenderUi(std::uint64_t generation)
+    {
+        if (generation != uiRenderGeneration || uiFilled) return;
+        auto panel = uiRenderPanel.load();
+        auto menu = RE::UI::GetSingleton()->GetMenu("CustomMenu");
+        if (panel == anima::Panel::none || !menu || !menu->uiMovie) return;
+        RE::GFxValue root;
+        const auto path = panel == anima::Panel::options ? "_root.listMenu" : "_root.textEntry";
+        const bool found = menu->uiMovie->GetVariable(&root, path) && root.IsObject();
+        if (uiProbeGeneration.exchange(generation) != generation)
+            SKSE::log::info("ANIMA UI task executing; panel={} root={} available={}", static_cast<int>(panel), path, found);
+        if (!found) return;
+        if (generation != uiRenderGeneration) return;
+        bool populated = false;
+        if (panel == anima::Panel::options) {
+            // Match SKSE UI.InvokeStringA: one scalar argument per entry, not one GFx array.
+            std::array<RE::GFxValue, anima::MenuEntries.size()> entries;
+            for (std::size_t i = 0; i < entries.size(); ++i) entries[i].SetString(anima::MenuEntries[i]);
+            populated = menu->uiMovie->Invoke("_root.listMenu.LM_AddTreeEntries", nullptr, entries.data(), entries.size());
+            RE::GFxValue sort(false); menu->uiMovie->Invoke("_root.listMenu.LM_SetSortingEnabled", nullptr, &sort, 1);
+        } else {
+            RE::GFxValue empty; empty.SetString("");
+            populated = menu->uiMovie->Invoke("_root.textEntry.setTextEntryMenuText", nullptr, &empty, 1);
+        }
+        if (generation != uiRenderGeneration) return;
+        uiFilled = populated;
+        if (populated) SKSE::log::info("ANIMA UI-thread population succeeded; panel={} generation={}", static_cast<int>(panel), generation);
+    }
+    void ProcessUi()
+    {
+        std::deque<json> events;
+        { std::scoped_lock lock(mutex); events.swap(uiEvents); }
+        for (const auto& item : events) {
+            const auto name = item.value("name", ""), text = item.value("text", "");
+            if (uiState.Owns(session, anima::Panel::options)) {
+                if (name == "UIListMenu_LoadMenu") {
+                    SKSE::log::info("ANIMA UIExtensions list load callback received");
+                } else if (name == "UIListMenu_SelectItem" && (text == "0" || text == "1" || text == "2")) {
+                    nextUi = text[0] - '0'; CancelUi();
+                } else if (name == "UIListMenu_CloseMenu") { CancelUi(); }
+            } else if (uiState.Owns(session, anima::Panel::text)) {
+                if (name == "UITextEntryMenu_LoadMenu") {
+                    SKSE::log::info("ANIMA UIExtensions text load callback received");
+                } else if (name == "UITextEntryMenu_TextChanged") {
+                    if (uiState.CanSubmit(session, text) && BargeIn()) { Notify("ANIMA: sending your message..."); auto event = Event("player_text"); event["text"] = text; Queue(std::move(event)); }
+                    CancelUi();
+                } else if (name == "UITextEntryMenu_CloseMenu") { CancelUi(); }
+            }
+        }
+        if (!RE::UI::GetSingleton()->IsMenuOpen("CustomMenu")) {
+            const auto choice = nextUi; nextUi = -1;
+            if (choice == 0) OpenUi(anima::Panel::text);
+            else if (choice == 1) Notify("ANIMA: hold F8 to speak; release to send.");
+            else if (choice == 2) RE::UIMessageQueue::GetSingleton()->AddMessage(RE::DialogueMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kHide, nullptr);
+            else if (uiState.panel != anima::Panel::none && Clock::now() - uiOpenedAt > std::chrono::seconds(5)) CancelUi();
+        }
+    }
+
+    bool BargeIn()
+    {
+        auto actor = speaker.get();
+        if (session.empty() || !open || !actor || actor->IsInCombat() || actor->IsDead()) return false;
+        Stop("interrupted"); actor->StopCurrentDialogue();
+        if (session.empty() || !open) return false;
+        // Invalidate both downloaded and in-flight commands before admitting new input.
+        ++snapshotSequence;
+        auto data = Snapshot(actor.get()); lastSnapshot = Fingerprint(data);
+        auto event = Event("snapshot"); event["snapshot"] = data; Queue(std::move(event));
+        lastCapture = Clock::now();
+        return true;
+    }
 
     json Event(const char* kind)
     {
@@ -212,6 +343,7 @@ private:
             std::scoped_lock lock(mutex); outgoing.clear();
         }
         auto now = Clock::now();
+        ProcessUi();
         if (open && now - openedAt > std::chrono::milliseconds(350)) {
             auto manager = RE::MenuTopicManager::GetSingleton();
             auto reference = manager ? manager->speaker.get() : RE::NiPointer<RE::TESObjectREFR>();
@@ -244,11 +376,28 @@ private:
         if (delivery.empty()) return;
         auto actor = speaker.get();
         if (!actor || !open || actor->IsInCombat() || actor->IsDead()) Stop("interrupted");
+        else if (audioStarted) {
+            const auto current = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+            if (!audioState.observed && UtcMs() >= audioStartExpiry) { Stop("failed"); return; }
+            const auto decision = audioState.Update(current, sound.IsPlaying());
+            if (decision == anima::AudioDecision::started) {
+                playbackStart = now;
+                SKSE::log::info("ANIMA observed native audio playing; delivery={} soundID={}", delivery, sound.soundID);
+                Ack(delivery, "started");
+            } else if (decision == anima::AudioDecision::failed) {
+                SKSE::log::error("ANIMA audio failed: observedPlaying={} soundID={}", audioState.observed, sound.soundID);
+                Stop("failed");
+            } else if (decision == anima::AudioDecision::interrupted) Stop("interrupted");
+            else if (decision == anima::AudioDecision::completed) {
+                const auto closeMenu = endAfter; Stop("completed");
+                if (closeMenu) RE::UIMessageQueue::GetSingleton()->AddMessage(RE::DialogueMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kHide, nullptr);
+            }
+        }
         else if (now >= playbackEnd) {
             auto closeMenu = endAfter; Stop("completed");
             if (closeMenu) RE::UIMessageQueue::GetSingleton()->AddMessage(RE::DialogueMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kHide, nullptr);
-        } else if (audioStarted && now - playbackStart > std::chrono::milliseconds(500) && !sound.IsPlaying()) Stop("interrupted");
-        else if (mouthOwned && !mouth.empty()) {
+        }
+        if (!delivery.empty() && mouthOwned && (!audioStarted || audioState.observed) && !mouth.empty()) {
             auto face = actor->GetFaceGenAnimationData();
             auto index = static_cast<std::size_t>(std::chrono::duration<float>(now - playbackStart).count() * 20);
             if (face && face->phenomeKeyFrame.count && face->phenomeKeyFrame.values) {
@@ -285,18 +434,24 @@ private:
         const bool ready = actor && open && !actor->IsInCombat() && !actor->IsDead() && seen.size() < 128;
         const auto decision = anima::Evaluate(
             {requestSession, target, id, command.value("snapshot_sequence", 0ULL), command.value("expires_at_ms", 0LL), command.value("text", "").size()},
-            {session, expected, snapshotSequence, UtcMs(), ready, RE::MenuTopicManager::GetSingleton()->currentTopicInfo != nullptr, seen.contains(id)});
+            {session, expected, snapshotSequence, UtcMs(), ready, false, seen.contains(id)});
         if (decision == anima::Decision::ignore || decision == anima::Decision::wait) return;
         if (decision == anima::Decision::reject) {
             Ack(id, "failed"); seen.insert(id); return;
         }
         if (command.value("mode", "speech") == "silence") { seen.insert(id); Ack(id, "completed"); return; }
+        actor->StopCurrentDialogue();
         Stop("interrupted"); delivery = id; seen.insert(id); audioStarted = false;
         if (command.contains("audio_file") && !command["audio_file"].is_null()) {
             auto path = command["audio_file"].get<std::string>();
             if (path != std::format("Sound/Voice/AnimaConnector/{}.wav", id) || !std::filesystem::exists(std::filesystem::path("Data") / path)) {
                 Stop("failed"); return;
             }
+            std::replace(path.begin(), path.end(), '/', '\\');
+            RE::BSResourceNiBinaryStream resource(path);
+            SKSE::log::info("ANIMA audio resource: delivery={} good={} error={} priority=128", id, resource.good(), static_cast<int>(resource.lastError));
+            if (!resource.good()) { Stop("failed"); return; }
+            sound = RE::BSSoundHandle{};
             BuildVoice(sound, path.c_str());
             sound.SetPosition(actor->GetPosition());
             if (auto node = actor->Get3D()) sound.SetObjectToFollow(node);
@@ -312,7 +467,12 @@ private:
         }
         auto duration = std::clamp(command.value("duration_s", 3.0), 0.05, 30.0);
         playbackStart = Clock::now(); playbackEnd = playbackStart + std::chrono::milliseconds(static_cast<int>(duration * 1000));
-        endAfter = command.value("mode", "speech") == "end"; Ack(id, "started");
+        endAfter = command.value("mode", "speech") == "end";
+        if (audioStarted) {
+            audioStartExpiry = command.value("expires_at_ms", 0LL);
+            audioState.Begin(std::chrono::duration_cast<std::chrono::milliseconds>(playbackStart.time_since_epoch()).count(),
+                             static_cast<std::int64_t>(duration * 1000));
+        } else Ack(id, "started");
     }
     void Ack(const std::string& id, const char* status)
     {
@@ -342,6 +502,8 @@ private:
     }
     void End(bool notify = true)
     {
+        if (uiState.panel != anima::Panel::none) CallUi("CloseCustomMenu");
+        CancelUi(); nextUi = -1;
         Stop("interrupted");
         if (notify && !session.empty()) Queue(Event("end"));
         session.clear(); seen.clear(); listening = false;
@@ -359,11 +521,15 @@ private:
             static_cast<DWORD>(body.size()), 0) || !WinHttpReceiveResponse(request.handle, nullptr)) throw std::runtime_error("bridge unavailable");
         DWORD status = 0, size = sizeof(status);
         WinHttpQueryHeaders(request.handle, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER, nullptr, &status, &size, nullptr);
-        if (status < 200 || status >= 300) throw HttpError(status);
         std::string received; char buffer[4096]; DWORD read = 0;
         while (WinHttpReadData(request.handle, buffer, sizeof(buffer), &read) && read) {
             received.append(buffer, read);
             if (received.size() > 65536) throw std::runtime_error("oversized command");
+        }
+        if (status < 200 || status >= 300) {
+            const auto error = json::parse(received, nullptr, false);
+            const auto reason = error.is_object() && error.contains("error") && error["error"].is_string() ? error["error"].get<std::string>() : "";
+            throw HttpError(status, anima::RequiresResync(status, reason));
         }
         return received.empty() ? json::object() : json::parse(received);
     }
@@ -371,6 +537,13 @@ private:
     {
         auto lastWarning = Clock::now() - std::chrono::seconds(30);
         while (true) {
+            if (uiRenderPanel != anima::Panel::none && !uiFilled && !uiTaskPending.exchange(true)) {
+                auto generation = uiRenderGeneration.load();
+                SKSE::GetTaskInterface()->AddUITask([this, generation] {
+                    try { RenderUi(generation); } catch (const std::exception& e) { SKSE::log::error("ANIMA UI render failed: {}", e.what()); }
+                    uiTaskPending = false;
+                });
+            }
             if (!taskPending.exchange(true)) SKSE::GetTaskInterface()->AddTask([this] {
                 try { Tick(); } catch (const std::exception& e) { SKSE::log::error("Observation failed: {}", e.what()); }
                 taskPending = false;
@@ -392,7 +565,7 @@ private:
                 if (e.status >= 400 && e.status < 500) {
                     std::scoped_lock lock(mutex);
                     if (!outgoing.empty() && !next.is_null() && outgoing.front()["event_id"] == next["event_id"]) outgoing.pop_front();
-                    if (e.status == 409) resync = true;
+                    if (e.resync) resync = true;
                 }
             } catch (const std::exception& e) {
                 if (Clock::now() - lastWarning > std::chrono::seconds(10)) { SKSE::log::warn("Bridge: {}", e.what()); lastWarning = Clock::now(); }
@@ -402,19 +575,35 @@ private:
     }
 };
 }
-extern "C" __declspec(dllexport) constinit SKSE::PluginVersionData SKSEPlugin_Version = [] {
-    SKSE::PluginVersionData data;
-    data.PluginVersion({0, 1, 0, 0}); data.PluginName("AnimaConnector"); data.AuthorName("Anima project");
-    data.UsesAddressLibrary(); data.CompatibleVersions({REL::Version{1, 6, 318, 0}}); return data;
-}();
+extern "C" __declspec(dllexport) constinit SKSE::PluginVersionData SKSEPlugin_Version = anima::VersionMetadata();
 extern "C" __declspec(dllexport) bool SKSEPlugin_Load(const SKSE::LoadInterface* skse)
 {
-    SKSE::Init(skse);
-    if (REL::Module::get().version() != REL::Version{1, 6, 318, 0}) return false;
+    // Admission uses SKSE's supplied runtime before touching engine relocations.
+    const auto version = skse->RuntimeVersion();
+    if (!anima::SupportsRuntime({version.major(), version.minor(), version.patch(), version.build()})) {
+        OutputDebugStringA("AnimaConnector: unsupported Skyrim runtime; supported: 1.6.318.0 and 1.7.104.0\n");
+        return false;
+    }
     if (auto directory = SKSE::log::log_directory()) {
         auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>((*directory / "AnimaConnector.log").string(), true);
         spdlog::set_default_logger(std::make_shared<spdlog::logger>("AnimaConnector", sink)); spdlog::flush_on(spdlog::level::info);
     }
+    std::array<wchar_t,32768> executable{};
+    const auto length = GetModuleFileNameW(nullptr, executable.data(), static_cast<DWORD>(executable.size()));
+    if (!length || length >= executable.size()) {
+        SKSE::log::error("Cannot locate the game executable for Address Library preflight");
+        return false;
+    }
+    const auto library = std::filesystem::path(executable.data()).parent_path() / "Data/SKSE/Plugins" /
+        std::format("versionlib-{}-{}-{}-{}.bin",version.major(),version.minor(),version.patch(),version.build());
+    const auto check = anima::CheckAddressLibrary(library,{version.major(),version.minor(),version.patch(),version.build()});
+    if (check != anima::LibraryCheck::ready) {
+        SKSE::log::error("Address Library preflight failed ({}) for {}",static_cast<int>(check),library.string());
+        return false;
+    }
+    SKSE::Init(skse);
+    SKSE::log::info("AnimaConnector 0.3.0 loading on Skyrim {}; Address Library format {}", version.string(),
+                   anima::AddressLibraryFormat({version.major(),version.minor(),version.patch(),version.build()}));
     return SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message* message) {
         if (message->type == SKSE::MessagingInterface::kDataLoaded) Connector::Get().Initialize();
         else if (message->type == SKSE::MessagingInterface::kPreLoadGame || message->type == SKSE::MessagingInterface::kNewGame) Connector::Get().ResetEpoch();
