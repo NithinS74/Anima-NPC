@@ -27,3 +27,6 @@ Every document requires a stable ID, world/source identity, provenance, revision
 World-public material still needs an explicit public grant for that world; an empty or missing access label never means globally accessible. M04 resolves who has the grants; generic M05 enforces the eligible set. Secret material needs explicit secret grants. Document instructions are treated as source data, never as prompt/system policy.
 
 M05 must provide validate/ingest/status diagnostics, automatic storage creation and model setup, incremental changes and recovery; see its [TRD](../../docs/modules/M05-rag.md). Do not edit the persisted database by hand.
+
+
+The internal `npc.rag` component reads this directory. Local documents are now ignored by Git; use public fixtures for shared synthetic examples. From the NPC-main root run `.\.venv\Scripts\python.exe -m npc.rag sync` after changes. Generated storage/encoder cache lives in `data/rag/`; no external RAG project/server is required. See `docs/RAG_INTEGRATION.md`.

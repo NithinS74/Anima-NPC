@@ -69,6 +69,7 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m pip install -e . --no-deps --no-build-isolation
 .\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -m npc.rag prepare
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
@@ -83,3 +84,7 @@ Runtime installation is idempotent. Previously package-managed files update auto
 To ensure an existing teammate install uses exactly the shared runtime media, run **`setup.bat --sync-media`** (setup pulls the current tracking branch itself). This intentionally replaces local runtime model/font/voice/scene overrides with verified bundle versions; `.env` and saved player state remain untouched. For automated checks combine `--no-pause --sync-media`. Normal setup preserves local overrides. Matching media does not force identical cloud-model responses or personal relationship state.
 
 Normal launches perform local readiness checks only: pinned package versions, project import, configuration presence, setup fingerprint and installed media presence/size. Missing/outdated installations trigger setup once, including regression. Healthy launches do not run pip, tests or a Git pull. To request source updates explicitly, run setup. Full media hashes are verified during setup rather than on every launch. Same-size local edits are not detected by the fast launch check; use `setup.bat --sync-media` to verify/restore the shared media. Python 3.11, Git, Git LFS and private-repository authentication remain machine prerequisites; the scripts do not install global software.
+
+## Included local RAG component
+
+Setup now also installs the pinned Chroma/ONNX CPU dependencies into the same `.venv`, prepares the local encoder (first setup may download it), and synchronizes `Knowledge base/kb/` into ignored `data/rag/`. No separate RAG environment/server is needed. Add your own documents, then use `python -m npc.rag sync` with the project interpreter outside interactive use. See [RAG integration](docs/RAG_INTEGRATION.md) for the single-process launch and trusted source bindings. Local preparation does not call the dialogue-model API or consume its request quota. Raw corpus, index and model cache remain ignored; existing external installations and player state are preserved.

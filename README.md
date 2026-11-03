@@ -2,7 +2,9 @@
 
 A game-independent orchestration system for believable NPC interactions. The system decides whether an NPC engages, what they know, and how they respond before asking a replaceable language model to express the response.
 
-**Status:** context building and a generation/validation scenario preview are implemented and tested offline. The preview adds deterministic engagement rules, replaceable API generation, strict output checks and bounded repair. A [live Gemini sample](docs/reviews/2026-10-31-behavior-quality-audit.md) confirmed integration but exposed grounding, social-policy and latency gaps; realism is not signed off. OpenRouter remains untested live. The full game pipeline is not yet implemented; local inference is a later option.
+The independent [Skyrim connector](docs/SKYRIM_CONNECTOR.md) connects SKSE game context/screenshots through optional local VLM, scoped RAG, NPC generation/validation and native text/audio delivery. Start `run_cv.bat`, then `run_skyrim_connector.bat --cv-url http://127.0.0.1:8000`; add `--attach-visual-reference` to include the untrusted descriptor in prompts. The default provider is scripted/offline; STT/TTS stay unconfigured for later. It has no Mantella runtime dependency. Offline checks do not establish live Skyrim/model compatibility; consult the guide and [integration review](docs/reviews/2026-11-02-skyrim-vision-pipeline.md).
+
+**Status:** context building and a generation/validation scenario preview are implemented and tested offline. The preview adds deterministic engagement rules, replaceable API generation, strict output checks and bounded repair. A [live Gemini sample](docs/reviews/2026-10-31-behavior-quality-audit.md) confirmed integration but exposed grounding, social-policy and latency gaps; realism is not signed off. A small [OpenRouter/Nemotron diagnostic](docs/reviews/2026-11-01-openrouter-output-budget.md) also verified answer text with reasoning disabled; response quality remains unverified. The full game pipeline is not yet implemented; local inference is a later option.
 
 Install Python 3.11, Git and Git LFS, clone the repository, then start **[run_anima.bat](run_anima.bat)**. It automatically runs setup when dependencies or shared runtime media are missing/outdated; `--offline` uses scripted responses. Run **[setup.bat](setup.bat)** explicitly to request a safe source update. Setup creates/reuses the venv, preserves `.env`, installs the single requirements file and runs regression. See [setup](SETUP.md), the [general TRD](docs/TRD.md) and the [implementation backlog](docs/BACKLOG.md). The [documentation index](docs/README.md) links contracts, module TRDs, research and reviews.
 
@@ -29,9 +31,27 @@ Try the [offline context preview](docs/CONTEXT_BUILDER.md) after [setup](SETUP.m
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-The context command explains response influences. The runtime command exercises generation/validation using a fake provider by default. See the [generation guide](docs/GENERATION_VALIDATION.md) for **OpenRouter/Gemini configuration and live commands**. An initial [persistent social-state slice](docs/SOCIAL_STATE.md) is implemented; RAG and production game delivery remain planned. Skyrim/Mantella remains a best-effort reference adapter.
+The context command explains response influences. The runtime command exercises generation/validation using a fake provider by default. See the [generation guide](docs/GENERATION_VALIDATION.md) for **OpenRouter/Gemini configuration and live commands**. An initial [persistent social-state slice](docs/SOCIAL_STATE.md) is implemented; An internal [local RAG component](docs/RAG_INTEGRATION.md) now owns ingestion, CPU embeddings and scoped dialogue retrieval inside NPC-main; full M05 authorization and production game delivery remain planned. Skyrim/Mantella remains a best-effort reference adapter.
 
 For **manual testing in a chat box**, double-click [run_anima.bat](run_anima.bat). It opens the separate localhost [Anima companion](docs/ANIMA.md) using valid Gemini configuration from `.env`, or a clearly labelled scripted preview when configuration is absent; pass `--offline` to require the fake or `--live` to require API configuration. Four [authored personas](fixtures/personas/npc_lab/README.md), persistent relationship reactions, bounded displayed-conversation memory, trace inspection and export are included. Characters sit on the left; the central model has the text box below. Optional local Skyrim models, a game backdrop and copied Mantella voices are available through [media setup](configs/npc_lab/README.md); the owner-approved runtime media archive is now included via Git LFS in this private repository. Raw game/conversion files remain ignored. The basic illustrated UI works without Skyrim and stays separate from core deployment. See the [current setup/media review](docs/reviews/2026-10-31-setup-native-faces.md); reliable recall and human realism are still not signed off.
+
+## Optional Skyrim CV → Context Builder workflow
+
+The included standalone [CV service](cv/README.md) feeds its validated `scene_descriptor` JSON into Anima's **Context Builder** as an optional `Situation.visual_context`. Install it once with `cv\\setupcv.bat`, then start both local services:
+
+```powershell
+# Terminal 1 — repository root: Skyrim CV service
+cd C:\path\to\Anima-NPC
+.\run_cv.bat
+
+# Terminal 2 — repository root: Anima
+cd C:\path\to\Anima-NPC
+.\run_anima.bat --offline --rag-config configs/rag/dialogue.example.json --cv-url http://127.0.0.1:8000
+```
+
+In Anima, expand **Shape the encounter**, choose a PNG/JPEG under **Optional visual reference**, click **Analyze scene**, then check **Attach to next turn**. The bridge sends the image to the local CV API, normalizes the returned Scene Descriptor, and passes it to `build_situation(...)`. Open **Inspect context** to view `context.visual_context`; the exact provider input includes it as `untrusted_visual_reference`.
+
+This is intentionally not a canonical `ObservedFact`: a manually selected player-camera screenshot does not establish what a particular NPC can see. Therefore it does not change availability, combat/threat, relationships, RAG eligibility, durable memory, identity, quest state, or other trusted context. The model receives it only as uncertain visual reference; its uncertainty/provenance are preserved. If CV is unavailable, leave it unattached and normal dialogue continues. See [Anima](docs/ANIMA.md) and [the integration plan](docs/plans/I10-local-cv-bridge.md).
 
 For every component, follow **plan -> review plan -> implement with unit tests -> review change -> run regression**. Read the [development skill](.agents/skills/develop-npc-component/SKILL.md) yourself or ask your agent:
 

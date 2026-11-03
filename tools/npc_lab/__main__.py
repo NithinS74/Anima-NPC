@@ -9,6 +9,8 @@ from tools.npc_lab.service import LabService
 from tools.npc_lab.media import LabMedia
 from tools.npc_lab.service import ROOT
 from npc.state.social_store import SocialStore, StoreFailure
+from npc.rag import load_retriever
+from npc.vision import CVSceneClient
 
 
 def choose_provider(mode, config):
@@ -36,13 +38,18 @@ def main():
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--state-db", type=Path, default=ROOT / "data/npc_lab/state.sqlite3", help="Separate SQLite file for an isolated test history")
     parser.add_argument("--open", action="store_true", help="Open the local browser interface")
+    parser.add_argument("--rag-config", type=Path, help="Trusted world/NPC/source bindings for the RAG API")
+    parser.add_argument("--cv-url", help="Optional loopback Skyrim CV service origin, e.g. http://127.0.0.1:8000")
+    parser.add_argument("--cv-timeout", type=int, default=120, choices=range(1, 181), metavar="1..180",
+                        help="Local CV analysis timeout in seconds (default 120; first VLM pass can be slow)")
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error("port must be 1..65535")
     try:
         provider, live = choose_provider(args.mode, args.config)
+        cv_client = CVSceneClient(args.cv_url, args.cv_timeout) if args.cv_url else None
         server = LabServer(LabService(provider, live=live, realtime=args.realtime, development_timeout_s=args.development_timeout, media=LabMedia(),
-                                     state_store=SocialStore(args.state_db)), args.port)
+                                     state_store=SocialStore(args.state_db), retriever=load_retriever(args.rag_config), cv_client=cv_client), args.port)
     except ConfigurationFailure as error:
         print(f"Configuration error: {error}. Check the local .env; no keys printed.")
         return 2

@@ -2,6 +2,8 @@
 
 Status: proposed | Requirement: SYS-10 | Owner/reviewer: unassigned
 
+Implementation update: the [independent Skyrim connector](../SKYRIM_CONNECTOR.md) stages correlated text/verified WAV and implements native receiver deduplication, state/expiry checks and best-effort playback reports. Full production outbox/heard-memory semantics remain separate; live Skyrim audio/subtitles still require verification.
+
 ## Responsibility and interfaces
 
 `deliver(validated_response, capabilities) -> DeliveryReceipt`; `cancel(turn_id)`; `ack(DeliveryAck)`. Deliver text, deliberate silence and supported cue/action intents. Optional TTS consumes only validated speech; optional STT lives before M01. No game-specific paths, voice model assumptions or animation IDs belong in the core.

@@ -1,0 +1,6 @@
+{
+  "name": "skyrim-cv-dashboard",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": { "start": "python3 -m http.server 5173", "lint": "node --check src/app.js", "build": "node --check src/app.js && mkdir -p dist/src && cp index.html dist/ && cp src/app.js src/styles.css dist/src/" }
+}

@@ -21,6 +21,8 @@ GPT_SECRET_KEY.txt
 /recordings/
 /captures/
 /output/
+/configs/skyrim/connector.json
+/configs/skyrim/npcs.json
 /assets/private/
 *.sqlite
 *.sqlite3
@@ -35,3 +37,17 @@ build/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# CV uses the root environment. Ignore legacy environments, local models and
+# annotated previews; checked-in samples remain trackable.
+/cv/.venv/
+/cv/backend/.env
+/cv/backend/*.pt
+/cv/datasets/
+/cv/frontend/dist/
+/cv/frontend/node_modules/
+
+# Local knowledge is user input, not public test fixtures.
+/Knowledge base/kb/*
+!/Knowledge base/kb/README.md
+!/Knowledge base/kb/.gitkeep

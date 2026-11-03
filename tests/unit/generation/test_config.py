@@ -51,3 +51,21 @@ def test_gemini_reasoning_profile_and_override_are_validated():
     assert load_provider(path, environ={**settings, "NPC_LLM_REASONING_EFFORT": "low"}).config.reasoning_effort == "low"
     with pytest.raises(ConfigurationFailure):
         load_provider(path, environ={**settings, "NPC_LLM_REASONING_EFFORT": "invalid"})
+
+
+def test_openrouter_reserves_short_output_allowance_for_answer_text():
+    provider = load_provider(Path("configs/providers/openrouter.yaml"), environ={
+        "OPENROUTER_API_KEY": "PRIVATE_KEY", "NPC_LLM_MODEL": "nvidia/nemotron-3.5-lightning:free"})
+    assert provider.config.reasoning_enabled is False
+    assert provider.config.reasoning_effort is None
+    gemini = load_provider(Path("configs/providers/gemini.yaml"), environ={
+        "GEMINI_API_KEY": "PRIVATE_KEY", "NPC_LLM_MODEL": "gemini-test"})
+    assert gemini.config.reasoning_enabled is None
+    assert gemini.config.reasoning_effort == "minimal"
+
+
+def test_reasoning_profile_toggle_requires_a_boolean(tmp_path):
+    path = tmp_path / "provider.yaml"
+    path.write_text('provider: chat_completions\nbase_url: https://example.test/v1\nreasoning_enabled: "false"\n')
+    with pytest.raises(ConfigurationFailure):
+        load_provider(path, environ={"NPC_LLM_API_KEY": "PRIVATE", "NPC_LLM_MODEL": "test"})

@@ -1,6 +1,6 @@
 # M05 - Generalized local RAG
 
-Status: proposed | Requirements: SYS-05, SYS-06 | Owner/reviewer: unassigned
+Status: [internal local RAG component](../RAG_INTEGRATION.md) implemented with ingestion/CPU embeddings/Chroma and optional HTTP compatibility; broader authorization/revision design below remains proposed | Requirements: SYS-05, SYS-06 | Owner/reviewer: unassigned
 
 ## Responsibility
 

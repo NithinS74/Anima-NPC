@@ -6,7 +6,7 @@ const presets = {
   stranger: [0, 0, 0, 0, 0], friend: [80, 80, 90, 0, 0],
   distrusted: [20, -60, 80, 0, 30], disliked: [-60, -60, 0, 0, 70]
 };
-let info, profile, pending = null, epoch = 0, records = [], settingsPending = false;
+let info, profile, pending = null, epoch = 0, records = [], settingsPending = false, visualContext = null;
 let stage = null, stageEpoch = 0, audioURL = null, speechFetch = null;
 let cameraView = "close", cameraZoom = 1;
 function feedback(text) { $('feedback').textContent = text; }
@@ -18,7 +18,10 @@ function fallbackExplanation(code) {
     provider_unavailable: 'The provider returned a server error. Try again later.',
     provider_bad_request: 'The API rejected the request settings. Check model and provider compatibility.',
     provider_not_found: 'The configured model or endpoint was not found.',
-    provider_transport: 'Could not reach the API. Check the network connection.'
+    provider_transport: 'Could not reach the API. Check the network connection.',
+    provider_output_limit: 'The model exhausted its output allowance before producing a reply. Disable reasoning for short NPC replies.',
+    provider_protocol: 'The API returned an unexpected response instead of usable answer text.',
+    irrelevant_boundary: 'The model answered an unrelated restriction instead of your current question; the reply was rejected.'
   };
   return `Outcome: ${code}. ${explanations[code] || 'Inspect validation and error details in the trace.'} A fallback is not successful generation.`;
 }
@@ -169,7 +172,7 @@ $('chat').addEventListener('submit', async event => {
   const text = $('message').value.trim(); if (!text) return;
   const id = crypto.randomUUID(), turnEpoch = epoch, character = profile;
   stopAudio(); pending = id; setBusy(true); $('message').value = '';
-  const request = { request_id: id, persona_id: character.id, text, relationship: relationship(), mood: $('mood').value, state: $('state').value, weapon_drawn: $('weapon').checked, state_revision: character.state_revision };
+  const request = { request_id: id, persona_id: character.id, text, relationship: relationship(), mood: $('mood').value, state: $('state').value, weapon_drawn: $('weapon').checked, state_revision: character.state_revision, visual_id: $('vision-attach').checked ? visualContext?.id || null : null };
   bubble('You', text, 'player');
   const waiting = document.createElement('div'); waiting.className = 'waiting'; waiting.textContent = 'Waiting for a validated response…'; $('messages').append(waiting);
   feedback(info.mode === 'live' ? 'Calling the configured API. No streaming text is displayed before validation.' : 'Using the deterministic fake — this is not an LLM-quality test.');
@@ -240,6 +243,7 @@ async function init() {
     $('mode').textContent = info.mode === 'live' ? 'CONNECTED · may incur charges' : 'OFFLINE PREVIEW · no model';
     $('timing').textContent = `${info.timing_profile.toUpperCase()} · ${info.deadline_ms / 1000}s deadline · ${info.input_budget_bytes} input bytes`;
     $('memory-notice').textContent = info.persistent_state ? 'Relationships persist · recent displayed replies become conversation memory.' : 'Single-turn test · this server has no persistent store.';
+    $('vision-controls').hidden = !info.cv_enabled;
     document.querySelector('.stage-panel').classList.toggle('game-background', !!info.background_url);
     info.profiles.forEach(next => {
       const button = document.createElement('button'); button.className = 'roster-item'; button.dataset.id = next.id;
@@ -273,6 +277,9 @@ function showInspection(data) {
   for (const dependency of context.dependencies) card(`Resolved ${dependency.field}`, `${dependency.value ?? 'unknown'} (${dependency.reason})`, dependency.source_ids.join(', ') || 'No eligible evidence');
   card('Response contract', `${plan.max_words} words / ${plan.max_sentences} sentences; route ${plan.route}; affect ${plan.affect}. History used: ${data.result.history_used}, omitted: ${data.result.history_omitted}.`, plan.reason_codes.join(', '));
   card('Knowledge boundary', `${context.perceived_facts.length} eligible observations; ${context.exclusions.length} excluded. History and player claims remain untrusted.`, 'These rules describe implemented appraisal, not proven human psychology.');
+  const knowledge = data.result.knowledge;
+  if (knowledge) card('Retrieved knowledge', `${knowledge.status}; ${data.result.evidence_used.length} passages used, ${data.result.evidence_omitted} omitted by budget.`, knowledge.evidence.map(hit => `${hit.source} #${hit.chunk_index}`).join(', ') || 'No retrieved passages');
+  if (data.visual_context) card('Visual reference (untrusted)', data.visual_context.environment || 'No environment description.', (data.visual_context.uncertainties || []).join('; ') || 'Not NPC perception or game truth.');
   $('impact-map').replaceChildren(...cards);
 }
 function updateCamera() {
@@ -310,3 +317,7 @@ document.addEventListener('keydown', event => {
 });
 
 $('expressions').addEventListener('change', () => stage?.setExpressions($('expressions').checked));
+function resetVisual(message = 'No scene selected.') { visualContext = null; $('vision-file').value = ''; $('vision-analyze').disabled = true; $('vision-clear').disabled = true; $('vision-attach').checked = false; $('vision-attach').disabled = true; $('vision-status').textContent = message; }
+$('vision-file').addEventListener('change', () => { const file = $('vision-file').files[0]; $('vision-analyze').disabled = !file; $('vision-status').textContent = file ? `${file.name} ready for local CV analysis.` : 'Choose a PNG or JPEG screenshot.'; });
+$('vision-clear').addEventListener('click', () => resetVisual());
+$('vision-analyze').addEventListener('click', async () => { const file = $('vision-file').files[0]; if (!file || !info?.cv_enabled) return; $('vision-analyze').disabled = true; $('vision-status').textContent = 'Analyzing scene locally…'; try { const response = await fetch('/api/vision/analyze', {method:'POST', headers:{'Content-Type':file.type, 'X-Lab-Token':token}, body:file}); const result = await response.json(); if (!response.ok) throw new Error(result.error || 'cv_failed'); visualContext = result.visual; $('vision-attach').disabled = false; $('vision-clear').disabled = false; $('vision-status').textContent = `Scene ready: ${visualContext.environment || 'no environment description'}. Check Attach to include it in the next turn.`; } catch (error) { $('vision-status').textContent = `Scene analysis unavailable: ${error.message}`; } finally { $('vision-analyze').disabled = false; } });

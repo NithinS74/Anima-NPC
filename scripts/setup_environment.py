@@ -52,6 +52,7 @@ def setup(root: Path, *, python=sys.executable, version=None, run=subprocess.run
                 shutil.copyfileobj(source, target)
         except FileExistsError:
             pass
+    command([interpreter, "-m", "npc.rag", "prepare"])
     command([interpreter, "-m", "pytest", "-q"])
     from scripts.check_environment import record_ready
     record_ready(root)

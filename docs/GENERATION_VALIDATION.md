@@ -15,6 +15,8 @@ After [setup](../SETUP.md), from the repository root:
 
 The available smith uses a deterministic fake provider; it is not an LLM and cannot demonstrate response quality. The closing smith uses an authored refusal with zero model calls. JSON output includes the plan, response, status, violations, call count, usage completeness and timing profile. `--text` changes the utterance; edit a copy of the fixture to change persona, relationship or perceived state. Scenario timestamps are deterministic replay inputs.
 
+For optional game-dialogue retrieval through your existing index, see [RAG integration](RAG_INTEGRATION.md).
+
 ## Configure OpenRouter or Gemini
 
 Public transport settings belong in [configs/providers](../configs/providers/README.md). Copy `.env.example` to `.env` once and fill the relevant values locally:
@@ -60,7 +62,7 @@ Reuse one `PreviewRunner` in a persistent integration. Its admission remains occ
 
 Offline regression covers each working component, mock HTTP payloads/errors/drip responses, structural failures/repair, persona differences, stale state, timeout, cancellation, slow cleanup and admission contention. The independent review reproduced two bugs despite an initially green suite: omitted disposition in prompts and cleanup delaying the caller. Both have regression tests and fixes. See the [review evidence](reviews/2026-10-31-generation-validation-review.md).
 
-An initial [live Gemini 3.1 Flash-Lite sample](reviews/2026-10-31-behavior-quality-audit.md) now confirms this model works through the configured transport. It also exposed invented role/world details and social-policy gaps. Six development-profile generated samples took 3.6–6.1 seconds; one normal-profile request timed out at the cutoff and used fallback. This is not a quality/latency signoff or a general compatibility guarantee. OpenRouter remains untested live. No game/VRAM performance benchmark has been established.
+An initial [live Gemini 3.1 Flash-Lite sample](reviews/2026-10-31-behavior-quality-audit.md) now confirms this model works through the configured transport. It also exposed invented role/world details and social-policy gaps. Six development-profile generated samples took 3.6–6.1 seconds; one normal-profile request timed out at the cutoff and used fallback. This is not a quality/latency signoff or a general compatibility guarantee. A small [OpenRouter/Nemotron diagnostic](reviews/2026-11-01-openrouter-output-budget.md) reproduced reasoning-only output at the short token limit and confirmed answer text with reasoning disabled; broader quality remains unverified. No game/VRAM performance benchmark has been established.
 
 Valid JSON and evidence IDs do not prove truth, entailment, lack of subtle disclosure or believable characterization. A test deliberately demonstrates that a false claim can pass structural checks. Unknown lore is constrained by prompting only; retrieval, explicit disclosure policies and labelled semantic/persona evaluation remain needed. There is no always-on LLM critic.
 

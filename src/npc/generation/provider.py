@@ -7,7 +7,7 @@ from typing import Literal, Protocol
 from urllib.parse import urlsplit
 
 import httpx
-from pydantic import Field, SecretStr, ValidationError, model_validator
+from pydantic import Field, SecretStr, StrictBool, ValidationError, model_validator
 
 from npc.contracts.context import Contract, Identifier
 from npc.contracts.dialogue import PromptPackage, ProviderReply
@@ -29,9 +29,12 @@ class ProviderConfig(Contract):
     api_key: SecretStr = Field(repr=False)
     response_format: Literal["json_object", "none"] = "json_object"
     reasoning_effort: Literal["none", "minimal", "low", "medium", "high"] | None = None
+    reasoning_enabled: StrictBool | None = None
 
     @model_validator(mode="after")
     def check_url(self) -> "ProviderConfig":
+        if self.reasoning_enabled is not None and self.reasoning_effort is not None:
+            raise ValueError("choose reasoning_enabled or reasoning_effort, not both")
         parsed = urlsplit(self.base_url)
         if not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment:
             raise ValueError("base URL must not contain credentials/query/fragment")
@@ -58,6 +61,8 @@ class ChatCompletionsProvider:
                    "max_tokens": prompt.max_output_tokens, "stream": False}
         if self.config.response_format == "json_object":
             payload["response_format"] = {"type": "json_object"}
+        if self.config.reasoning_enabled is not None:
+            payload["reasoning"] = {"enabled": self.config.reasoning_enabled}
         if self.config.reasoning_effort is not None:
             payload["reasoning_effort"] = self.config.reasoning_effort
         try:
@@ -95,6 +100,8 @@ class ChatCompletionsProvider:
             message = choice["message"]
             if message.get("tool_calls") or message.get("function_call") or message.get("refusal"):
                 raise ProviderFailure("provider_refusal_or_tools")
+            if choice.get("finish_reason") == "length" and not message.get("content"):
+                raise ProviderFailure("provider_output_limit")
             usage = body.get("usage") or {}
             return ProviderReply(content=message["content"], model=body.get("model", self.config.model),
                                  finish_reason=choice["finish_reason"],

@@ -114,3 +114,37 @@ def test_total_timeout_bounds_drip_fed_response():
     provider = ChatCompletionsProvider(config(), transport=httpx.MockTransport(lambda request: httpx.Response(200, stream=Drip())))
     with pytest.raises(ProviderFailure, match="provider_timeout"):
         asyncio.run(provider.generate(PROMPT, 0.03))
+
+
+@pytest.mark.parametrize("enabled", [None, False, True])
+def test_reasoning_toggle_is_explicit_and_does_not_raise_output_budget(enabled):
+    def handler(request):
+        payload = json.loads(request.content)
+        assert payload["max_tokens"] == 160
+        if enabled is None:
+            assert "reasoning" not in payload
+        else:
+            assert payload["reasoning"] == {"enabled": enabled}
+        assert "reasoning_effort" not in payload
+        return httpx.Response(200, json=body())
+    invoke(handler, reasoning_enabled=enabled)
+
+
+@pytest.mark.parametrize("content", [None, ""])
+def test_reasoning_only_length_limited_reply_is_output_limit_not_protocol(content):
+    payload = body(choices=[{"message": {"content": content, "reasoning": "PRIVATE_REASONING"}, "finish_reason": "length"}])
+    with pytest.raises(ProviderFailure, match="provider_output_limit") as error:
+        invoke(lambda request: httpx.Response(200, json=payload))
+    assert "PRIVATE_REASONING" not in str(error.value)
+
+
+def test_partial_answer_still_reaches_incomplete_generation_validation():
+    payload = body(choices=[{"message": {"content": '{"mode":"speech"'}, "finish_reason": "length"}])
+    reply = invoke(lambda request: httpx.Response(200, json=payload))
+    assert reply.finish_reason == "length"
+    assert reply.content == '{"mode":"speech"'
+
+
+def test_conflicting_reasoning_controls_are_rejected():
+    with pytest.raises(ValidationError, match="choose reasoning_enabled or reasoning_effort"):
+        config(reasoning_enabled=False, reasoning_effort="low")

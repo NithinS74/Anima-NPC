@@ -10,6 +10,8 @@ Unknown values use null/absence explicitly; patch omission means unchanged in fu
 
 Preview-specific types are `InteractionPlan` (prototype policy subset), `PromptPackage` (messages, conservative input byte estimate and output-token cap), `ProviderReply` (raw text/finish reason/model/usage), `CurrentState`, `ValidationResult` and developer-only `TurnPreview`. `TurnPreview` includes diagnostics and is not the proposed public/delivered `TurnResult`. It has no persistence, outbox or acknowledgement semantics. Preview end/silence bodies require empty text. The inventory below describes the broader target, including fields not implemented by these types yet.
 
+The [internal RAG component](RAG_INTEGRATION.md), with local default and optional HTTP transport, adds executable `Evidence` and `KnowledgeContext` in `contracts/knowledge.py`. `PromptPackage.evidence` holds only whole passages actually sent; response validation accepts only their IDs plus perceived observation IDs. `TurnPreview.knowledge`, `evidence_used` and `evidence_omitted` are inspection fields. The bridge uses trusted file-level bindings rather than the full proposed `RetrievalRequest`/`EvidenceSet` authorization and revision schema below.
+
 ## Boundary object inventory
 
 | Object | Required content | Producer -> consumer |
@@ -141,8 +143,14 @@ Ack statuses: `accepted`, `started`, `completed`, `interrupted`, `failed`; core 
 
 ## Ownership rules
 
+The independent Skyrim connector's adapter-specific wire protocol is implemented in `adapters/skyrim/protocol.py` and documented in [Skyrim connections](SKYRIM_CONNECTOR.md). Its full game envelope and screenshot references sit beside the executable `ContextScenario` subset; they do not extend `TurnInput` implicitly. Context-ready can analyze a frame through configured local CV; player-turn composes the existing pipeline or an external endpoint. `image_description` is a bounded `VisualContext`, bound to capture/session/revision/TTL, never a canonical fact or citation. Prompt attachment is explicitly configured. Correlated results return via the command channel. Native playback acknowledgements remain best effort and do not implement the broader production outbox/memory guarantees above.
+
 M02 owns persistent mutations; M03 owns social decisions; M04 owns NPC knowledge eligibility and context selection; M05 enforces retrieval filters without NPC-specific business rules; M06 owns serialization/provider details; M07 owns acceptance; M08 owns transport/cues; M09 owns deadline, idempotency and scheduling. M10 supplies uncertain observations only.
 
 ## Implemented social-state and lab media slice
 
 See [social state](SOCIAL_STATE.md) for typed `DialogueMemory`/`SocialAppraisal`, persona temperament, revision-checked SQLite relationships and bounded acknowledged recent history. This is partial state implementation, not the full delivery/outbox proposal. Reusable policy/storage stay in `src/npc/behavior/` and `src/npc/state/`; standalone HTTP, static models, voice and offline asset conversion stay in `tools/npc_lab/`. Public recipes live in `configs/npc_lab/`; all converted game assets/tools/weights remain ignored. Unit/integration cases live under the corresponding `tests/` owners.
+
+### Dialogue-reference provenance and prompt citations
+
+`SourceBinding.source_format` selects ordinary `reference` or the configured `dialogue_export` reader. `Evidence.source_kind` and `record_ids` preserve dialogue provenance. `KnowledgeContext.source_kind` remains explicit even for empty results; dialogue-export prompts retain player history but omit previous generated NPC replies as unverified knowledge. No saved history is deleted. `PromptPackage.evidence_aliases` maps short model labels only to packed original evidence IDs, avoiding observation-ID collisions. Response validation resolves labels back to original source IDs; unknown labels/omitted sources fail. Record IDs are inspection-only; dialogue entries sent to the model explicitly mark speaker unknown and conditions unresolved.

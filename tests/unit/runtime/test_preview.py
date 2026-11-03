@@ -58,7 +58,7 @@ def test_two_invalid_outputs_then_validated_fallback(scenario_data):
     assert result.response.text == result.plan.fallback_text
 
 
-@pytest.mark.parametrize("code", ["provider_timeout", "provider_rate_limited", "provider_auth", "provider_transport"])
+@pytest.mark.parametrize("code", ["provider_timeout", "provider_rate_limited", "provider_auth", "provider_transport", "provider_output_limit"])
 def test_provider_failures_fall_back_without_retry(scenario_data, code):
     provider = ScriptedProvider(ProviderFailure(code))
     result = asyncio.run(PreviewRunner(provider).run(generating(scenario_data)))

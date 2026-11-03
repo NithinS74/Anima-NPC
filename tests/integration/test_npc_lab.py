@@ -6,6 +6,8 @@ import pytest
 from npc.generation.provider import OfflineProvider
 from tools.npc_lab.server import ASSETS, LabServer
 from tools.npc_lab.service import LabService
+from npc.vision import VisualContext
+from datetime import datetime, timezone
 
 
 @pytest.fixture(scope="module")
@@ -130,6 +132,24 @@ def test_cancel_without_active_request(lab):
 def test_unknown_post_route(lab):
     server, client = lab
     assert client.post("/api/provider-config", json={}, headers=headers(server)).status_code == 404
+
+
+def test_visual_proxy_requires_image_and_returns_only_normalized_context(lab):
+    server, client = lab
+    class FakeCV:
+        async def analyze(self, image, content_type):
+            assert image == b"image" and content_type == "image/png"
+            return VisualContext(id="cv-http", captured_at=datetime.now(timezone.utc), environment="A visible market", uncertainties=("uncertain",))
+    original = server.service.cv_client
+    server.service.cv_client = FakeCV()
+    try:
+        assert client.post("/api/vision/analyze", content=b"image", headers=headers(server) | {"Content-Type": "text/plain"}).status_code == 415
+        response = client.post("/api/vision/analyze", content=b"image", headers=headers(server) | {"Content-Type": "image/png"})
+        assert response.status_code == 200
+        assert response.json()["visual"]["environment"] == "A visible market"
+        assert "scene_descriptor" not in response.text
+    finally:
+        server.service.cv_client = original
 
 
 def test_voice_accepts_only_validated_recorded_turn_ids(lab):

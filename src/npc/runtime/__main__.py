@@ -9,6 +9,7 @@ from npc.contracts.context import ContextScenario, PlayerInput, TurnInput
 from npc.generation.config import ConfigurationFailure, load_provider
 from npc.generation.provider import OfflineProvider
 from npc.runtime.preview import PreviewLimits, PreviewRunner
+from npc.rag import load_retriever
 
 
 def main() -> int:
@@ -18,6 +19,7 @@ def main() -> int:
     parser.add_argument("--live", action="store_true", help="Send this scenario's context to the configured API (may incur cost)")
     parser.add_argument("--config", type=Path, default=Path("configs/providers/openrouter.yaml"))
     parser.add_argument("--development-timeout-ms", type=int, help="Explicit longer test deadline; not a realtime benchmark")
+    parser.add_argument("--rag-config", type=Path, help="Trusted source bindings for the existing RAG API")
     args = parser.parse_args()
     try:
         if args.scenario.stat().st_size > 256*1024:
@@ -31,10 +33,14 @@ def main() -> int:
             response_timeout_ms=args.development_timeout_ms,
             model_cutoff_ms=args.development_timeout_ms-550,
         )
+        retriever = load_retriever(args.rag_config)
+        if retriever:
+            limits = limits.model_copy(update={"max_input_bytes": 10000,
+                                               "retrieval_timeout_ms": 5000 if args.development_timeout_ms else 750})
         provider = load_provider(args.config) if args.live else OfflineProvider()
         if args.live:
             print("Live mode: supplied NPC/player context may leave this machine and incur API charges.", file=sys.stderr)
-        result = asyncio.run(PreviewRunner(provider, limits).run(scenario))
+        result = asyncio.run(PreviewRunner(provider, limits, retriever=retriever).run(scenario))
     except ConfigurationFailure as error:
         print(f"Configuration error: {error}", file=sys.stderr)
         return 2

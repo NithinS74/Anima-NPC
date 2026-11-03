@@ -1,0 +1,20 @@
+{
+  "backend": "local",
+  "kb_dir": "Knowledge base/kb",
+  "data_dir": "data/rag",
+  "bindings": [
+    {
+      "game_id": "manual-lab",
+      "world_id": "village",
+      "npc_ids": [
+        "lab-mira",
+        "lab-elin",
+        "lab-daren"
+      ],
+      "source": "Dialogue_2015.txt",
+      "source_format": "dialogue_export"
+    }
+  ],
+  "top_k": 3,
+  "max_chars": 6000
+}

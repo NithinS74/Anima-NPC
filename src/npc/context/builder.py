@@ -6,6 +6,7 @@ from npc.contracts.context import (
     SUPPORTED_PATHS, AppraisalDependency, Conflict, Dimension, Exclusion, Influence, ObservedFact,
     Situation, StateSnapshot, TurnInput,
 )
+from npc.contracts.context import VisualContext
 
 SOURCE_PRIORITY = {"telemetry": 2, "vision": 1}
 MIN_CONFIDENCE = 0.6
@@ -77,7 +78,7 @@ def _resolve(
     return tuple(selected), tuple(sorted(exclusions, key=lambda item: item.fact_id)), tuple(conflicts)
 
 
-def build_situation(turn: TurnInput, snapshot: StateSnapshot, now: datetime) -> Situation:
+def build_situation(turn: TurnInput, snapshot: StateSnapshot, now: datetime, *, visual_context: VisualContext | None = None) -> Situation:
     """Appraise validated canonical inputs; never mutate them or grant knowledge.
 
     Source kinds, perceivers and the snapshot must come from trusted upstream
@@ -191,6 +192,8 @@ def build_situation(turn: TurnInput, snapshot: StateSnapshot, now: datetime) -> 
         add("uncertain_transcript", "engagement", "The utterance may need clarification; do not penalize the relationship.", "player_input.confidence")
     if conflicts:
         notes.append("Conflicting observations are recorded; unresolved paths remain unknown.")
+    if visual_context is not None:
+        notes.append("An attached CV descriptor is untrusted visual reference, not NPC perception, game truth, or authoritative state.")
 
     dependencies = (
         AppraisalDependency(field="availability", value=availability, source_ids=availability_sources,
@@ -218,5 +221,6 @@ def build_situation(turn: TurnInput, snapshot: StateSnapshot, now: datetime) -> 
         current_goal=goal, perceived_facts=perceived, exclusions=exclusions,
         conflicts=conflicts, influences=tuple(influences), dependencies=dependencies, notes=tuple(notes),
         social_appraisal=appraise_social(turn.player_input, persona, relationship),
+        visual_context=visual_context,
         recent_dialogue=snapshot.recent_dialogue,
     )
