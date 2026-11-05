@@ -7,6 +7,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    JsonValue,
     StrictBool,
     StrictFloat,
     StrictInt,
@@ -247,7 +248,21 @@ class Situation(Contract):
         return self
 
 
+class AdapterContext(Contract):
+    """Opaque adapter observations at pipeline ingress, not authorized NPC knowledge."""
+
+    source: Identifier
+    payload: dict[str, JsonValue]
+
+    @model_validator(mode="after")
+    def bound_payload(self) -> "AdapterContext":
+        if len(self.model_dump_json().encode("utf-8")) > 256 * 1024:
+            raise ValueError("adapter context exceeds the 256 KB payload limit")
+        return self
+
+
 class ContextScenario(Contract):
     now: AwareDatetime
     turn: TurnInput
     snapshot: StateSnapshot
+    adapter_context: AdapterContext | None = None

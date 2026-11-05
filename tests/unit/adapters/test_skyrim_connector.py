@@ -79,7 +79,90 @@ def test_mapping_preserves_unknown_knowledge_and_visibility():
     assert scenario.turn.npc_id != scenario.turn.player_id
     assert "player.weapon_drawn" not in {fact.path for fact in scenario.turn.facts}
     assert "world.weather" not in {fact.path for fact in scenario.turn.facts}
+    assert scenario.adapter_context.payload["game_event"] == source.model_dump(mode="json")
+    assert scenario.adapter_context.payload["screenshot"] is None
+    assert scenario.adapter_context.payload["image_description"] is None
     assert all(fact.captured_at.timestamp() == pytest.approx(source.captured_at_ms / 1000) for fact in scenario.turn.facts)
+
+
+@pytest.mark.parametrize("mode", ["preview", "http", "inbox"])
+def test_complete_collected_context_reaches_pipeline_ingress(tmp_path, mode):
+    from npc.adapters.skyrim.protocol import DialogueOption, NpcProfile
+    from npc.contracts.context import ContextScenario, Persona, VisualContext
+    from npc.generation.provider import OfflineProvider
+    from npc.runtime.preview import PreviewRunner
+
+    source = event()
+    actor = source.snapshot.npc.model_copy(update={
+        "race": form("00013746", "Nord"), "voice": form("00013AE6", "Voice"),
+        "sex": 1, "hostile_to_player": False, "sees_player": None,
+        "factions": (form("00012345", "Faction"),),
+        "equipment": (form("00012346", "Sword"),),
+    })
+    source = source.model_copy(update={"snapshot": source.snapshot.model_copy(update={
+        "npc": actor, "cell": form("00012347", "Cell"),
+        "dialogue": (DialogueOption(topic=form(), info=form(), player_text="Any work?",
+            responses=("Ask at the inn.",), quest=form("00012348", "Quest"), quest_stage=20),),
+        "dialogue_complete": False,
+    })})
+    profile = NpcProfile(persona=Persona(name="Test NPC", occupation="guard", social_role="guard"),
+                         knowledge_sources=("authored-reference",))
+    received = []
+
+    class RecordingRunner(PreviewRunner):
+        async def run(self, scenario, **kwargs):
+            received.append(scenario)
+            return await super().run(scenario, **kwargs)
+
+    def endpoint(request):
+        payload = json.loads(request.content)
+        if payload["kind"] == "player_turn":
+            received.append(ContextScenario.model_validate(payload["scenario"]))
+        return httpx.Response(202)
+
+    async def run():
+        client = httpx.AsyncClient(transport=httpx.MockTransport(endpoint))
+        bridge = Bridge(settings(tmp_path, pipeline_mode=mode,
+            pipeline_url="http://localhost/pipeline" if mode == "http" else None),
+            root=tmp_path, client=client, runner=RecordingRunner(OfflineProvider()))
+        bridge.profiles[source.snapshot.npc.base.definition_key] = profile
+        try:
+            await bridge.game_event(source)
+            await bridge.session.context_task
+            screenshot = {"path": "frame.png", "viewpoint": "player_camera", "npc_visibility": "unknown"}
+            visual = VisualContext(id="frame-a", captured_at=datetime.now(timezone.utc), environment="A stone room")
+            bridge.session.screenshot = screenshot
+            bridge.session.visual = visual
+            bridge.session.visual_revision = bridge.session.revision
+            bridge.session.visual_time = bridge.clock()
+            utterance = speech(source="stt", confidence=0.73)
+            await bridge.player_input(utterance)
+            await bridge.session.turn_task
+            records = [json.loads(path.read_text()) for path in bridge.output.glob("inbox/*.json")]
+            turn = next(record for record in records if record["kind"] == "player_turn")
+            recorded = ContextScenario.model_validate(turn["scenario"])
+            if mode == "inbox":
+                received.append(recorded)
+            assert len(received) == 1
+            assert received[0] == recorded
+            context = received[0].adapter_context
+            assert context.source == "anima-skse"
+            assert context.payload == {
+                "game_event": source.model_dump(mode="json"),
+                "npc_profile": profile.model_dump(mode="json"),
+                "screenshot": screenshot, "image_description": visual.model_dump(mode="json"),
+            }
+            assert recorded.turn.player_input.model_dump() == {
+                "text": utterance.text, "source": "stt", "confidence": 0.73,
+            }
+            # Raw visibility/quest observations are preserved, not promoted to facts.
+            assert "player.weapon_drawn" not in {fact.path for fact in recorded.turn.facts}
+            if mode == "preview":
+                assert bridge.command(source.session_id)["kind"] == "speak"
+        finally:
+            await bridge.close()
+            await client.aclose()
+    asyncio.run(run())
 
 
 @pytest.mark.parametrize("url", ["https://example.com/events", "http://user:secret@localhost/events", "http://localhost/events#secret"])
@@ -383,6 +466,7 @@ def test_cli_overrides_enable_connected_path_without_rewriting_config(tmp_path, 
     import uvicorn
     from fastapi.testclient import TestClient
     from npc.adapters.skyrim.__main__ import main
+    monkeypatch.setattr("npc.adapters.skyrim.whisper.prepare_model", lambda root: None)
     profile = tmp_path / "offline.yaml"; profile.write_text("provider: offline\n")
     config = tmp_path / "connector.json"
     original = settings(tmp_path, pipeline_mode="preview", provider_profile=str(profile)).model_dump_json()

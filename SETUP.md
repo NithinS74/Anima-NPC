@@ -88,3 +88,11 @@ Normal launches perform local readiness checks only: pinned package versions, pr
 ## Included local RAG component
 
 Setup now also installs the pinned Chroma/ONNX CPU dependencies into the same `.venv`, prepares the local encoder (first setup may download it), and synchronizes `Knowledge base/kb/` into ignored `data/rag/`. No separate RAG environment/server is needed. Add your own documents, then use `python -m npc.rag sync` with the project interpreter outside interactive use. See [RAG integration](docs/RAG_INTEGRATION.md) for the single-process launch and trusted source bindings. Local preparation does not call the dialogue-model API or consume its request quota. Raw corpus, index and model cache remain ignored; existing external installations and player state are preserved.
+
+## Skyrim speech input
+
+Setup automatically downloads and validates the fixed English Whisper base.en model into ignored `data/stt/`. The Skyrim connector launcher also prepares it if missing, preserving explicit external STT endpoints. After setup, run `run_skyrim_connector.bat`, open NPC dialogue and hold F8 to speak; release to transcribe. No manual model placement, GPU/CUDA or system FFmpeg installation is needed. First preparation needs internet; cached operation is local. TTS remains separate. See [connector speech](docs/SKYRIM_CONNECTOR.md#player-speech-input) for limits and readiness checks.
+
+## Chatterbox Turbo voice output
+
+Double-click **[setup_chatterbox.bat](setup_chatterbox.bat)** once. It installs the compatible speech dependencies in the existing `.venv`, downloads the pinned Turbo model and prepares reference voices from installed Skyrim files. Subsequent connector launches enable it automatically. Game discovery is automatic where possible; otherwise run `setup_chatterbox.bat --game-directory "D:\Games\Skyrim Special Edition"`. First setup needs internet and several GB of free disk space. No manual model placement or separate TTS server is required. CPU wheels are the fresh-install default; existing compatible CUDA builds are preserved. See [NPC voice setup and limitations](docs/SKYRIM_CONNECTOR.md#chatterbox-turbo-npc-voices).

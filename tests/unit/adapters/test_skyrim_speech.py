@@ -83,3 +83,32 @@ def test_speech_routes_bound_input_and_report_real_failures():
 def test_speech_service_rejects_non_loopback():
     with TestClient(create_speech_app(None),client=('198.51.100.1',4444)) as c:
         assert c.get('/health').status_code==403
+
+
+def test_turbo_route_passes_voice_identity_and_returns_validated_wav():
+    from types import SimpleNamespace
+    class Worker:
+        process = None
+        def __init__(self): self.requests=[]; self.closed=False
+        async def start(self): self.process=SimpleNamespace(returncode=None)
+        async def close(self): self.process=None; self.closed=True
+        async def synthesize(self,request): self.requests.append(request); return audio()
+    worker=Worker()
+    with TestClient(create_speech_app(None,turbo=worker)) as client:
+        response=client.post('/tts',json={'request_id':'r','text':'Hello',
+            'voice':{'plugin':'Skyrim.esm','local_id':'00013AE6'},
+            'npc_base':{'plugin':'Skyrim.esm','local_id':'0001347B'}})
+        assert response.status_code==200 and response.content==audio()
+        assert worker.requests[0].voice_key=='skyrim.esm:00013ae6'
+        assert worker.requests[0].npc_key=='skyrim.esm:0001347b'
+        assert client.get('/health').json()['tts']=='Chatterbox Turbo'
+    assert worker.closed
+
+
+def test_turbo_bad_audio_fails_instead_of_delivering():
+    class Worker:
+        async def start(self): pass
+        async def close(self): pass
+        async def synthesize(self,request): return b'bad audio'
+    with TestClient(create_speech_app(None,turbo=Worker())) as client:
+        assert client.post('/tts',json={'request_id':'r','text':'Hello'}).status_code==503
