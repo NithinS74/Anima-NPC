@@ -60,6 +60,8 @@ def test_setup_commands_and_success_marker(tmp_path, monkeypatch):
     interpreter = tmp_path / ".venv" / ("Scripts/python.exe" if setup.sys.platform == "win32" else "bin/python")
     interpreter.parent.mkdir(parents=True); interpreter.touch()
     game = tmp_path / "game"
+    template=tmp_path/'configs/skyrim/connector.example.json';template.parent.mkdir(parents=True)
+    template.write_text(json.dumps({'game_directory':'old','pipeline_mode':'preview','tts_url':None}))
     calls = []
     def prepare(root, source):
         assert root == tmp_path and source == game
@@ -67,10 +69,11 @@ def test_setup_commands_and_success_marker(tmp_path, monkeypatch):
         return 3
     monkeypatch.setattr(voices, "prepare_voices", prepare)
     setup.setup(tmp_path, game=game, run=lambda args, **kwargs: calls.append(args) or SimpleNamespace(returncode=0))
-    assert all(call[0] == str(interpreter) for call in calls)
+    assert all(call[0] == str(interpreter) for call in calls if call[0] != "nvidia-smi")
     assert calls[-2][-3:] == ["-m", "npc.output.chatterbox", "--prepare"]
     assert calls[-1][-3:] == ["-m", "pytest", "-q"]
     assert json.loads((tmp_path / "data/tts/.chatterbox-ready.json").read_text())["voices"] == 3
+    assert json.loads(template.with_name('connector.json').read_text())['game_directory']==str(game.resolve())
 
 
 def test_failed_setup_does_not_enable_tts(tmp_path):
@@ -95,3 +98,19 @@ def test_invalid_reference_manifest_is_preserved(tmp_path, contents):
     with pytest.raises(ValueError, match="invalid"):
         voices.prepare_voices(tmp_path, tmp_path / "game")
     assert json.loads(target.read_text()) == contents
+
+
+@pytest.mark.parametrize("output,expected", [('566.36, 8.6','cu124'),('600.1, 12.0','cpu'),('600.1, 12.0\n566.36, 8.6','cpu'),('535.10, 7.5','cpu'),('invalid','cpu')])
+def test_gpu_setup_admission_is_automatic_and_conservative(output, expected):
+    assert setup.torch_backend(lambda *a, **kw: SimpleNamespace(returncode=0,stdout=output)) == expected
+
+
+def test_detected_game_updates_only_game_path_preserving_local_settings(tmp_path):
+    config=tmp_path/'configs/skyrim/connector.json';config.parent.mkdir(parents=True)
+    raw={'game_directory':'old','tts_url':'http://localhost/custom','port':8769,'profiles_file':'private-profiles.json'}
+    config.write_text(json.dumps(raw))
+    setup.configure_game(tmp_path,tmp_path/'detected-game')
+    assert json.loads(config.read_text())=={**raw,'game_directory':str(tmp_path/'detected-game')}
+    before=config.read_bytes()
+    setup.configure_game(tmp_path,tmp_path/'detected-game')
+    assert config.read_bytes()==before

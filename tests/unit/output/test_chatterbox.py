@@ -49,14 +49,22 @@ def test_pinned_download_omits_unused_checkpoint(tmp_path, monkeypatch):
 @pytest.mark.parametrize("cuda", [False, True])
 def test_model_loading_uses_existing_device_and_caps_cpu_threads(tmp_path, monkeypatch, cuda):
     threads, loads = [], []
-    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(set_num_threads=threads.append,
+    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(set_num_threads=threads.append, set_grad_enabled=lambda enabled: None,
         cuda=SimpleNamespace(is_available=lambda: cuda)))
+    monkeypatch.setitem(sys.modules, "perth", SimpleNamespace(PerthImplicitWatermarker=object))
     class Model:
         @classmethod
         def from_local(cls, path, **kwargs): loads.append(kwargs); return "model"
     monkeypatch.setitem(sys.modules, "chatterbox.tts_turbo", SimpleNamespace(ChatterboxTurboTTS=Model))
     assert turbo.load_model(tmp_path) == "model"
     assert threads == [2] and loads == [{"device": "cuda" if cuda else "cpu"}]
+
+
+def test_missing_watermark_dependency_fails_before_loading_large_model(tmp_path, monkeypatch):
+    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace())
+    monkeypatch.setitem(sys.modules, "perth", SimpleNamespace(PerthImplicitWatermarker=None))
+    with pytest.raises(RuntimeError, match="watermark dependency"):
+        turbo.load_model(tmp_path)
 
 
 def test_voice_switching_restores_conditioning_and_npc_override(tmp_path):
@@ -125,7 +133,10 @@ def test_resident_worker_protocol_and_cancellation(tmp_path, failure):
         if failure:
             with pytest.raises(asyncio.CancelledError if failure == "cancel" else TimeoutError if failure == "timeout" else ValueError):
                 await task
-            assert worker.process is None and processes[0].returncode == -1
+            assert processes[0].returncode == -1
+            assert worker._recovery is not None
+            await worker.close()
+            assert worker.process is None
         else:
             assert await task == b"audio"
             assert await worker.synthesize(turbo.TurboRequest(request_id="r", text="Again")) == b"audio"
@@ -139,3 +150,65 @@ def test_worker_busy_does_not_admit_more_work(tmp_path):
     worker = turbo.TurboWorker(tmp_path); worker.busy = True
     with pytest.raises(ValueError, match="busy"):
         asyncio.run(worker.synthesize(turbo.TurboRequest(request_id="r", text="Hello")))
+
+
+def test_worker_warms_and_emits_only_correlated_protocol_json(tmp_path, monkeypatch):
+    events=[]
+    class Model:
+        sr=24000
+        def generate(self,text):
+            events.append('warm'); print('upstream model log'); return Audio()
+    class Engine:
+        def __init__(self,root,model): self.model=model
+        def synthesize(self,request):
+            events.append('synthesize'); return b'audio'
+    output=io.StringIO(); errors=io.StringIO()
+    request=turbo.TurboRequest(request_id='r',text='Hello',voice_key='voice')
+    monkeypatch.setattr(turbo,'model_path',lambda root: tmp_path)
+    monkeypatch.setattr(turbo,'load_model',lambda *args: Model())
+    monkeypatch.setattr(turbo,'TurboEngine',Engine)
+    monkeypatch.setattr(sys,'stdin',SimpleNamespace(buffer=io.BytesIO(request.model_dump_json().encode()+b'\n')))
+    monkeypatch.setattr(sys,'stdout',output)
+    monkeypatch.setattr(sys,'stderr',errors)
+    assert turbo.worker(tmp_path,'cpu')==0
+    records=[json.loads(line) for line in output.getvalue().splitlines()]
+    assert records==[{'ready':True},{'request_id':'r','wav':base64.b64encode(b'audio').decode()}]
+    assert events==['warm','synthesize']
+    assert 'upstream model log' in errors.getvalue()
+
+
+def test_timeout_recovery_warms_outside_new_request_deadlines(tmp_path):
+    processes=[]
+    async def run():
+        recovery_ready=asyncio.Event()
+        class Input:
+            def write(self,raw): pass
+            async def drain(self): pass
+        class Process:
+            returncode=None
+            def __init__(self,index): self.index=index;self.stdin=Input();self.stdout=self;self.lines=0
+            async def readline(self):
+                self.lines+=1
+                if self.lines==1:
+                    if self.index==1: await recovery_ready.wait()
+                    return b'{"ready":true}\n'
+                if self.index==0: await asyncio.sleep(10)
+                return json.dumps({'request_id':'r','wav':base64.b64encode(b'audio').decode()}).encode()+b'\n'
+            def kill(self): self.returncode=-1
+            async def wait(self): return self.returncode
+        async def launch(*args,**kwargs):
+            process=Process(len(processes));processes.append(process);return process
+        worker=turbo.TurboWorker(tmp_path,timeout_s=.03,launch=launch)
+        request=turbo.TurboRequest(request_id='r',text='Hello')
+        try:
+            with pytest.raises(TimeoutError): await worker.synthesize(request)
+            while len(processes)<2: await asyncio.sleep(0)
+            assert not worker.ready
+            with pytest.raises(ValueError,match='busy'): await worker.synthesize(request)
+            assert len(processes)==2
+            recovery_ready.set()
+            await worker._recovery
+            assert worker.ready and await worker.synthesize(request)==b'audio'
+        finally: await worker.close()
+        assert all(process.returncode==-1 for process in processes)
+    asyncio.run(run())

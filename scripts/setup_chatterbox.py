@@ -10,11 +10,26 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def install_torch(interpreter, command):
-    # An already installed compatible CUDA build is retained by pip. Fresh installs
-    # use CPU wheels, avoiding multi-GB CUDA downloads and driver prerequisites.
-    command([interpreter, "-m", "pip", "install", "torch==2.6.0", "torchaudio==2.6.0",
-             "--index-url", "https://download.pytorch.org/whl/cpu",
+def torch_backend(probe=subprocess.run):
+    try:
+        result = probe(["nvidia-smi", "--query-gpu=driver_version,compute_cap", "--format=csv,noheader"],
+                       capture_output=True, text=True, timeout=5, check=False)
+        if result.returncode == 0:
+            for line in result.stdout.splitlines()[:1]:
+                driver, capability = line.split(",")
+                # Conservative CUDA 12.4 admission. Torch 2.6 does not support Blackwell.
+                if int(driver.strip().split(".")[0]) >= 552 and 6 <= float(capability) < 10:
+                    return "cu124"
+    except (OSError, ValueError, AttributeError, subprocess.TimeoutExpired):
+        pass
+    return "cpu"
+
+
+def install_torch(interpreter, command, *, probe=subprocess.run):
+    backend = torch_backend(probe)
+    print(f"Preparing Torch runtime: {backend} (no separate CUDA toolkit installation).", flush=True)
+    command([interpreter, "-m", "pip", "install", "--upgrade", "torch==2.6.0", "torchaudio==2.6.0",
+             "--index-url", f"https://download.pytorch.org/whl/{backend}",
              "--extra-index-url", "https://pypi.org/simple"])
 
 
@@ -49,6 +64,20 @@ def find_game(root):
     return next((path for path in guesses if (path / "Data/Skyrim.esm").is_file()), None)
 
 
+def configure_game(root, game):
+    config = root / "configs/skyrim/connector.json"
+    template = config.with_name("connector.example.json")
+    source = config if config.is_file() else template
+    if not source.is_file():
+        raise ValueError("connector configuration template missing from checkout")
+    raw = json.loads(source.read_text(encoding="utf-8"))
+    if config.is_file() and (root / raw["game_directory"]).resolve() == game.resolve():
+        return
+    raw["game_directory"] = str(game.resolve())
+    temporary = config.with_suffix(".tmp")
+    temporary.write_text(json.dumps(raw, indent=2), encoding="utf-8"); temporary.replace(config)
+
+
 def setup(root, *, game=None, run=subprocess.run):
     interpreter = root / ".venv" / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
     if not interpreter.is_file():
@@ -57,7 +86,7 @@ def setup(root, *, game=None, run=subprocess.run):
         result = run([str(arg) for arg in args], cwd=root, check=False)
         if result.returncode:
             raise ValueError("Chatterbox setup step failed; resolve the displayed error and rerun")
-    install_torch(interpreter, command)
+    install_torch(interpreter, command, probe=lambda args, **kwargs: run(args, cwd=root, **kwargs))
     command([interpreter, "-m", "pip", "install", "-r", root / "requirements.txt"])
     command([interpreter, "-m", "pip", "install", "-e", ".", "--no-deps", "--no-build-isolation"])
     command([interpreter, "-m", "pip", "check"])
@@ -73,6 +102,7 @@ def setup(root, *, game=None, run=subprocess.run):
     else:
         raise ValueError("Turbo model is installed, but Skyrim was not found. Rerun setup_chatterbox.bat --game-directory \"your Skyrim folder\" to prepare NPC voices")
     command([interpreter, "-m", "pytest", "-q"])
+    configure_game(root, game)
     marker = root / "data/tts/.chatterbox-ready.json"
     temporary = marker.with_suffix(".tmp")
     temporary.write_text(json.dumps({"model": "chatterbox-turbo", "voices": count}))
