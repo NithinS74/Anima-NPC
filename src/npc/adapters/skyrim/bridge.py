@@ -374,7 +374,10 @@ class Bridge:
             if self.session is not session or session.request_id != speech.input_id:
                 return
             profile = profile_for(session.event.snapshot, self.profiles)
-            scenario = canonical_scenario(session.event, speech, profile, self.settings.world_id, session.revision, social_state=session.social_state)
+            scenario = canonical_scenario(
+                session.event, speech, profile, self.settings.world_id, session.revision,
+                social_state=session.social_state, screenshot=session.screenshot,
+                image_description=self.visual_payload(session))
             payload = {"kind": "player_turn", "session_id": speech.session_id,
                        "request_id": speech.input_id, "npc_id": scenario.turn.npc_id,
                        "revision": session.revision, "expires_at": session.deadline,
@@ -438,10 +441,13 @@ class Bridge:
                 try:
                     # Leave time to deliver a text-only result if synthesis fails.
                     async with asyncio.timeout(max(0.001, session.deadline - self.clock() - 0.5)):
-                        async with self.client.stream("POST", self.settings.tts_url, json={
+                        speech_request = {
                             "request_id": result.request_id, "text": result.text,
                             "voice": session.event.snapshot.npc.voice.model_dump() if session.event.snapshot.npc.voice else None,
-                        }) as response:
+                        }
+                        if self.settings.tts_url == f"http://127.0.0.1:{self.settings.port}/v1/speech/tts":
+                            speech_request["npc_base"] = session.event.snapshot.npc.base.model_dump()
+                        async with self.client.stream("POST", self.settings.tts_url, json=speech_request) as response:
                             response.raise_for_status()
                             data = bytearray()
                             async for chunk in response.aiter_bytes():

@@ -42,7 +42,11 @@ def readiness(root, *, version=None, installed=importlib.metadata.version, find=
             if not line:
                 continue
             name, expected = line.split("==", 1)
-            if installed(name) != expected:
+            actual = installed(name)
+            # CPU/CUDA wheel tags are hardware builds of the same pinned Torch release.
+            if name.lower() in {"torch", "torchaudio"}:
+                actual = actual.split("+", 1)[0]
+            if actual != expected:
                 return "missing or outdated dependency"
         project = find("npc")
         if project is None or not project.origin or not Path(project.origin).resolve().is_relative_to((root / "src/npc").resolve()):

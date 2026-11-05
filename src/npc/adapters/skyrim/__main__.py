@@ -54,7 +54,7 @@ def main():
     parser.add_argument("--attach-visual-reference", action="store_true", help="Attach untrusted camera description to dialogue prompts")
     parser.add_argument("--say", help="Send this text to the running ANIMA bridge; does not start a server")
     parser.add_argument("--log-file", help="Optional rotating Anima dialogue log (1 MiB, two backups)")
-    parser.add_argument("--local-speech", action="store_true", help="Enable local Windows voice synthesis and dictation")
+    parser.add_argument("--local-speech", action="store_true", help="Add Windows TTS to default Whisper STT")
     args = parser.parse_args()
     root = Path.cwd()
     path = root / args.config
@@ -69,6 +69,12 @@ def main():
     if args.local_speech:
         port = raw.get("port", 8768)
         raw.update(stt_url=f"http://127.0.0.1:{port}/v1/speech/stt", tts_url=f"http://127.0.0.1:{port}/v1/speech/tts")
+    local_stt = f"http://127.0.0.1:{raw.get('port', 8768)}/v1/speech/stt"
+    if not raw.get("stt_url"):
+        raw["stt_url"] = local_stt
+    local_tts = f"http://127.0.0.1:{raw.get('port', 8768)}/v1/speech/tts"
+    if not raw.get("tts_url") and (root / "data/tts/.chatterbox-ready.json").is_file():
+        raw["tts_url"] = local_tts
     settings = Settings.model_validate(raw)
     configure(args.log_file)
     if args.say is not None:
@@ -89,9 +95,27 @@ def main():
     import uvicorn
     bridge = Bridge(settings, root=root, runner=runner)
     app = create_app(bridge)
-    if args.local_speech:
-        from .speech import WindowsSpeech, create_speech_app
-        app.mount("/v1/speech", create_speech_app(WindowsSpeech(root / settings.output_directory / "speech")))
+    speech_engine, turbo = None, None
+    if settings.stt_url == local_stt:
+        from .whisper import prepare_model
+        from .speech import WhisperSpeech, create_speech_app
+        try:
+            prepare_model(root)
+        except Exception as error:
+            parser.exit(1, f"Whisper setup failed ({type(error).__name__}). Check internet/disk space and restart.\n")
+        speech_engine = WhisperSpeech(root / settings.output_directory / "speech", root)
+    if settings.tts_url == local_tts and not args.local_speech:
+        from npc.output.chatterbox import TurboWorker, model_path
+        try:
+            model_path(root)
+        except (OSError, ValueError):
+            parser.exit(1, "Chatterbox model missing. Rerun setup_chatterbox.bat.\n")
+        turbo = TurboWorker(root)
+        app.state.tts_worker = turbo
+    if speech_engine is not None or turbo is not None:
+        from .speech import create_speech_app
+        app.mount("/v1/speech", create_speech_app(speech_engine,
+            tts_enabled=args.local_speech or turbo is not None, turbo=turbo))
     try:
         uvicorn.run(app, host="127.0.0.1", port=settings.port,
                     access_log=False, limit_concurrency=8, timeout_keep_alive=3)
