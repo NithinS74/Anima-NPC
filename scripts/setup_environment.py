@@ -35,7 +35,7 @@ def setup(root: Path, *, python=sys.executable, version=None, run=subprocess.run
     command([interpreter, "-c", "import sys; assert sys.version_info[:2] == (3, 11), 'Existing .venv must use Python 3.11'"])
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from scripts.setup_chatterbox import install_torch
-    install_torch(interpreter, command)
+    install_torch(interpreter, command, probe=lambda args, **kwargs: run(args, cwd=root, **kwargs))
     command([interpreter, "-m", "pip", "install", "-r", root / "requirements.txt"])
     command([interpreter, "-m", "pip", "install", "-e", ".", "--no-deps", "--no-build-isolation"])
     command([interpreter, "-m", "pip", "check"])

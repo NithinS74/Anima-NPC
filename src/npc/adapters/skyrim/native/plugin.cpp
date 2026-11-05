@@ -432,15 +432,16 @@ private:
         const auto expected = actor ? std::format("ref:{:08x}", actor->GetFormID()) : "";
         const auto requestSession = command.value("session_id", "");
         const bool ready = actor && open && !actor->IsInCombat() && !actor->IsDead() && seen.size() < 128;
-        const auto decision = anima::Evaluate(
+        auto manager = RE::MenuTopicManager::GetSingleton();
+        const auto targetHandle = actor ? static_cast<RE::TESObjectREFR*>(actor.get())->GetHandle() : RE::ObjectRefHandle{};
+        const auto decision = anima::EvaluateDialogue(
             {requestSession, target, id, command.value("snapshot_sequence", 0ULL), command.value("expires_at_ms", 0LL), command.value("text", "").size()},
-            {session, expected, snapshotSequence, UtcMs(), ready, false, seen.contains(id)});
+            {session, expected, snapshotSequence, UtcMs(), ready, false, seen.contains(id)}, manager, targetHandle);
         if (decision == anima::Decision::ignore || decision == anima::Decision::wait) return;
         if (decision == anima::Decision::reject) {
             Ack(id, "failed"); seen.insert(id); return;
         }
         if (command.value("mode", "speech") == "silence") { seen.insert(id); Ack(id, "completed"); return; }
-        actor->StopCurrentDialogue();
         Stop("interrupted"); delivery = id; seen.insert(id); audioStarted = false;
         if (command.contains("audio_file") && !command["audio_file"].is_null()) {
             auto path = command["audio_file"].get<std::string>();
