@@ -7,7 +7,7 @@ from urllib.parse import urlsplit
 from pydantic import Field, StrictInt, field_validator
 
 from npc.contracts.context import (
-    Contract, ContextScenario, Identifier, ObservedFact, Persona, PlayerInput,
+    AdapterContext, Contract, ContextScenario, Identifier, ObservedFact, Persona, PlayerInput,
     Scope, StateSnapshot, TurnInput, NpcState,
 )
 
@@ -162,8 +162,9 @@ def profile_for(snapshot: GameSnapshot, profiles: dict[str, NpcProfile]) -> NpcP
 
 
 def canonical_scenario(event: GameEvent, speech: SpeechInput, profile: NpcProfile,
-                       world_id: str, revision: int, *, now: datetime | None = None, social_state=None) -> ContextScenario:
-    """Small executable core view; full game context travels beside it to the pipeline."""
+                       world_id: str, revision: int, *, now: datetime | None = None, social_state=None,
+                       screenshot=None, image_description=None) -> ContextScenario:
+    """Canonical subset plus complete adapter observations for pipeline ingress."""
     data = event.snapshot
     if data is None:
         raise ValueError("snapshot required")
@@ -203,4 +204,10 @@ def canonical_scenario(event: GameEvent, speech: SpeechInput, profile: NpcProfil
                           **({"relationship": social_state["relationship"], "recent_dialogue": social_state["history"],
                               "npc_state": NpcState(observed_at=now, ttl_ms=60000, mood=social_state["mood"])}
                              if social_state else {}))
-    return ContextScenario(now=now, turn=turn, snapshot=state)
+    return ContextScenario(now=now, turn=turn, snapshot=state,
+                           adapter_context=AdapterContext(source="anima-skse", payload={
+                               "game_event": event.model_dump(mode="json"),
+                               "npc_profile": profile.model_dump(mode="json"),
+                               "screenshot": screenshot,
+                               "image_description": image_description,
+                           }))

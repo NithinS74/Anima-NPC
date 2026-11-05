@@ -12,8 +12,17 @@ from .protocol import GameEvent, PipelineResult, SpeechInput
 def create_app(bridge: Bridge):
     @asynccontextmanager
     async def lifespan(app):
-        yield
-        await bridge.close()
+        worker = getattr(app.state, "tts_worker", None)
+        try:
+            if worker:
+                await worker.start()
+            yield
+        finally:
+            try:
+                await bridge.close()
+            finally:
+                if worker:
+                    await worker.close()
 
     app = FastAPI(title="Anima Skyrim connector", lifespan=lifespan)
 

@@ -4,7 +4,22 @@ import pytest
 from pydantic import ValidationError
 
 from npc.context import build_situation
-from npc.contracts.context import ContextScenario, ObservedFact, Relationship, Situation
+from npc.contracts.context import AdapterContext, ContextScenario, ObservedFact, Relationship, Situation
+
+
+def test_adapter_context_is_optional_bounded_json_and_not_perception(scenario):
+    assert scenario.adapter_context is None
+    context = AdapterContext(source="test-adapter", payload={
+        "quest": {"stage": 20, "secret": "unknown to NPC"}, "visibility": None,
+    })
+    enriched = ContextScenario(**{**scenario.model_dump(), "adapter_context": context})
+    assert ContextScenario.model_validate_json(enriched.model_dump_json()) == enriched
+    assert build_situation(enriched.turn, enriched.snapshot, enriched.now) == build_situation(
+        scenario.turn, scenario.snapshot, scenario.now)
+    with pytest.raises(ValidationError, match="256 KB"):
+        AdapterContext(source="test-adapter", payload={"text": "é" * (256 * 1024)})
+    with pytest.raises(ValidationError):
+        AdapterContext(source="test-adapter", payload={"object": object()})
 
 
 @pytest.mark.parametrize("field,value", [

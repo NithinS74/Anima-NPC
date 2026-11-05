@@ -29,6 +29,8 @@ def test_setup_installs_only_in_project_and_preserves_existing_key(tmp_path):
     assert all(str(root / ".venv") in args[0] for args in commands[1:])
     assert commands[-1][-3:] == ["-m", "pytest", "-q"]
     assert (root / ".env").read_text() == "PRIVATE_EXISTING_KEY"
+    whisper = next(i for i, args in enumerate(commands) if args[-3:] == ["-m", "npc.adapters.skyrim.whisper", "--prepare"])
+    assert whisper == len(commands) - 2  # model prepared before offline regression
 
 
 def test_setup_seeds_blank_configuration_and_stops_after_failure(tmp_path):
