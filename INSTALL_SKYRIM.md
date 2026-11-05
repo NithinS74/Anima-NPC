@@ -41,8 +41,19 @@ After checks pass it installs only `Data/SKSE/Plugins/AnimaConnector.dll` and `A
 
 For mod-manager installation instead, the native archive is `mod/AnimaConnector.zip`. Install it as its own mod and retain SKSE/Address Library prerequisites. Avoid deploying an older managed Anima DLL over the current one. The Python companion and its downloaded models remain in `D:\Anima`, not in `Data`.
 
-## 4. Start and play
+## 4. Start and play (single launcher)
 
+**Option A — One command (recommended):**
+```powershell
+.\launch_skyrim.bat
+```
+Or with explicit game path:
+```powershell
+.\launch_skyrim.bat --game-directory "D:\Games\Skyrim Special Edition"
+```
+This starts CV (port 8000), the bridge (port 8768), waits for both to be healthy, launches Skyrim via SKSE, and shuts everything down when you close the game.
+
+**Option B — Manual (three terminals):**
 Keep Ollama running. Open **`run_cv.bat`**, then **`run_skyrim_connector.bat`**. Leave both terminals open. The bridge loads/warm-ups the speech model before accepting requests; CPU startup took about 50 seconds on the development host.
 
 Check:
