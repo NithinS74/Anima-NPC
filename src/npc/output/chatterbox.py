@@ -47,8 +47,12 @@ def model_path(root, *, download=False):
 
 def load_model(path, device="auto"):
     import torch
+    import perth
+    if perth.PerthImplicitWatermarker is None:
+        raise RuntimeError("Chatterbox watermark dependency is unavailable; rerun setup_chatterbox.bat to restore compatible packages")
     from chatterbox.tts_turbo import ChatterboxTurboTTS
     torch.set_num_threads(2)
+    torch.set_grad_enabled(False)
     if device == "auto":
         device = "cuda" if torch.cuda.is_available() else "cpu"
     return ChatterboxTurboTTS.from_local(path, device=device)
@@ -119,6 +123,8 @@ def worker(root, device):
     # Model/library messages must not corrupt the JSON line protocol.
     with redirect_stdout(sys.stderr):
         engine = TurboEngine(root, load_model(model_path(root), device))
+        # Warm lazy audio kernels before admitting deadline-bound NPC requests.
+        pcm_wav(engine.model.generate("Ready.").detach().cpu().numpy(), engine.model.sr)
     print(json.dumps({"ready": True}), flush=True)
     while line := sys.stdin.buffer.readline(16385):
         if len(line) > 16384:
@@ -141,17 +147,42 @@ class TurboWorker:
         self.root, self.timeout_s, self.launch = root, timeout_s, launch
         self.process = None
         self.busy = False
+        self.ready = False
+        self._recovery = None
+        self._closed = False
 
-    async def close(self):
+    async def _stop_process(self):
+        self.ready = False
         process, self.process = self.process, None
         if process is not None:
             if process.returncode is None:
-                process.kill()
+                try:
+                    process.kill()
+                except ProcessLookupError:
+                    pass
             await process.wait()
 
+    async def close(self):
+        self._closed = True
+        if self._recovery is not None:
+            self._recovery.cancel()
+            await asyncio.gather(self._recovery, return_exceptions=True)
+            self._recovery = None
+        await self._stop_process()
+
+    async def _recover(self):
+        try:
+            await self.start()
+        except Exception:
+            # No automatic retry loop. A later request can initiate one new attempt.
+            pass
+
     async def start(self):
-        if self.process is not None and self.process.returncode is None:
+        if self._closed:
+            raise ValueError("Turbo worker closed")
+        if self.ready and self.process is not None and self.process.returncode is None:
             return
+        self.ready = False
         environment = {**os.environ, "HF_HUB_OFFLINE": "1", "TOKENIZERS_PARALLELISM": "false",
                        "HF_HOME": str(self.root / "data/tts/hf")}
         self.process = await self.launch(sys.executable, "-m", "npc.output.chatterbox", "--worker",
@@ -162,12 +193,13 @@ class TurboWorker:
                 ready = json.loads(await self.process.stdout.readline())
                 if ready != {"ready": True}:
                     raise ValueError("Turbo worker failed readiness")
+                self.ready = True
         except BaseException:
-            await self.close()
+            await self._stop_process()
             raise
 
     async def synthesize(self, request):
-        if self.busy:
+        if self.busy or (self._recovery is not None and not self._recovery.done()):
             raise ValueError("Turbo worker busy")
         self.busy = True
         try:
@@ -186,7 +218,9 @@ class TurboWorker:
                     raise ValueError("Turbo WAV exceeds limit")
                 return audio
         except BaseException:
-            await self.close()
+            await self._stop_process()
+            if not self._closed:
+                self._recovery = asyncio.create_task(self._recover())
             raise
         finally:
             self.busy = False

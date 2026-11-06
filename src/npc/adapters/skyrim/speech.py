@@ -358,7 +358,8 @@ def create_speech_app(engine, *, tts_enabled=True, turbo=None):
     @app.get("/health")
     async def health():
         if turbo:
-            return {"status": "ready" if turbo.process is not None and turbo.process.returncode is None else "degraded",
+            ready = getattr(turbo, "ready", turbo.process is not None and turbo.process.returncode is None)
+            return {"status": "ready" if ready else "degraded",
                     "stt": engine.stt_engine if engine else "external", "tts": "Chatterbox Turbo"}
         if isinstance(engine, WhisperSpeech):
             from .whisper import model_path

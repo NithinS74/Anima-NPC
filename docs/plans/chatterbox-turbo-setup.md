@@ -16,8 +16,10 @@ Plan and plan review were performed before implementation in the task notes, usi
 
 ## Self-review resolutions
 
-The current machine has no usable NVIDIA driver. Fresh setup therefore uses CPU Torch wheels without CUDA prerequisites; compatible installed CUDA builds are retained and selected automatically. Speed and GPU fit remain measurement gates, not promises.
+The current machine has no usable NVIDIA driver. Initial planning used CPU wheels as the fallback. Real reference-conditioned inference reached the speech deadline on CPU, so setup now probes GPU 0 and selects CUDA 12.4 wheels for conservative known-compatible driver/architecture combinations, with CPU fallback otherwise. No manual CUDA toolkit installation is required. Speed and GPU fit remain measurement gates, not promises.
 
 Upstream package metadata introduces compatibility constraints beyond NumPy, including Torch's SymPy pin, Transformers/tokenizer/Hub versions and Gradio's FastAPI/Starlette/Pillow bounds. Resolve compatible pins in the existing environment and rerun HTTP/RAG/Whisper regression; do not suppress dependency errors or introduce a second environment. Upstream is unmaintained, so use fixed package/model versions.
 
 Unit coverage includes download pin/filter, device selection, voice isolation/override/cache restoration, invalid references/audio, process timeout/cancellation, HTTP lifecycle, external TTS compatibility, plugin/FUZ fixtures, setup sequencing, corrupt manifests and preservation of local settings. Run full offline regression, pip check and Windows binary-wheel resolution. Real model load/reference-conditioned synthesis and Windows Skyrim playback are separate evidence categories.
+
+Empirical review finding: restarting a roughly 50-second cold model inside a new 20-second synthesis deadline would repeatedly time out. Recovery therefore owns one bounded background warm-up; new speech is rejected until it is ready, with subtitle fallback and no queue. Startup warms audio kernels before announcing readiness. The watermark package also required setuptools below 81; retain the watermark and pin its compatible dependency rather than bypassing it.

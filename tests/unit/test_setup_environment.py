@@ -26,7 +26,7 @@ def test_setup_installs_only_in_project_and_preserves_existing_key(tmp_path):
         return SimpleNamespace(returncode=0)
     module.setup(root, python="base-python", version=(3, 11), run=run)
     assert commands[0] == ["base-python", "-m", "venv", str(root / ".venv")]
-    assert all(str(root / ".venv") in args[0] for args in commands[1:])
+    assert all(str(root / ".venv") in args[0] for args in commands[1:] if args[0] != "nvidia-smi")
     assert commands[-1][-3:] == ["-m", "pytest", "-q"]
     assert (root / ".env").read_text() == "PRIVATE_EXISTING_KEY"
     whisper = next(i for i, args in enumerate(commands) if args[-3:] == ["-m", "npc.adapters.skyrim.whisper", "--prepare"])

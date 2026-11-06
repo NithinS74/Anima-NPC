@@ -30,8 +30,11 @@ set(RAPIDCSV_INCLUDE_DIRS "${ANIMA_DEPS}/rapidcsv/src" CACHE PATH "" FORCE)
 add_subdirectory("${ANIMA_DEPS}/DirectXMath" "${CMAKE_BINARY_DIR}/directxmath")
 add_library(Microsoft::DirectXMath ALIAS DirectXMath)
 set(directxmath_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake")
-add_subdirectory("${ANIMA_DEPS}/DirectXTK" "${CMAKE_BINARY_DIR}/directxtk")
-add_library(Microsoft::DirectXTK ALIAS DirectXTK)
+# CommonLib uses only SimpleMath types in BSGraphics::State. This plugin does
+# not call DirectXTK rendering/audio functions or need its HLSL shader compiler.
+add_library(Microsoft::DirectXTK INTERFACE IMPORTED)
+set_target_properties(Microsoft::DirectXTK PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "${ANIMA_DEPS}/DirectXTK/Inc")
 set(directxtk_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake")
 add_subdirectory("${ANIMA_DEPS}/CommonLibSSE-NG" "${CMAKE_BINARY_DIR}/commonlib")
 target_link_libraries(CommonLibSSE PUBLIC Microsoft::DirectXMath)

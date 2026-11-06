@@ -26,6 +26,7 @@
 #include "launch_policy.h"
 #include "direct_session.h"
 #include "conversation_request.h"
+#include "activation_policy.h"
 
 using json = nlohmann::json;
 using Clock = std::chrono::steady_clock;
@@ -100,7 +101,7 @@ void BuildVoice(RE::BSSoundHandle& sound, const char* path)
             sound.SetOutputModel(output);
 }
 
-class Connector final : public RE::BSTEventSink<RE::MenuOpenCloseEvent>, public RE::BSTEventSink<RE::InputEvent*>, public RE::BSTEventSink<SKSE::ModCallbackEvent> {
+class Connector final : public RE::BSTEventSink<RE::MenuOpenCloseEvent>, public RE::BSTEventSink<RE::InputEvent*>, public RE::BSTEventSink<SKSE::ModCallbackEvent>, public RE::BSTEventSink<RE::TESActivateEvent> {
 public:
     static Connector& Get() { static auto* instance = new Connector; return *instance; }
     void OnConversationLine() { RequestConversation(); }
@@ -114,12 +115,14 @@ public:
         SKSE::GetModCallbackEventSource()->AddEventSink(this);
         animateMouth = GetPrivateProfileIntW(L"Connection", L"AnimateMouth", 1, path.c_str()) != 0;
         suppressVanilla = GetPrivateProfileIntW(L"Connection", L"SuppressVanillaSpeech", 1, path.c_str()) != 0;
+        autoStart = GetPrivateProfileIntW(L"Connection", L"AutoStartOnActivate", 1, path.c_str()) != 0;  // missing key -> default 1
         ResetEpoch();
         StartConsole(path);
         RE::UI::GetSingleton()->AddEventSink<RE::MenuOpenCloseEvent>(this);
         if (auto input = RE::BSInputDeviceManager::GetSingleton()) input->AddEventSink(this);
+        if (auto holder = RE::ScriptEventSourceHolder::GetSingleton()) holder->AddEventSink<RE::TESActivateEvent>(this);
         std::thread([this] { Worker(); }).detach();
-        SKSE::log::info("AnimaConnector initialized on port {}; SuppressVanillaSpeech={}", port, suppressVanilla);
+        SKSE::log::info("AnimaConnector initialized on port {}; SuppressVanillaSpeech={} AutoStartOnActivate={}", port, suppressVanilla, autoStart);
         // Diagnostics only, no dependency: other dialogue mods hooking subtitles/audio may explain odd playback.
         for (const char* module : {"MantellaDialogue.dll", "MantellaSubtitles.dll", "SKSE_HTTP.dll"})
             SKSE::log::info("ANIMA other dialogue module {}: {}", module, GetModuleHandleA(module) ? "loaded" : "not loaded");
@@ -181,7 +184,7 @@ public:
     {
         if (event && event->menuName == RE::DialogueMenu::MENU_NAME) {
             open = event->opening;
-            if (open) direct = false;  // a vanilla menu session takes over; menu_closed ends it as before
+            if (open) { direct = false; activationPending = false; activationMenuSeen = true; }  // a vanilla menu session takes over; menu_closed ends it as before
             openedAt = Clock::now();
             if (!open) End(true, "menu_closed");
         }
@@ -194,11 +197,16 @@ public:
             auto button = event->AsButtonEvent();
             if (!button || event->GetDevice() != RE::INPUT_DEVICE::kKeyboard) continue;
             if (button->idCode == chatKey) {
-                const bool canStart = session.empty() && button->IsDown() && !MenuBlocksDirect() && DirectTarget() != nullptr;
-                switch (anima::DecideChatKey(button->IsDown(), !session.empty(), RE::UI::GetSingleton()->IsMenuOpen("CustomMenu"), listening, canStart)) {
+                const bool down = button->IsDown();
+                const auto info = down ? Inspect() : TargetInfo{};
+                const bool canStart = session.empty() && down && !MenuBlocksDirect() && info.valid;
+                const bool customMenu = RE::UI::GetSingleton()->IsMenuOpen("CustomMenu");
+                const auto action = anima::DecideChatKey(down, !session.empty(), customMenu, listening, canStart);
+                if (down) LogPress("ChatKey", info, anima::ChatKeyName(action));
+                switch (action) {
                 case anima::ChatKeyAction::open_text: OpenUi(anima::Panel::text); break;
                 case anima::ChatKeyAction::start_direct:
-                    if (auto target = DirectTarget(); target && StartDirect(target)) OpenUi(anima::Panel::text);
+                    if (info.actor && StartDirect(info.actor)) OpenUi(anima::Panel::text);
                     break;
                 case anima::ChatKeyAction::no_npc: Notify("ANIMA: talk to an NPC first."); break;
                 default: break;
@@ -206,8 +214,12 @@ public:
                 continue;
             }
             if (session.empty()) {
-                if (button->idCode != pttKey || !anima::PttStartsDirect(button->IsDown(), false, MenuBlocksDirect(), DirectTarget() != nullptr)) continue;
-                if (!StartDirect(DirectTarget())) continue;
+                if (button->idCode != pttKey) continue;
+                const bool down = button->IsDown();
+                const auto info = down ? Inspect() : TargetInfo{};
+                const bool starts = anima::PttStartsDirect(down, false, MenuBlocksDirect(), info.valid);
+                if (down) LogPress("F8", info, starts ? "start_direct" : "ignored_no_valid_target_or_blocked");
+                if (!starts || !StartDirect(info.actor)) continue;
             }
             if (button->idCode == menuKey && button->IsDown()) { OpenUi(anima::Panel::options); continue; }
             if (button->idCode != pttKey || RE::UI::GetSingleton()->IsMenuOpen("CustomMenu")) continue;
@@ -227,6 +239,22 @@ public:
             std::scoped_lock lock(mutex);
             if (uiEvents.size() < 8) uiEvents.push_back({{"name", name}, {"text", text}});
         }
+        return RE::BSEventNotifyControl::kContinue;
+    }
+    RE::BSEventNotifyControl ProcessEvent(const RE::TESActivateEvent* event, RE::BSTEventSource<RE::TESActivateEvent>*) override
+    {
+        auto player = RE::PlayerCharacter::GetSingleton();
+        if (!event || !player || !event->objectActivated || !event->actionRef || event->actionRef.get() != player) return RE::BSEventNotifyControl::kContinue;
+        auto actor = event->objectActivated->As<RE::Actor>();
+        if (!actor) return RE::BSEventNotifyControl::kContinue;  // doors, containers, items: not our business
+        const auto info = Inspect(actor);
+        const bool inSession = !session.empty();
+        const bool track = anima::TrackActivation(autoStart, true, true, actor == player, inSession, info.valid);
+        SKSE::log::info("ANIMA activate: actor='{}' form={:08X} enabled={} in_session={} menu_open={} valid={} (dist={:.0f} dead={} hostile={} combat={} base={}) -> {}",
+                        info.name, info.id, autoStart, inSession, open, info.valid, info.distance, info.dead, info.hostile, info.combat, info.hasBase,
+                        track ? "waiting_for_dialogue_menu" : "ignored");
+        if (!track) return RE::BSEventNotifyControl::kContinue;
+        activationActor = actor->GetHandle(); activationAt = Clock::now(); activationPending = true; activationMenuSeen = open;
         return RE::BSEventNotifyControl::kContinue;
     }
 private:
@@ -255,7 +283,9 @@ private:
     std::uint64_t serial = 0, sequence = 0, snapshotSequence = 0;
     INTERNET_PORT port = 8768;
     std::uint32_t pttKey = 66, menuKey = 65, chatKey = 64;
-    bool direct = false, requestPending = false;
+    bool direct = false, requestPending = false, autoStart = true, activationPending = false, activationMenuSeen = false;
+    RE::ActorHandle activationActor;
+    Clock::time_point activationAt;
     RE::ActorHandle requestActor;
     Clock::time_point requestAt;
     std::uint32_t directCell = 0;
@@ -277,23 +307,83 @@ private:
         auto ui = RE::UI::GetSingleton();
         return open || !ui || ui->GameIsPaused() || ui->IsMenuOpen("CustomMenu");
     }
+    struct TargetInfo {
+        const char* source = "none";
+        RE::Actor* actor = nullptr;
+        std::string name;
+        std::uint32_t id = 0;
+        float distance = 0;
+        bool hasRef = false, dead = false, hostile = false, combat = false, hasBase = false, valid = false;
+    };
+    // Crosshair reference: CrosshairPickData::target, then ::targetActor (both exist in the pinned CommonLibSSE-NG;
+    // SE/AE builds have single handles, multi-runtime builds index per VR device and GetActiveTarget covers target).
+    RE::Actor* CrosshairActor(const char*& source, bool& hasRef)
+    {
+        source = "none"; hasRef = false;
+        auto pick = RE::CrosshairPickData::GetSingleton();
+        if (!pick) return nullptr;
+        auto reference = pick->GetActiveTarget().get();
+        hasRef = reference != nullptr;
+        if (auto actor = reference ? reference->As<RE::Actor>() : nullptr) { source = "target"; return actor; }
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
+        auto second = pick->targetActor.get();
+#else
+        auto second = pick->targetActor[0].get();
+#endif
+        if (second) hasRef = true;
+        if (auto actor = second ? second->As<RE::Actor>() : nullptr) { source = "targetActor"; return actor; }
+        return nullptr;
+    }
+    // Facts and verdict for the given actor, or for the crosshair actor when none is given. Raw pointer valid for this tick only.
+    TargetInfo Inspect(RE::Actor* given = nullptr)
+    {
+        TargetInfo info;
+        auto player = RE::PlayerCharacter::GetSingleton();
+        auto actor = given;
+        if (given) info.source = "given";
+        else actor = CrosshairActor(info.source, info.hasRef);
+        if (!actor || !player) return info;
+        info.actor = actor; info.hasRef = true; info.name = Text(actor->GetName(), 64); info.id = actor->GetFormID();
+        info.hasBase = actor->GetActorBase() != nullptr; info.dead = actor->IsDead();
+        info.hostile = actor != player && actor->IsHostileToActor(player); info.combat = actor->IsInCombat();
+        info.distance = actor->GetPosition().GetDistance(player->GetPosition());
+        info.valid = anima::ValidDirectTarget(true, actor == player, info.hasBase, info.dead, info.hostile, info.combat) &&
+                     info.distance <= anima::kDirectMaxDistance;
+        return info;
+    }
+    void LogPress(const char* key, const TargetInfo& info, const char* outcome)
+    {
+        auto ui = RE::UI::GetSingleton();
+        std::string target = info.actor
+            ? std::format("'{}' form={:08X} dist={:.0f} dead={} hostile={} combat={} base={} valid={} via={}", info.name, info.id, info.distance,
+                          info.dead, info.hostile, info.combat, info.hasBase, info.valid, info.source)
+            : std::format("none (crosshair has {})", info.hasRef ? "a non-actor reference" : "nothing");
+        SKSE::log::info("ANIMA key {} down: session_empty={} dialogue_menu={} game_paused={} custom_menu={} listening={} target={} -> {}", key, session.empty(), open,
+                        ui && ui->GameIsPaused(), ui && ui->IsMenuOpen("CustomMenu"), listening, target, outcome);
+    }
     // Living, non-hostile actor under the crosshair, or null.
     RE::Actor* DirectTarget()
     {
-        auto pick = RE::CrosshairPickData::GetSingleton();
-        auto player = RE::PlayerCharacter::GetSingleton();
-        if (!pick || !player) return nullptr;
-        auto reference = pick->target.get();
-        auto actor = reference ? reference->As<RE::Actor>() : nullptr;
-        return IsDirectTarget(actor) ? actor : nullptr;
+        auto info = Inspect();
+        return info.valid ? info.actor : nullptr;
     }
-    bool IsDirectTarget(RE::Actor* actor)
+    bool IsDirectTarget(RE::Actor* actor) { return actor && Inspect(actor).valid; }
+    void ProcessActivation(Clock::time_point now)
     {
-        auto player = RE::PlayerCharacter::GetSingleton();
-        if (!actor || !player) return false;
-        const bool valid = anima::ValidDirectTarget(true, actor == player, actor->GetActorBase() != nullptr, actor->IsDead(),
-                                                    actor->IsHostileToActor(player), actor->IsInCombat());
-        return valid && actor->GetPosition().GetDistance(player->GetPosition()) <= anima::kDirectMaxDistance;
+        auto actor = activationActor.get();
+        const auto age = std::chrono::duration_cast<std::chrono::milliseconds>(now - activationAt).count();
+        const bool sessionActive = !session.empty() || open;
+        const auto info = actor ? Inspect(actor.get()) : TargetInfo{};
+        const auto action = anima::DecideActivation(age, activationMenuSeen || open, sessionActive, MenuBlocksDirect(), info.valid);
+        if (action == anima::ActivationAction::wait) return;
+        activationPending = false;
+        if (action == anima::ActivationAction::cancel) {
+            SKSE::log::info("ANIMA activate: not starting for form={:08X} after {} ms: {}", info.id, age,
+                            anima::ActivationReason(activationMenuSeen || open, sessionActive, info.valid));
+            return;
+        }
+        SKSE::log::info("ANIMA activate: no dialogue menu within {} ms for '{}' form={:08X}; starting direct session", age, info.name, info.id);
+        if (StartDirect(actor.get())) OpenUi(anima::Panel::text);
     }
     // Called on the game thread from the Papyrus fragment of the Anima.esp "Talk with me." line.
     void RequestConversation()
@@ -572,6 +662,7 @@ private:
             } else if (!session.empty()) End(true, "actor_lost");
         } else if (direct && !open && !session.empty()) TickDirect(now);
         if (requestPending) ProcessRequest(now);
+        if (activationPending) ProcessActivation(now);
         std::deque<json> ready;
         { std::scoped_lock lock(mutex); ready.swap(commands); }
         for (const auto& command : ready) {
@@ -581,7 +672,7 @@ private:
         fastPoll = !delivery.empty() || std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() < fastUntilMs.load();
         if (delivery.empty()) return;
         auto actor = speaker.get();
-        if (actor && !sayActive && !openingDelivery) SuppressVanillaSpeech(actor.get(), now);  // the engine's own Say line is not vanilla speech
+        if (actor && !sayActive && !openingDelivery && Active() && !session.empty()) SuppressVanillaSpeech(actor.get(), now);  // the engine's own Say line is not vanilla speech
         if (!actor || !Active() || actor->IsInCombat() || actor->IsDead())
             Stop(!actor ? "actor_lost" : !Active() ? "menu_closed" : "combat", "interrupted");
         else if (sayPending) {
@@ -700,9 +791,11 @@ private:
         const auto expected = actor ? std::format("ref:{:08x}", actor->GetFormID()) : "";
         const auto requestSession = command.value("session_id", "");
         const bool ready = actor && Active() && !actor->IsInCombat() && !actor->IsDead() && seen.size() < 128;
-        const auto decision = anima::Evaluate(
+        auto manager = RE::MenuTopicManager::GetSingleton();
+        const auto targetHandle = actor ? static_cast<RE::TESObjectREFR*>(actor.get())->GetHandle() : RE::ObjectRefHandle{};
+        const auto decision = anima::EvaluateDialogue(
             {requestSession, target, id, command.value("snapshot_sequence", 0ULL), command.value("expires_at_ms", 0LL), command.value("text", "").size()},
-            {session, expected, snapshotSequence, UtcMs(), ready, false, seen.contains(id)});
+            {session, expected, snapshotSequence, UtcMs(), ready, false, seen.contains(id)}, manager, targetHandle);
         if (decision == anima::Decision::ignore || decision == anima::Decision::wait) return;
         if (decision == anima::Decision::reject) {
             Ack(id, "failed"); seen.insert(id); return;
@@ -930,7 +1023,7 @@ extern "C" __declspec(dllexport) bool SKSEPlugin_Load(const SKSE::LoadInterface*
     }
     SKSE::Init(skse);
     SKSE::GetPapyrusInterface()->Register(RegisterPapyrus);
-    SKSE::log::info("AnimaConnector 0.5.3 loading on Skyrim {}; Address Library format {}", version.string(),
+    SKSE::log::info("AnimaConnector 0.5.4 loading on Skyrim {}; Address Library format {}", version.string(),
                    anima::AddressLibraryFormat({version.major(),version.minor(),version.patch(),version.build()}));
     return SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message* message) {
         if (message->type == SKSE::MessagingInterface::kDataLoaded) Connector::Get().Initialize();

@@ -27,4 +27,16 @@ inline Decision Evaluate(const Delivery& request, const Receiver& receiver)
         || request.expires <= receiver.now || request.textBytes > 2000) return Decision::reject;
     return receiver.vanillaTalking ? Decision::wait : Decision::play;
 }
+
+// Keep the engine-to-policy mapping here so native delivery and the offline
+// receiver tests exercise the same selected-speaker/active-line checks.
+template <class TopicManager, class SpeakerHandle>
+Decision EvaluateDialogue(const Delivery& request, Receiver receiver,
+                          const TopicManager* manager, const SpeakerHandle& speaker)
+{
+    const bool currentSpeaker = manager && manager->IsCurrentSpeaker(speaker);
+    receiver.actorReady = receiver.actorReady && currentSpeaker;
+    receiver.vanillaTalking = currentSpeaker && manager->currentTopicInfo != nullptr;
+    return Evaluate(request, receiver);
+}
 }
