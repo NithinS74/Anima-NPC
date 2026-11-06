@@ -193,7 +193,9 @@ $('chat').addEventListener('submit', async event => {
       const deltas = data.social_change ? scores.filter(name => data.social_change.delta[name]).map(name => `${name} ${data.social_change.delta[name] > 0 ? '+' : ''}${data.social_change.delta[name]}`) : [];
       $('reaction-change').textContent = deltas.length ? deltas.join(' · ') : 'No score change; context still shapes the response.';
     }
-    $('trace').textContent = JSON.stringify(data, null, 2);
+    const conversation = data.context.conversation;
+    $('trace').textContent = `Turn type: ${result.turn_type || 'n/a'} | Move: ${result.plan.move || 'none'} | Turns completed: ${conversation ? conversation.turns : 0} | Rapport: ${conversation ? conversation.rapport : 0}
+` + JSON.stringify(data, null, 2);
     records.push({ request, ...data }); if (records.length > 30) records.shift();
     if (info.persistent_state && result.response) {
       try { const acknowledged = await post('/api/displayed', {persona_id: character.id, request_id: id}); if (epoch === turnEpoch) applySavedState(acknowledged, data.social_change); }

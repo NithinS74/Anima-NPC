@@ -1,0 +1,14 @@
+{
+  "provider_calls": 1,
+  "rows": [
+    {
+      "attempt": 0,
+      "reply": "Folk at the mill say the king might march east before the harvest, but that's just talk.",
+      "status": "model_success",
+      "error": null,
+      "max_words": 18,
+      "restricted_in_reply": [],
+      "elapsed_ms": 2530.9999999990396
+    }
+  ]
+}

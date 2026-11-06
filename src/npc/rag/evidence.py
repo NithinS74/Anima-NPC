@@ -10,8 +10,8 @@ def select_binding(config, situation):
                  and situation.npc_id in binding.npc_ids), None)
 
 
-def result_for(situation, binding, status, evidence=()):
-    return KnowledgeContext(scope=situation.scope, npc_id=situation.npc_id, status=status, evidence=evidence,
+def result_for(situation, binding, status, evidence=(), top_k=3):
+    return KnowledgeContext(scope=situation.scope, npc_id=situation.npc_id, status=status, evidence=evidence, top_k=top_k,
                             source_kind="dialogue" if binding and binding.source_format == "dialogue_export" else "reference")
 
 
@@ -19,7 +19,7 @@ def normalize_result(config, situation, binding, query, data):
     if not isinstance(data, dict) or data.get("query") != query:
         return result_for(situation, binding, "unavailable")
     matches = data.get("matches")
-    if not isinstance(matches, list) or len(matches) > config.top_k:
+    if not isinstance(matches, list) or len(matches) > config.candidate_k:
         return result_for(situation, binding, "unavailable")
     evidence, seen = [], set()
     for raw in matches:
@@ -36,4 +36,4 @@ def normalize_result(config, situation, binding, query, data):
                 continue
         seen.add(hit.id)
         evidence.append(hit)
-    return result_for(situation, binding, "ok" if evidence else "empty", tuple(evidence))
+    return result_for(situation, binding, "ok" if evidence else "empty", tuple(evidence), config.top_k)

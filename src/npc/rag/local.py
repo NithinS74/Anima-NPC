@@ -29,6 +29,10 @@ class LocalRetriever:
                 raise FileNotFoundError("Run setup or python -m npc.rag prepare first")
             from npc.rag.backend import RAGService, Settings
             self._service = RAGService(Settings(root=self.root, kb_dir=self.config.kb_dir, data_dir=self.config.data_dir))
+            embedder = getattr(self._service, "embedder", None)
+            if embedder is not None and hasattr(embedder, "embed"):
+                from npc.context.conversation import set_encoder
+                set_encoder(embedder.embed)  # already loaded for retrieval; reused for turn similarity
         return self._service
 
     async def retrieve(self, situation, *, timeout_s):
@@ -41,7 +45,7 @@ class LocalRetriever:
 
         def work():
             try:
-                reply = self._service_ready().retrieve(query, top_k=self.config.top_k,
+                reply = self._service_ready().retrieve(query, top_k=self.config.candidate_k,
                                                       max_chars=self.config.max_chars, source=binding.source)
                 return normalize_result(self.config, situation, binding, query, reply.model_dump())
             except (OSError, ValueError, RuntimeError, ImportError, KeyError, TypeError):

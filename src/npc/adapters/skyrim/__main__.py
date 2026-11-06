@@ -10,17 +10,29 @@ from .diagnostics import configure, shutdown, event as log_event
 from .server import create_app
 
 
+def _name_allowlist(settings, root):
+    """World vocabulary the validator accepts as names, from the game's role rules (core stays game-neutral)."""
+    from .personas import load_rules
+    rules = load_rules(root / settings.role_rules_file) if settings.role_rules_file else None
+    terms = (rules or {}).get("name_allowlist", ())
+    return tuple(t for t in terms if isinstance(t, str))[:512]
+
+
 def build_runner(settings, root):
     """Compose the existing pipeline; never ingest or download during launch."""
     from npc.generation.config import load_provider
     from npc.runtime.preview import PreviewLimits, PreviewRunner
     from npc.rag import load_retriever
     timeout_ms = int(settings.timeout_s * 1000)
+    attempt_ms, retry_delay_ms = int(settings.model_cutoff_s * 1000), 250
+    # Two calls at most: the first is cut off at model_cutoff_s, the retry (after its delay) gets the same again.
+    cutoff_ms = max(50, min(timeout_ms - 1000, 2 * attempt_ms + retry_delay_ms))
     return PreviewRunner(load_provider(root / settings.provider_profile),
-                         PreviewLimits(response_timeout_ms=timeout_ms,
-                                       model_cutoff_ms=max(50, timeout_ms - 1000),
+                         PreviewLimits(response_timeout_ms=timeout_ms, model_cutoff_ms=cutoff_ms,
+                                       provider_attempt_ms=attempt_ms, retry_delay_ms=retry_delay_ms, retry_transient=True,
                                        max_input_bytes=12000),
-                         retriever=load_retriever(root / settings.rag_config if settings.rag_config else None))
+                         retriever=load_retriever(root / settings.rag_config if settings.rag_config else None),
+                         name_allowlist=_name_allowlist(settings, root))
 
 
 def send_text(settings, text, *, client=None):
@@ -45,6 +57,17 @@ def send_text(settings, text, *, client=None):
         return submit(connection)
 
 
+def port_taken(port):
+    """True when something already listens on the bridge port (a second bridge must not start)."""
+    import socket
+    with socket.socket() as probe:
+        try:
+            probe.bind(("127.0.0.1", port))
+        except OSError:
+            return True
+    return False
+
+
 def main():
     parser = argparse.ArgumentParser(description="Independent Skyrim connection layer")
     parser.add_argument("--config", default="configs/skyrim/connector.json")
@@ -54,6 +77,7 @@ def main():
     parser.add_argument("--attach-visual-reference", action="store_true", help="Attach untrusted camera description to dialogue prompts")
     parser.add_argument("--say", help="Send this text to the running ANIMA bridge; does not start a server")
     parser.add_argument("--log-file", help="Optional rotating Anima dialogue log (1 MiB, two backups)")
+    parser.add_argument("--console", action="store_true", help="Console window mode: title, colours and [PLUGIN] log tail")
     parser.add_argument("--local-speech", action="store_true", help="Add Windows TTS to default Whisper STT")
     args = parser.parse_args()
     root = Path.cwd()
@@ -77,6 +101,10 @@ def main():
         raw["tts_url"] = local_tts
     settings = Settings.model_validate(raw)
     configure(args.log_file)
+    if args.console:
+        from .console import setup as setup_console
+        from .diagnostics import LOGGER
+        setup_console(LOGGER)
     if args.say is not None:
         import httpx
         try:
@@ -85,6 +113,10 @@ def main():
             parser.exit(1, "ANIMA: text was not accepted; check bridge health, open NPC dialogue, and retry.\n")
         finally:
             shutdown()
+        return
+    if port_taken(settings.port):  # before any model loads: the watcher and the plugin console can both launch a bridge
+        shutdown()
+        print(f"ANIMA: a bridge is already running on port {settings.port}; this second bridge is exiting.")
         return
     log_event("STARTUP", mode=settings.pipeline_mode, provider_profile=Path(settings.provider_profile).name,
               rag=bool(settings.rag_config), stt=bool(settings.stt_url), tts=bool(settings.tts_url),
@@ -103,7 +135,22 @@ def main():
             prepare_model(root)
         except Exception as error:
             parser.exit(1, f"Whisper setup failed ({type(error).__name__}). Check internet/disk space and restart.\n")
-        speech_engine = WhisperSpeech(root / settings.output_directory / "speech", root)
+        speech_dir = root / settings.output_directory / "speech"
+        if args.local_speech:
+            from .speech import PiperSpeech
+            from .voice_types import VoiceTypeResolver
+            from .voice_table import VoiceTable
+            piper = Path(settings.piper_directory)
+            speech_engine = PiperSpeech(
+                speech_dir, root, piper_directory=piper if piper.is_absolute() else root / piper,
+                voice_types=VoiceTypeResolver(root / settings.game_directory / "Data"),
+                voice_table=VoiceTable(settings.voice_table) if settings.voice_table else None,
+                voice_overrides=settings.voice_overrides)
+            app.state.tts_worker = speech_engine  # Closed with the server; kills warm Piper processes.
+            log_event("TTS_ENGINE", engine=speech_engine.tts_engine, folder=str(speech_engine.piper_directory),
+                      models=len(speech_engine.available_models()))
+        else:
+            speech_engine = WhisperSpeech(speech_dir, root)
     if settings.tts_url == local_tts and not args.local_speech:
         from npc.output.chatterbox import TurboWorker, model_path
         try:

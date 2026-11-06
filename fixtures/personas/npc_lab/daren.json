@@ -25,7 +25,18 @@
     "caution": 0.9,
     "patience": 0.3,
     "assertiveness": 0.85,
-    "swearing": "when_provoked"
+    "swearing": "when_provoked",
+    "location": "The gate of a small Skyrim village",
+    "common_knowledge": [
+      "Skyrim is the cold northern province of Tamriel, home to Nords.",
+      "A civil war splits Skyrim between the Empire and the Stormcloak rebels.",
+      "The High King is dead; Jarls rule the holds, and most commoners just want peace.",
+      "Guards watch the gate, keep the peace and point travellers to the inn and forge."
+    ],
+    "services": [
+      "give directions around the village",
+      "take reports of trouble"
+    ]
   },
   "relationship": {
     "favourability": -10,

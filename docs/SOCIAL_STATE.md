@@ -28,3 +28,13 @@ Typed `DialogueMemory` and `SocialAppraisal` fields are carried through snapshot
 The lab defaults to `data/npc_lab/state.sqlite3`; `--state-db` isolates experiments. Explicit slider edits require the current revision. A 250 MB database stop-admission threshold prevents silent unbounded disk growth, but archival/retention maintenance is still future work. Read/write failures fail closed with typed errors. This is console display acknowledgement, not reliable game delivery, an outbox, crash-proof exactly-once generation, long-term semantic memory, save synchronization or verified semantic entailment.
 
 See the [review](reviews/2026-10-31-social-state-character-stage.md) and [plan](plans/I02-I03-social-memory.md) for tests and remaining gates.
+
+## Conversation state (I24 WP-B)
+
+`SocialStore` schema version 2 adds `conversation_state` and `conversation_turn` (created with `CREATE TABLE IF NOT EXISTS`; versions 0, 1 and 2 open). `begin_turn` reads the player's turn (new, repeat, rephrase, follow_up, push_back, shared_news, stall, answered, return) with the pure `read_turn`, using MiniLM similarity only if the retrieval service already loaded it and token overlap otherwise. `stage_preview` stores the reply, move and evidence IDs. Conversation state changes only in `displayed()` and only when that call flips `displayed` from 0 to 1, so interrupted replies and duplicate receipts never change it. It never changes relationship, trust or knowledge access. Personas may carry optional `location`, `common_knowledge` and `services` (fixtures or config, never core code); authored and fallback lines come from `fixtures/lines/line_pools.json`.
+
+## Skyrim memory scope and its known limit
+
+The Skyrim bridge setting `memory_scope` chooses the save-branch part of the memory key. `character` (default) derives it from the player's name, so an NPC remembers that character across game launches and differently named characters stay separate; `session` uses the per-launch game epoch (memory resets on every launch). Existing rows need no migration: rows written under an epoch key are simply not read under the character key.
+
+Known limit: the plugin has no save identity. Loading an older save of the same character keeps the later memories, because the key does not change with the save. Two characters with the same name share memory.

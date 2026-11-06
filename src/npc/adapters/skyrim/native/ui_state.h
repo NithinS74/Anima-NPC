@@ -13,6 +13,14 @@ inline constexpr std::array<const char*, 3> MenuEntries{
     "ANIMA: Start conversation / type message;;-1;;0;;0;;0",
     "ANIMA: Voice input (hold F8);;-1;;1;;1;;0",
     "ANIMA: End conversation;;-1;;2;;2;;0"};
+// Dedicated chat key: acts on key down only, never while another custom menu is open or F8 is held.
+enum class ChatKeyAction { ignore, open_text, no_npc, start_direct };
+// With no session and no open menu, a valid crosshair target starts a menu-less (direct) session.
+inline ChatKeyAction DecideChatKey(bool keyDown, bool hasSession, bool customMenuOpen, bool listening, bool canStartDirect = false) {
+    if (!keyDown || customMenuOpen || listening) return ChatKeyAction::ignore;
+    if (hasSession) return ChatKeyAction::open_text;
+    return canStartDirect ? ChatKeyAction::start_direct : ChatKeyAction::no_npc;
+}
 struct UiState {
     Panel panel = Panel::none;
     std::string session;

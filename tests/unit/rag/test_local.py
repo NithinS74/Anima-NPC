@@ -31,7 +31,7 @@ def test_local_calls_existing_backend_directly_with_source_prefilter(scenario):
     service = Service()
     result = asyncio.run(LocalRetriever(config(situation), service=service).retrieve(situation, timeout_s=1))
     assert result.status == "ok" and result.evidence[0].source == "world.txt"
-    assert service.calls[0][1] == dict(source="world.txt", top_k=3, max_chars=6000)
+    assert service.calls[0][1] == dict(source="world.txt", top_k=8, max_chars=6000)
 
 
 def test_unbound_identity_is_denied_without_opening_backend(scenario):

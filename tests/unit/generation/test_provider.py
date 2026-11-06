@@ -148,3 +148,44 @@ def test_partial_answer_still_reaches_incomplete_generation_validation():
 def test_conflicting_reasoning_controls_are_rejected():
     with pytest.raises(ValidationError, match="choose reasoning_enabled or reasoning_effort"):
         config(reasoning_enabled=False, reasoning_effort="low")
+
+
+def test_one_shared_client_serves_every_call_and_closes_on_aclose():
+    # Before: a new httpx.AsyncClient (and TLS handshake) was built for every generate() call.
+    requests = []
+    provider = ChatCompletionsProvider(config(), transport=httpx.MockTransport(
+        lambda request: requests.append(request) or httpx.Response(200, json=body())))
+    async def run():
+        await provider.generate(PROMPT, 1)
+        first = provider._client
+        await provider.generate(PROMPT, 1)
+        assert provider._client is first and not first.is_closed
+        await provider.aclose()
+        assert first.is_closed and provider._client is None
+        await provider.aclose()  # idempotent
+        await provider.generate(PROMPT, 1)  # usable again after close
+        assert provider._client is not first
+        await provider.aclose()
+    asyncio.run(run())
+    assert len(requests) == 3
+
+
+def test_shared_client_is_rebuilt_for_a_new_event_loop():
+    provider = ChatCompletionsProvider(config(), transport=httpx.MockTransport(lambda request: httpx.Response(200, json=body())))
+    assert asyncio.run(provider.generate(PROMPT, 1)).model == "actual-model"
+    assert asyncio.run(provider.generate(PROMPT, 1)).model == "actual-model"
+
+
+def test_timeout_applies_per_request_on_the_shared_client():
+    async def handler(request):
+        await asyncio.sleep(1)
+        return httpx.Response(200, json=body())
+    provider = ChatCompletionsProvider(config(), transport=httpx.MockTransport(handler))
+    async def run():
+        with pytest.raises(ProviderFailure, match="provider_timeout"):
+            await provider.generate(PROMPT, 0.02)
+        provider._transport = httpx.MockTransport(lambda request: httpx.Response(200, json=body()))
+        await provider.aclose()
+        assert (await provider.generate(PROMPT, 1)).model == "actual-model"
+        await provider.aclose()
+    asyncio.run(run())

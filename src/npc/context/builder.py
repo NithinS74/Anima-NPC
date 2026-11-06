@@ -222,5 +222,6 @@ def build_situation(turn: TurnInput, snapshot: StateSnapshot, now: datetime, *, 
         conflicts=conflicts, influences=tuple(influences), dependencies=dependencies, notes=tuple(notes),
         social_appraisal=appraise_social(turn.player_input, persona, relationship),
         visual_context=visual_context,
-        recent_dialogue=snapshot.recent_dialogue,
+        recent_dialogue=snapshot.recent_dialogue, conversation=snapshot.conversation, reading=snapshot.reading,
+        scene=turn.scene,
     )

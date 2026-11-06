@@ -4,6 +4,8 @@ Start with the [general TRD](TRD.md), then the [shared contracts](CONTRACTS.md) 
 
 | Need | Read |
 |---|---|
+| The project vision and research proposal | [Proposal](PROPOSAL.md), [goal gap review](reviews/2026-11-05-goal-gap-review.md) |
+| How conversations should develop (proposed) | [Conversation design](plans/I23-conversation-dynamics.md) |
 | Where to put code, tests and data | [Repository structure](REPOSITORY_STRUCTURE.md) |
 | Run/understand the first working context builder | [Context builder](CONTEXT_BUILDER.md), [reviewed implementation plan](plans/I04-context-builder.md) |
 | Generate/validate dialogue; configure OpenRouter or Gemini | [Preview guide](GENERATION_VALIDATION.md), [provider profiles](../configs/providers/README.md), [plan](plans/I06-I07-generation-validation.md), [review](reviews/2026-10-31-generation-validation-review.md) |

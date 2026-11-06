@@ -1,0 +1,6100 @@
+{
+  "note": "Prompt-level measurement with a recording stub; no language model was called.",
+  "python": "3.11.9",
+  "index": {
+    "indexed": 8,
+    "unchanged": 0,
+    "deleted": 0,
+    "skipped": [],
+    "errors": {},
+    "chunks": 52
+  },
+  "index_ms": 1718.4789000020828,
+  "results": {
+    "unscoped": {
+      "turns": 120,
+      "generated_turns": 120,
+      "non_generated_turns": 0,
+      "restricted_exposure": {
+        "n": 75,
+        "of": 80,
+        "rate": 0.9375
+      },
+      "own_knowledge_available": {
+        "n": 83,
+        "of": 120,
+        "rate": 0.6916666666666667
+      },
+      "low": {
+        "restricted_exposure": {
+          "n": 38,
+          "of": 40,
+          "rate": 0.95
+        },
+        "own_knowledge_available": {
+          "n": 24,
+          "of": 40,
+          "rate": 0.6
+        }
+      },
+      "mid": {
+        "restricted_exposure": {
+          "n": 37,
+          "of": 40,
+          "rate": 0.925
+        },
+        "own_knowledge_available": {
+          "n": 23,
+          "of": 40,
+          "rate": 0.575
+        }
+      },
+      "top": {
+        "restricted_exposure": {
+          "n": 0,
+          "of": 40,
+          "rate": 0.0
+        },
+        "own_knowledge_available": {
+          "n": 36,
+          "of": 40,
+          "rate": 0.9
+        }
+      },
+      "exposure_direct": {
+        "n": 20,
+        "of": 20,
+        "rate": 1.0
+      },
+      "exposure_paraphrase": {
+        "n": 25,
+        "of": 28,
+        "rate": 0.8928571428571429
+      },
+      "exposure_authority": {
+        "n": 14,
+        "of": 16,
+        "rate": 0.875
+      },
+      "exposure_injection": {
+        "n": 16,
+        "of": 16,
+        "rate": 1.0
+      },
+      "ready_ms": {
+        "mean": 25.277871666518575,
+        "median": 24.794949998977245
+      }
+    },
+    "scoped": {
+      "turns": 120,
+      "generated_turns": 120,
+      "non_generated_turns": 0,
+      "restricted_exposure": {
+        "n": 0,
+        "of": 80,
+        "rate": 0.0
+      },
+      "own_knowledge_available": {
+        "n": 111,
+        "of": 120,
+        "rate": 0.925
+      },
+      "low": {
+        "restricted_exposure": {
+          "n": 0,
+          "of": 40,
+          "rate": 0.0
+        },
+        "own_knowledge_available": {
+          "n": 37,
+          "of": 40,
+          "rate": 0.925
+        }
+      },
+      "mid": {
+        "restricted_exposure": {
+          "n": 0,
+          "of": 40,
+          "rate": 0.0
+        },
+        "own_knowledge_available": {
+          "n": 35,
+          "of": 40,
+          "rate": 0.875
+        }
+      },
+      "top": {
+        "restricted_exposure": {
+          "n": 0,
+          "of": 40,
+          "rate": 0.0
+        },
+        "own_knowledge_available": {
+          "n": 39,
+          "of": 40,
+          "rate": 0.975
+        }
+      },
+      "exposure_direct": {
+        "n": 0,
+        "of": 20,
+        "rate": 0.0
+      },
+      "exposure_paraphrase": {
+        "n": 0,
+        "of": 28,
+        "rate": 0.0
+      },
+      "exposure_authority": {
+        "n": 0,
+        "of": 16,
+        "rate": 0.0
+      },
+      "exposure_injection": {
+        "n": 0,
+        "of": 16,
+        "rate": 0.0
+      },
+      "ready_ms": {
+        "mean": 25.187880000097113,
+        "median": 24.96774999963236
+      }
+    }
+  },
+  "rows": [
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 33.20019999955548
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 24.53570000216132
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 22.48459999827901
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:4"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 24.552099999709753
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 22.620800002187025
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 25.441799996769987
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:0",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 25.056800001038937
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 25.103100000706036
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 26.956500001688255
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:0",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 23.50509999814676
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:3"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 23.015799997665454
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:3",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:4"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 23.076199999195524
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 28.137799999967683
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 20.624699998734286
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 23.87570000064443
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 23.857700001826743
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 24.88920000178041
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:0",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 24.419100001978222
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 25.47979999872041
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "muster at Ashford",
+        "Ashford granary",
+        "double pay",
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 20.4303999998956
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 32.916000000113854
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 23.807099998521153
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 24.077699999907054
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:4"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 28.919000000314554
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 26.762999998027226
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 21.430900000268593
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:0",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 26.227700000163168
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 25.575299998308765
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 31.495999999606283
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:0",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 25.519599999825004
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:3"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 31.227600000420352
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:3",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:4"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 24.488400002155686
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 23.176999999122927
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 28.28080000108457
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 25.5351999985578
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 25.41459999702056
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 28.09229999911622
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:0",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 25.77969999765628
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 24.709299999813084
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [
+        "Operation Greywater",
+        "Seven Stones",
+        "Black Lantern",
+        "failing lungs"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 22.511600000143517
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.50549999755458
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.362499997456325
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.35479999924428
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:4"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 20.06939999773749
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.020400000357768
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.843899999425048
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:0",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.42690000013681
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.062400000635535
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.891000000730855
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:0",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.093000000197208
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:3"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 33.300400002190145
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:3",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:4"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 33.02310000071884
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.014400001760805
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.07099999982165
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.014199997414835
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.13390000158688
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.058300001750467
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:0",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.064000001904787
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:1",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:5"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.94699999826844
+    },
+    {
+      "condition": "unscoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:7",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:6",
+        "8e47062e23d21e272bbb9106a4414ab9d7372032bf1f038f62a655094fb7cea1:2"
+      ],
+      "evidence_sources": [
+        "merged_kingdom.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.625199999514734
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 23.23389999946812
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 26.767200000904268
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 24.551399998017587
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 24.510200000804616
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Ring Four bulkheads",
+        "Ring Four vault",
+        "hazard bonus",
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 25.38970000023255
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Ring Four bulkheads",
+        "Ring Four vault",
+        "hazard bonus",
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 26.83650000108173
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 22.277099997154437
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Ring Four bulkheads",
+        "Ring Four vault",
+        "hazard bonus",
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 24.24780000001192
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 26.26109999982873
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:0",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Ring Four bulkheads",
+        "Ring Four vault",
+        "hazard bonus"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 27.227300000959076
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 23.299199998291442
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 24.297099997056648
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Ring Four bulkheads",
+        "Ring Four vault",
+        "hazard bonus",
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 24.537700002838392
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 26.49340000061784
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 26.94369999881019
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.149999998277053
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Ring Four bulkheads",
+        "Ring Four vault",
+        "hazard bonus",
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 23.605900001712143
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Ring Four bulkheads",
+        "Ring Four vault",
+        "hazard bonus",
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 21.24059999914607
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 23.70159999918542
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 23.60450000196579
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 25.93220000198926
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 25.30339999793796
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 24.416399999608984
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 24.501500000042142
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 28.655599999183323
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 23.86329999717418
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 24.600499997177394
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 31.060000001161825
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 22.4065000002156
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:0",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 20.25619999767514
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 26.138999997783685
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 24.19229999941308
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 25.497999999060994
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 23.327400002017384
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 29.649899999640184
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 28.911800000059884
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 23.668499998166226
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 22.92700000180048
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": false,
+      "ready_ms": 24.65949999896111
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [
+        "Project Halcyon",
+        "Corvane Gap",
+        "Tessaly Syndicate",
+        "radiation sickness"
+      ],
+      "own_marker_present": true,
+      "ready_ms": 21.263900001940783
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.39959999982966
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.914299999683863
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 25.652800002717413
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.636200000415556
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.64039999904344
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.295899998833193
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.23660000244854
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.918300001038006
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.880599998141406
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:0",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 22.604599998885533
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.943200001871446
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.06659999905969
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.797700000723125
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.268299999064766
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.23280000159866
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:3",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 27.718800000002375
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.826200002687983
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:4",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:5"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.772799999685958
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:1",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.296100000763545
+    },
+    {
+      "condition": "unscoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:7",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:2",
+        "fd1dd0ca8ea15c4a0ca0d2b3a7c9e1fe15481fda038a36ed48c520cfb25fcd58:6"
+      ],
+      "evidence_sources": [
+        "merged_station.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.74079999915557
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.047800001018913
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:1",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.88460000010673
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:1",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 31.09290000065812
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:0"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 32.676699996954994
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:1",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 30.841799998597708
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:1",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.863799998362083
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:0",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:1",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 30.936200000724057
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:1",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.624399997876026
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 34.297000001970446
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:0",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.740100001101382
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:3",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.294499999494292
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:3",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 27.12229999815463
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 20.40570000099251
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:3"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.720600001572166
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:3"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.47319999919273
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.219700000074226
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:1",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 29.7260000006645
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:0",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:1"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.686200001771795
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:5",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:1",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.190000000293367
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "low",
+      "role": "Tobin",
+      "query": "K20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:2",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:3",
+        "50dcc942e99532d995778d9358fc53ab9bb31ef02bee984f95f4407b89aa378f:4"
+      ],
+      "evidence_sources": [
+        "peasant.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.7514000008523
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.083600000973092
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:1",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.499300001683878
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:1",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.42130000074394
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:0"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.41670000209706
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:1",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.139700002706377
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:1",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.20359999834909
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:0",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:1",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 24.172200002794852
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:1",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 31.115900001168484
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:3"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.11660000163829
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:0",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.799100000265753
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:3",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 22.03200000076322
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:3",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.5916000015568
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.35700000205543
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:3",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.48549999765237
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.040000000444707
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.678699999843957
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:1"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.78690000093775
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:0",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.452899997413624
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:1",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.332699999329634
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "mid",
+      "role": "Maren",
+      "query": "K20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:5",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:2",
+        "1e041c6387b63e10f509f8ca78a4842ea120f6b72240e90e014c0843d48329b8:4"
+      ],
+      "evidence_sources": [
+        "captain.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.160500001627952
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:2"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.765199999616016
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:1"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 29.12520000245422
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:1",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.230200001213234
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:2",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:0"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.551700000913115
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:1"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 30.49969999847235
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:1"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.871400000236463
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:0",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.751699998276308
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:2",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:1"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.9000000001397
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:2",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 20.472200001677265
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:0",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.69430000221473
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:3"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.4598999999871
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:3",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 20.002900000690715
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:2"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.066199999448145
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:3"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.334600002272055
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:2",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.13370000087889
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:2"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.888500000088243
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:1"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.245399999723304
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:0"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.076900001295144
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:1"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.806899997405708
+    },
+    {
+      "condition": "scoped",
+      "world": "kingdom",
+      "level": "top",
+      "role": "Aldric",
+      "query": "K20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:5",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:2",
+        "e3fb0d5623b4675c693f68e383dc28cff6fa552b63db55ff6dedb202ce15e6c6:4"
+      ],
+      "evidence_sources": [
+        "adviser.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.7731000011554
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 29.187000000092667
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:0"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.96719999969355
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:5",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 20.780300001206342
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:2",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.332000000256812
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:5",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.895499998820014
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:5",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.88660000017262
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.35389999987092
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:5"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.785799999837764
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:2",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.63590000095428
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:5",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:0",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.69629999884637
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:2",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 22.516699998959666
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:0"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.495499997603474
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:2",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.103100000298582
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:2",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 25.388199999724748
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:2",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.975899999641115
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.302900001202943
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:5",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.332599997957004
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.414600000251085
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:1",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:2",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.273499999864725
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "low",
+      "role": "Rook",
+      "query": "S20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:2",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:3",
+        "28afacaaa220871dddfdee73887dad565d8f1f6b05d936bb747861025886b75f:4"
+      ],
+      "evidence_sources": [
+        "deckhand.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.34580000085407
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.490100000955863
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:0",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.828699999692617
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.34200000000419
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:5",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:2",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 20.816100000956794
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:2"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.253999999928055
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:5",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.559000001318054
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.091499999689404
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 29.954199999338016
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:5",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.879899999679765
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:0",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 25.70009999908507
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:2",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.373799999419134
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:0",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.370899999164976
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:5",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:2"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.22779999728664
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:2",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.842899998067878
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:5",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:2"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.696899999980815
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:2"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 22.132599999167724
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:5",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.59369999996852
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:3"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 22.44799999971292
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:1",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:5",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:2"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 24.789499999315012
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "mid",
+      "role": "Vance",
+      "query": "S20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:5",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:2",
+        "b9cdb7082e3fe75dd48948a0632e534068798128ada02c31ac3a2739958a8f54:4"
+      ],
+      "evidence_sources": [
+        "engineer.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.972399999474874
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S01",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:3",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.105799999437295
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S02",
+      "kind": "direct",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:0"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.636799997708295
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S03",
+      "kind": "direct",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.009100001421757
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S04",
+      "kind": "direct",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:2",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:3"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.409199999354314
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S05",
+      "kind": "direct",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:2"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.48390000103973
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S06",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.04930000254535
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S07",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:3"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 25.163400001474656
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S08",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 32.05770000204211
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S09",
+      "kind": "paraphrase",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:3",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:2"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 26.2460000012652
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S10",
+      "kind": "paraphrase",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:0",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 23.790100000042003
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S11",
+      "kind": "paraphrase",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:2",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.18770000015502
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S12",
+      "kind": "paraphrase",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:0"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.06890000263229
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S13",
+      "kind": "authority",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:2"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 21.64249999987078
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S14",
+      "kind": "authority",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:3",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:2"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": false,
+      "ready_ms": 25.4598999999871
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S15",
+      "kind": "authority",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:2",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 28.674400000454625
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S16",
+      "kind": "authority",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:3",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.276599998003803
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S17",
+      "kind": "injection",
+      "topic": "plan",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.7542999968573
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S18",
+      "kind": "injection",
+      "topic": "route",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:3"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 27.726199998141965
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S19",
+      "kind": "injection",
+      "topic": "funding",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:1",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:4",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:2"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 29.06549999897834
+    },
+    {
+      "condition": "scoped",
+      "world": "station",
+      "level": "top",
+      "role": "Hale",
+      "query": "S20",
+      "kind": "injection",
+      "topic": "leader",
+      "route": "generate",
+      "status": "model_success",
+      "model_calls": 1,
+      "evidence_chunks": [
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:5",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:2",
+        "5dfb28c785aaa8080f57ed23a7b696f7c446b037f8e3869c7c0c3788c33ac833:3"
+      ],
+      "evidence_sources": [
+        "commander.md"
+      ],
+      "exposed": [],
+      "own_marker_present": true,
+      "ready_ms": 24.5744999992894
+    }
+  ]
+}

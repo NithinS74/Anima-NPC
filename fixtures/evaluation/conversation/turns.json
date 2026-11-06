@@ -1,0 +1,277 @@
+{
+  "note": "Labelled player turns for read_turn. history is a list of [player text, npc reply] pairs, advanced in order. Token-overlap scale; the embedding scale is not calibrated.",
+  "cases": [
+    {
+      "id": "first",
+      "history": [],
+      "text": "Who is the king?",
+      "expect": "new"
+    },
+    {
+      "id": "greeting",
+      "history": [],
+      "text": "Hello",
+      "expect": "new"
+    },
+    {
+      "id": "exact-repeat",
+      "history": [
+        [
+          "Who is the king?",
+          "A man in a far castle."
+        ]
+      ],
+      "text": "Who is the king?",
+      "expect": "repeat"
+    },
+    {
+      "id": "case-repeat",
+      "history": [
+        [
+          "Who is the king?",
+          "A man in a far castle."
+        ]
+      ],
+      "text": "who is the king",
+      "expect": "repeat"
+    },
+    {
+      "id": "rephrase",
+      "history": [
+        [
+          "What is the king's plan for the war?",
+          "Nobody tells me."
+        ]
+      ],
+      "text": "What's the actual plan for the war?",
+      "expect": "rephrase"
+    },
+    {
+      "id": "followup-why",
+      "history": [
+        [
+          "Where is the river?",
+          "East of the market."
+        ]
+      ],
+      "text": "Why?",
+      "expect": "follow_up"
+    },
+    {
+      "id": "followup-who-told",
+      "history": [
+        [
+          "Who is the king?",
+          "A man in a far castle."
+        ]
+      ],
+      "text": "Who told you that?",
+      "expect": "follow_up"
+    },
+    {
+      "id": "followup-narrowing",
+      "history": [
+        [
+          "Who is the king?",
+          "A man in a far castle."
+        ]
+      ],
+      "text": "Who is the king's heir?",
+      "expect": "follow_up"
+    },
+    {
+      "id": "pushback-sure",
+      "history": [
+        [
+          "Where is the river?",
+          "East of the market."
+        ]
+      ],
+      "text": "Are you sure about that?",
+      "expect": "push_back"
+    },
+    {
+      "id": "pushback-right",
+      "history": [
+        [
+          "Where is the river?",
+          "East of the market."
+        ]
+      ],
+      "text": "That can't be right.",
+      "expect": "push_back"
+    },
+    {
+      "id": "news",
+      "history": [
+        [
+          "Where is the river?",
+          "East of the market."
+        ]
+      ],
+      "text": "I came from the north road and the bridge is out.",
+      "expect": "shared_news"
+    },
+    {
+      "id": "stall-ok",
+      "history": [
+        [
+          "Where is the river?",
+          "East of the market."
+        ]
+      ],
+      "text": "ok",
+      "expect": "stall"
+    },
+    {
+      "id": "stall-hmm",
+      "history": [
+        [
+          "Where is the river?",
+          "East of the market."
+        ]
+      ],
+      "text": "hmm",
+      "expect": "stall"
+    },
+    {
+      "id": "answered",
+      "history": [
+        [
+          "Hello",
+          "Where are you from?"
+        ]
+      ],
+      "text": "Near Dunmere.",
+      "expect": "answered"
+    },
+    {
+      "id": "new-topic",
+      "history": [
+        [
+          "Where is the river?",
+          "East of the market."
+        ]
+      ],
+      "text": "What do you sell?",
+      "expect": "new"
+    },
+    {
+      "id": "return",
+      "history": [
+        [
+          "Where is the river?",
+          "East."
+        ],
+        [
+          "What do you sell?",
+          "Tools."
+        ],
+        [
+          "Who guards the gate?",
+          "Daren."
+        ],
+        [
+          "Is the inn open?",
+          "Always."
+        ]
+      ],
+      "text": "Where is that river again?",
+      "expect": "return"
+    },
+    {
+      "id": "who-after-where",
+      "history": [
+        [
+          "Where is the blacksmith?",
+          "Past the market."
+        ]
+      ],
+      "text": "Who is the blacksmith?",
+      "expect": "new"
+    },
+    {
+      "id": "where-after-who",
+      "history": [
+        [
+          "Who runs the inn?",
+          "Hulda does."
+        ]
+      ],
+      "text": "Where is the inn?",
+      "expect": "new"
+    },
+    {
+      "id": "what-after-where",
+      "history": [
+        [
+          "Where is the river?",
+          "East."
+        ]
+      ],
+      "text": "What is the river?",
+      "expect": "new"
+    },
+    {
+      "id": "when-after-who",
+      "history": [
+        [
+          "Who guards the gate?",
+          "Daren."
+        ]
+      ],
+      "text": "When does the gate close?",
+      "expect": "new"
+    },
+    {
+      "id": "how-after-why",
+      "history": [
+        [
+          "Why is the bridge out?",
+          "Floods."
+        ]
+      ],
+      "text": "How is the bridge built?",
+      "expect": "new"
+    },
+    {
+      "id": "which-after-what",
+      "history": [
+        [
+          "What do you sell?",
+          "Tools."
+        ]
+      ],
+      "text": "Which tools do you sell?",
+      "expect": "follow_up"
+    },
+    {
+      "id": "thanks-go",
+      "history": [
+        [
+          "Where is the river?",
+          "East of the market."
+        ]
+      ],
+      "text": "Thanks, I will go there.",
+      "expect": "stall"
+    },
+    {
+      "id": "thanks-only",
+      "history": [
+        [
+          "Where is the river?",
+          "East of the market."
+        ]
+      ],
+      "text": "Thank you, goodbye.",
+      "expect": "stall"
+    },
+    {
+      "id": "thanks-first",
+      "history": [],
+      "text": "Thanks, I will go there.",
+      "expect": "stall"
+    }
+  ]
+}

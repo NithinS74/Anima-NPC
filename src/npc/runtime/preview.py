@@ -7,7 +7,8 @@ from typing import Callable
 
 from pydantic import Field, StrictInt, model_validator
 
-from npc.behavior import choose_plan
+from npc.behavior import apply_material, apply_move, choose_move, choose_plan
+from npc.context.conversation import read_turn
 from npc.context import build_situation
 from npc.context.assembly import assemble_knowledge
 from npc.contracts.knowledge import KnowledgeContext, Retriever
@@ -25,6 +26,12 @@ class PreviewLimits(Contract):
     max_input_bytes: StrictInt = Field(default=2048, ge=512, le=32000)
     retrieval_timeout_ms: StrictInt = Field(default=750, ge=10, le=5000)
     max_output_tokens: StrictInt = Field(default=160, ge=32, le=512)
+    # Optional per-call limit (a real-time profile): a call slower than this is abandoned and may be retried once.
+    provider_attempt_ms: StrictInt | None = Field(default=None, ge=100, le=59000)
+    # Pause before the single retry of a transient provider failure. It counts against model_cutoff_ms.
+    retry_delay_ms: StrictInt = Field(default=250, ge=0, le=5000)
+    # Opt-in: retry provider_unavailable/provider_timeout once. Off by default (one call plus the single repair).
+    retry_transient: bool = False
 
     @model_validator(mode="after")
     def reserve_response_time(self) -> "PreviewLimits":
@@ -57,11 +64,17 @@ async def _await_work(work, timeout_s, cancellation, retain_cleanup):
             await asyncio.gather(cancel_task, return_exceptions=True)
 
 
+# Only transient provider failures are retried, and only with the second of the two allowed calls.
+# Auth, rate-limit, bad-request, transport and protocol failures are never retried.
+RETRYABLE = frozenset({"provider_unavailable", "provider_timeout"})
+
+
 class PreviewRunner:
     """Reuse ONE instance to bound local request work. No pending-work queue."""
 
     def __init__(self, provider: ModelProvider, limits: PreviewLimits | None = None, *, clock: Callable[[], float] = monotonic,
-                 retriever: Retriever | None = None):
+                 retriever: Retriever | None = None, name_allowlist: tuple[str, ...] = ()):
+        self.name_allowlist = tuple(name_allowlist)
         self.provider = provider
         self.retriever = retriever
         self.limits = limits or PreviewLimits()
@@ -69,6 +82,12 @@ class PreviewRunner:
         self._slot = asyncio.Lock()
         self._pending_cleanup: asyncio.Task | None = None
         self._owners: set[tuple[str, str, str, str]] = set()
+
+    async def aclose(self):
+        """Release the provider's shared connection, if it keeps one."""
+        close = getattr(self.provider, "aclose", None)
+        if close is not None:
+            await close()
 
     def _retain_cleanup(self, task: asyncio.Task):
         # At most one outstanding request task: its admission remains held.
@@ -117,10 +136,21 @@ class PreviewRunner:
         start = self.clock()
         situation = build_situation(scenario.turn, scenario.snapshot, scenario.now, visual_context=visual_context)
         plan = choose_plan(situation)
+        conv = situation.conversation
+        # Turn type comes from the store when it recorded one; otherwise it is read here (same pure function).
+        reading = situation.reading or read_turn(situation.player_input.text, conv)
+        if plan.route == "generate":
+            plan = apply_move(plan, choose_move(reading, conv, situation.persona, situation.player_input.text), conv,
+                              situation.persona, situation.request_id)
         current_state = current_state or (lambda: CurrentState(dialogue_revision=situation.dialogue_revision, turn_epoch=situation.turn_epoch))
         calls, violations, model = 0, (), None
         input_tokens, output_tokens, usage_complete = 0, 0, True
         history_used, history_omitted = 0, 0
+        stages: dict[str, float] = {}
+
+        def spend(stage, since):
+            stages[stage] = round(stages.get(stage, 0) + (self.clock() - since) * 1000, 1)
+
         evidence_used, evidence_omitted = (), 0
         knowledge = KnowledgeContext(scope=situation.scope, npc_id=situation.npc_id,
                                      status="not_requested" if self.retriever else "disabled")
@@ -142,11 +172,12 @@ class PreviewRunner:
                                input_tokens=input_tokens, output_tokens=output_tokens, usage_complete=usage_complete,
                                response_deadline_ms=self.limits.response_timeout_ms, model_cutoff_ms=self.limits.model_cutoff_ms,
                                timing_profile=self._timing_profile(), history_used=history_used, history_omitted=history_omitted,
-                               knowledge=knowledge, evidence_used=evidence_used, evidence_omitted=evidence_omitted)
+                               knowledge=knowledge, evidence_used=evidence_used, evidence_omitted=evidence_omitted,
+                               stage_ms=dict(stages), turn_type=reading.type)
 
         def checked(body):
             reply = ProviderReply(content=body.model_dump_json(), model="authored", finish_reason="stop")
-            return validate_response(reply, situation, plan, current_state())
+            return validate_response(reply, situation, plan, current_state(), check_conversation=False)
 
         def fallback(code):
             if (self.clock()-start)*1000 >= self.limits.response_timeout_ms:
@@ -171,11 +202,19 @@ class PreviewRunner:
                                 self.limits.model_cutoff_ms / 1000 - (self.clock() - start))
                 if remaining <= 0:
                     return fallback("model_cutoff")
+                began = self.clock()
                 try:
                     retrieved = await _await_work(self.retriever.retrieve(situation, timeout_s=remaining),
                                                  remaining, cancellation, self._retain_cleanup)
                     knowledge = assemble_knowledge(situation, retrieved)
+                    told = set(conv.told)
+                    if told and knowledge.status in {"ok", "empty"}:  # never re-offer a passage already given
+                        fresh = tuple(hit for hit in knowledge.evidence if hit.id not in told)
+                        knowledge = knowledge.model_copy(update=dict(evidence=fresh, status="ok" if fresh else "empty"))
+                    plan = apply_material(plan, knowledge, conv)
+                    spend("retrieval", began)
                 except ProviderFailure as error:
+                    spend("retrieval", began)
                     if error.code == "cancelled":
                         return finish("cancelled", error="cancelled")
                     knowledge = KnowledgeContext(scope=situation.scope, npc_id=situation.npc_id, status="unavailable")
@@ -188,24 +227,45 @@ class PreviewRunner:
                 remaining = self.limits.model_cutoff_ms/1000 - (self.clock()-start)
                 if remaining <= 0:
                     return fallback("model_cutoff")
+                began = self.clock()
                 try:
                     prompt = build_prompt(situation, plan, knowledge=knowledge if self.retriever else None, max_input_bytes=self.limits.max_input_bytes,
                                           max_output_tokens=self.limits.max_output_tokens, repair_codes=violations if attempt else ())
                     history_used, history_omitted = prompt.history_count, prompt.omitted_history_count
                     evidence_used = tuple(hit.id for hit in prompt.evidence)
                     evidence_omitted = prompt.evidence_omitted
+                    spend("prompt", began)
                 except PromptTooLarge:
+                    spend("prompt", began)
                     return fallback("prompt_budget")
                 remaining = self.limits.model_cutoff_ms/1000 - (self.clock()-start)
                 if remaining <= 0:
                     return fallback("model_cutoff")
                 calls += 1
+                limit = remaining if self.limits.provider_attempt_ms is None else min(remaining, self.limits.provider_attempt_ms / 1000)
+                began = self.clock()
                 try:
-                    reply = await _await_work(self.provider.generate(prompt, remaining), remaining, cancellation, self._retain_cleanup)
+                    reply = await _await_work(self.provider.generate(prompt, limit), limit, cancellation, self._retain_cleanup)
+                    spend("model", began)
                 except ProviderFailure as error:
+                    spend("model", began)
                     usage_complete = False
                     if error.code == "cancelled":
                         return finish("cancelled", error="cancelled")
+                    if self.limits.retry_transient and error.code in RETRYABLE and calls == 1 and attempt == 0:
+                        delay = self.limits.retry_delay_ms / 1000
+                        if (self.clock() - start + delay) * 1000 >= self.limits.model_cutoff_ms:
+                            return fallback(error.code)
+                        began = self.clock()
+                        try:
+                            await asyncio.wait_for(cancellation.wait(), delay) if cancellation is not None else await asyncio.sleep(delay)
+                        except TimeoutError:
+                            pass
+                        spend("model", began)  # The delay is part of the model wait and of the cutoff.
+                        cleanup = self._pending_cleanup
+                        if cleanup is not None and not cleanup.done():
+                            return fallback(error.code)  # An abandoned call is still unwinding; never run two at once.
+                        continue
                     return fallback(error.code)
                 model = reply.model
                 usage_complete = usage_complete and reply.input_tokens is not None and reply.output_tokens is not None
@@ -215,11 +275,13 @@ class PreviewRunner:
                     return finish("cancelled", error="cancelled_or_stale")
                 if (self.clock()-start)*1000 >= self.limits.model_cutoff_ms:
                     return fallback("late_completion")
+                began = self.clock()
                 validation = validate_response(reply, situation, plan, current_state(), evidence=prompt.evidence,
-                                               evidence_aliases=prompt.evidence_aliases)
+                                               evidence_aliases=prompt.evidence_aliases, name_allowlist=self.name_allowlist)
+                spend("validation", began)
                 violations = tuple(dict.fromkeys(violations + validation.violations))
                 if validation.accepted:
-                    return finish("repair_success" if attempt else "model_success", validation.response)
+                    return finish("repair_success" if attempt and violations else "model_success", validation.response)
                 if "stale_state" in validation.violations:
                     return finish("cancelled", error="stale_state")
             return fallback("irrelevant_boundary" if "irrelevant_boundary" in violations else "invalid_candidate")

@@ -8,7 +8,8 @@ from pathlib import Path
 from time import time
 
 from npc.behavior.appraisal import relationship_effect
-from npc.contracts.context import DialogueMemory, Persona, PlayerInput, Relationship, Scope
+from npc.context.conversation import advance, default_similarity, read_turn
+from npc.contracts.context import ConversationState, DialogueMemory, Persona, PlayerInput, Relationship, Scope, TurnReading
 
 
 class StoreFailure(Exception):
@@ -20,15 +21,16 @@ class StateConflict(StoreFailure):
 
 
 class SocialStore:
-    def __init__(self, path: Path, *, clock=time, max_bytes=250 * 1024 * 1024, memory_source="console_display"):
+    def __init__(self, path: Path, *, clock=time, max_bytes=250 * 1024 * 1024, memory_source="console_display", similarity=None):
         if memory_source not in {"console_display", "game_completed"}:
             raise ValueError("unsupported dialogue memory provenance")
         self.memory_source = memory_source
+        self.similarity = similarity  # None: chosen per turn (MiniLM only if already loaded, else token overlap)
         self.path, self.clock, self.max_bytes = Path(path), clock, max_bytes
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self._connection() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1):
+            if version not in (0, 1, 2):
                 raise StoreFailure("unsupported_state_version")
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS social_state (
@@ -41,7 +43,11 @@ class SocialStore:
                     displayed INTEGER NOT NULL DEFAULT 0, cancelled INTEGER NOT NULL DEFAULT 0,
                     UNIQUE(scope_key, request_id));
                 CREATE INDEX IF NOT EXISTS social_history ON social_turn(scope_key, displayed, sequence DESC);
-                PRAGMA user_version=1;
+                CREATE TABLE IF NOT EXISTS conversation_state (scope_key TEXT PRIMARY KEY, state TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS conversation_turn (
+                    scope_key TEXT NOT NULL, request_id TEXT NOT NULL, reading TEXT NOT NULL,
+                    move TEXT, reply TEXT, evidence TEXT, PRIMARY KEY(scope_key, request_id));
+                PRAGMA user_version=2;
             """)
 
     @staticmethod
@@ -79,8 +85,13 @@ class SocialStore:
         if row is None:
             raise StoreFailure("state_missing")
         history = db.execute("SELECT request_id,player_text,npc_text,mode FROM social_turn WHERE scope_key=? AND displayed=1 ORDER BY sequence DESC LIMIT 8", (key,)).fetchall()
+        conv = db.execute("SELECT state FROM conversation_state WHERE scope_key=?", (key,)).fetchone()
+        try:
+            conversation = ConversationState.model_validate_json(conv["state"]) if conv else ConversationState()
+        except ValueError:
+            conversation = ConversationState()
         return dict(relationship=Relationship.model_validate_json(row["relationship"]), mood=row["mood"],
-                    revision=row["revision"], last_gain=row["last_gain"],
+                    revision=row["revision"], last_gain=row["last_gain"], conversation=conversation, reading=None,
                     history=tuple(DialogueMemory(request_id=r["request_id"], player_text=r["player_text"], npc_text=r["npc_text"] or "", mode=r["mode"], source=self.memory_source) for r in reversed(history)))
 
     def ensure(self, key: str, initial: Relationship, mood: str):
@@ -110,6 +121,7 @@ class SocialStore:
             if old:
                 if old["digest"] != digest or old["cancelled"]:
                     raise StateConflict("request_conflict")
+                state["reading"] = self._reading(db, key, request_id)
                 return state, json.loads(old["audit"]), json.loads(old["result"]) if old["result"] else None
             if state["revision"] != expected_revision:
                 raise StateConflict("state_conflict")
@@ -121,16 +133,28 @@ class SocialStore:
             elif appraisal.stimulus == "threat": mood = "fearful" if persona.assertiveness < 0.5 else "angry"
             elif appraisal.stimulus == "apology" and after.irritation < 30 and positive_allowed: mood = "calm"
             gain_used = delta["familiarity"] > 0 or appraisal.stimulus in {"gratitude", "apology"} and positive_allowed
-            audit = dict(before=state["relationship"].model_dump(), after=after.model_dump(), delta=delta,
+            reading = read_turn(player.text, state["conversation"], self.similarity or default_similarity())
+            audit = dict(turn_type=reading.type, before=state["relationship"].model_dump(), after=after.model_dump(), delta=delta,
                          stimulus=appraisal.stimulus, reasons=list(appraisal.reasons), positive_cooldown_applied=not positive_allowed,
                          policy_version=appraisal.policy_version)
             db.execute("UPDATE social_state SET relationship=?,mood=?,revision=revision+1,last_gain=? WHERE scope_key=?",
                        (after.model_dump_json(), mood, now if gain_used else state["last_gain"], key))
             db.execute("INSERT INTO social_turn(scope_key,request_id,digest,player_text,audit) VALUES(?,?,?,?,?)",
                        (key, request_id, digest, player.text, json.dumps(audit)))
-            return self._read(db, key), audit, None
+            db.execute("INSERT OR REPLACE INTO conversation_turn(scope_key,request_id,reading) VALUES(?,?,?)", (key, request_id, reading.model_dump_json()))
+            state = self._read(db, key)
+            state["reading"] = reading
+            return state, audit, None
 
-    def stage_preview(self, key, request_id, result, expected_revision):
+    @staticmethod
+    def _reading(db, key, request_id):
+        row = db.execute("SELECT reading FROM conversation_turn WHERE scope_key=? AND request_id=?", (key, request_id)).fetchone()
+        try:
+            return TurnReading.model_validate_json(row["reading"]) if row else None
+        except ValueError:
+            return None
+
+    def stage_preview(self, key, request_id, result, expected_revision, *, move=None, evidence_ids=None):
         encoded = json.dumps(result, ensure_ascii=False)
         if len(encoded.encode()) > 128 * 1024:
             raise StoreFailure("preview_size_limit")
@@ -144,13 +168,40 @@ class SocialStore:
                 raise StateConflict("turn_conflict")
             db.execute("UPDATE social_turn SET result=?,npc_text=?,mode=? WHERE scope_key=? AND request_id=?",
                        (encoded, response["text"] if response else None, response["mode"] if response else None, key, request_id))
+            # Reply, move and evidence IDs wait here; conversation state changes only when `displayed` confirms.
+            inner = result["result"]
+            move = move or (inner.get("plan") or {}).get("move") or result.get("move")
+            if evidence_ids is None:
+                evidence_ids = result.get("evidence_ids") or (response or {}).get("evidence_ids") or inner.get("evidence_used") or ()
+            db.execute("UPDATE conversation_turn SET move=?,reply=?,evidence=? WHERE scope_key=? AND request_id=?",
+                       (move, response["text"] if response else None, json.dumps(list(evidence_ids)), key, request_id))
 
     def displayed(self, key, request_id):
         with self._transaction() as db:
-            cursor = db.execute("UPDATE social_turn SET displayed=1 WHERE scope_key=? AND request_id=? AND result IS NOT NULL AND mode IS NOT NULL AND cancelled=0", (key, request_id))
-            if not cursor.rowcount:
+            cursor = db.execute("UPDATE social_turn SET displayed=1 WHERE scope_key=? AND request_id=? AND displayed=0 AND result IS NOT NULL AND mode IS NOT NULL AND cancelled=0", (key, request_id))
+            changed = bool(cursor.rowcount)
+            if not changed:  # repeat receipt: fine if it was already displayed
+                cursor = db.execute("SELECT 1 FROM social_turn WHERE scope_key=? AND request_id=? AND displayed=1", (key, request_id))
+                if cursor.fetchone():
+                    return self._read(db, key)
                 raise StateConflict("display_conflict")
+            if changed:  # a duplicate receipt never counts twice
+                self._advance(db, key, request_id)
             return self._read(db, key)
+
+    def _advance(self, db, key, request_id):
+        state = self._read(db, key)["conversation"]
+        row = db.execute("SELECT player_text,npc_text FROM social_turn WHERE scope_key=? AND request_id=?", (key, request_id)).fetchone()
+        extra = db.execute("SELECT move,evidence FROM conversation_turn WHERE scope_key=? AND request_id=?", (key, request_id)).fetchone()
+        if extra is None:
+            return
+        try:
+            ids = tuple(str(i)[:128] for i in json.loads(extra["evidence"] or "[]"))
+        except ValueError:
+            ids = ()
+        reading = self._reading(db, key, request_id)
+        new = advance(state, reading, row["player_text"], row["npc_text"] or "", extra["move"], ids)
+        db.execute("INSERT OR REPLACE INTO conversation_state VALUES(?,?)", (key, new.model_dump_json()))
 
     def cancel(self, key, request_id):
         with self._transaction() as db:

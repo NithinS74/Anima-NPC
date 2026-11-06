@@ -1,0 +1,35 @@
+\documentclass[border=4pt]{standalone}
+\input{../../../research/cs3235_paper/figure_sources/styles.tex}
+\begin{document}
+\begin{tikzpicture}[x=1mm,y=1mm]
+\def\tw{36mm}
+% Top row: the turn, left to right.
+\node[gamebox,text width=\tw,minimum height=17mm] (in) at (20,62) {\textbf{Player turn}\\words and game state};
+\node[corebox,text width=\tw,minimum height=17mm] (rules) at (68,62) {\textbf{Hard rules first}\\combat, threats, availability: unchanged};
+\node[corebox,text width=\tw,minimum height=17mm] (act) at (116,62) {\textbf{1. Read the turn}\\new, repeat, rephrase, follow-up, push back, shared news, stall};
+% Middle row: the state in the centre.
+\node[knowbox,text width=70mm,minimum height=23mm] (state) at (68,33) {\textbf{Conversation state} (per NPC and player)\\topics and times asked $\cdot$ what the NPC told them $\cdot$ passages used $\cdot$ NPC's position $\cdot$ what the player said $\cdot$ open questions $\cdot$ rapport $\cdot$ recent phrases};
+\node[corebox,text width=\tw,minimum height=23mm] (move) at (162,62) {\textbf{2. Choose a move}\\answer, expand, answer differently, challenge, hold, admit limit, react, take initiative};
+\node[knowbox,text width=\tw,minimum height=23mm] (material) at (162,33) {\textbf{3. Pick material}\\retrieve for the topic, drop what was already said, flag when exhausted};
+% Bottom row: right to left.
+\node[corebox,text width=\tw,minimum height=23mm] (prompt) at (162,4) {\textbf{4. Compose the prompt}\\identity + brief + this move + new material + phrases to avoid + length};
+\node[modelbox,text width=\tw,minimum height=23mm] (model) at (116,4) {\textbf{Any model}\\proposes a reply};
+\node[corebox,text width=\tw,minimum height=23mm] (check) at (68,4) {\textbf{5. Check the reply}\\existing checks + repeated reply + did it make the move; one repair};
+\node[gamebox,text width=\tw,minimum height=23mm] (deliver) at (20,4) {\textbf{Deliver}\\subtitle and voice, then a receipt from the game};
+\node[corebox,text width=22mm,minimum height=23mm] (update) at (11,33) {\textbf{6. Update}\\only if the reply was completed};
+\draw[flow] (in) -- (rules);
+\draw[flow] (rules) -- (act);
+\draw[flow] (act) -- (move);
+\draw[flow] (act.south) -- node[lab,right,pos=.45] {compares} ($(state.north east)+(-3,0)$ |- state.north);
+\draw[flow] (move) -- (material);
+\draw[flow] (material) -- (prompt);
+\draw[flow] (prompt) -- (model);
+\draw[flow] (model) -- (check);
+\draw[flow] (check) -- (deliver);
+\draw[flow] (deliver.north -| update) -- (update);
+\draw[flow] (update) -- (state);
+\draw[flow] (state.east) -- node[lab,above] {shapes} (material.west);
+\draw[flow] (state.south -| check) -- node[lab,right] {avoid list} (check.north);
+\draw[dflow] (rules.south) -- ++(0,-5) node[lab,right,pos=.5] {no model needed} -| ($(deliver.north)+(4,0)$);
+\end{tikzpicture}
+\end{document}

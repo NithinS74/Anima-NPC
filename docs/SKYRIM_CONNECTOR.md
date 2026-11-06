@@ -10,6 +10,31 @@ The engine dialogue manager supplies the currently offered topic text, resolved 
 
 Skyrim does not expose a definitive "everything this NPC knows" field. The payload preserves game observations and dialogue provenance. Biography, personality and knowledge references can be added by an explicit authored profile keyed by `base.plugin.lower():base.local_id.lower()`. Unconfigured roles/knowledge remain unknown. Factions, player-camera visibility and quest records do not automatically grant the NPC knowledge. Vanilla quest dialogue and its effects remain under the game's control; generated speech never executes quest, inventory or combat actions.
 
+## Console window at game start
+
+Plugin 0.5.3 can open a visible console window when Skyrim starts, showing every Anima log: the bridge's `[ANIMA]` lines (green, errors red) and the native plugin log tailed as `[PLUGIN]` lines (cyan). The plugin log is found through the Windows known-folder API, so OneDrive-redirected Documents work. `AnimaConsole.exe` (icon, title "Anima Skyrim Bridge") starts the Python bridge with `--console`, exits (and stops the bridge) when the game exits or the window is closed, and stays open with the exit code and a key prompt if the bridge fails.
+
+Setup, after building with `scripts/build_skyrim_connector.py`:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/install_skyrim_console.py --dry-run   # preview
+.\.venv\Scripts\python.exe scripts/install_skyrim_console.py             # writes AnimaConsole.ini beside output/skyrim-mod/AnimaConsole.exe
+```
+
+It prints the two lines to add under `[Console]` in the installed `AnimaConnector.ini` (`LaunchConsole=1`, `ConsoleExe=<full path>`). The script never touches the game or mod-manager folders. If `AnimaConsole.exe` is installed from the ZIP into a mod folder, copy `AnimaConsole.ini` next to it.
+
+At load the plugin checks `http://127.0.0.1:<Port>/v1/health` on a background thread (about 250 ms timeouts). If a bridge already answers, nothing is launched and that bridge is left alone; otherwise the exe is started once per game session. A missing exe is logged as a warning and the game continues. To turn it off, set `LaunchConsole=0` (the default) and restart the game. Live-game behaviour is not verified by the automated tests.
+
+### Talking to NPCs without a dialogue menu (plugin 0.5.1)
+
+With no session and no menu open, pressing `ChatKey` (F6) or holding F8 while the crosshair is on a living, non-hostile actor within about 600 units starts a menu-less session with that actor (F6 then opens the text box; F8 records). With no valid target F6 keeps the "talk to an NPC first" message. The session ends when the actor is more than about 600 units away, in combat or dead, when the cell changes, when the text box is closed or submitted empty, or after 60 s with nothing pending. Vanilla `MenuTopicManager` speaker checks are not applied to it; sessions started from the vanilla dialogue menu behave as before. Not verified live.
+
+### Lip movement without engine audio
+
+When the bridge plays voice itself (`audio_file` null) and sends a `mouth` array, the plugin drives the mouth envelope for the delivery's planned duration and restores the mouth at stop. Not verified live.
+
+The console window shows each turn: `PLAYER_INPUT`, `PIPELINE_RESULT` (route and model result), `OUTPUT_STAGED` (reply text), `TTS_ENGINE`/`AUDIO_OUTPUT`/`TURN_TIMING` (voice engine and timing), `NATIVE_ACK` (plugin receipts), each in its own colour, plus `[PLUGIN]` lines.
+
 ## Build and installation
 
 The 0.2.0 plugin explicitly supports **SkyrimSE.exe 1.6.318.0 and 1.7.104.0** from one x64 DLL. Other runtimes remain rejected. Use the matching SKSE loader and Address Library for the selected executable:
@@ -19,7 +44,7 @@ The 0.2.0 plugin explicitly supports **SkyrimSE.exe 1.6.318.0 and 1.7.104.0** fr
 | 1.6.318.0 | `Data/SKSE/Plugins/versionlib-1-6-318-0.bin` | 2 | Native allowlist/metadata/library checks; separate live run still required |
 | 1.7.104.0 | `Data/SKSE/Plugins/versionlib-1-7-104-0.bin` | 5 | Live load, Jenassa context and authored text delivery started/completed; see current review |
 
-A pinned modern CommonLibSSE-NG supplies version-aware native layouts and both Address Library readers. Metadata uses an exact version list rather than generic version independence: old SKSE rejects the newer `StructsPost629` flag, and this plugin does use native structures. A matching-file/header preflight runs before SKSE initialization; CommonLib validates and resolves the complete library afterward. Merely bypassing a version guard is not compatibility. See [dual-runtime plan](plans/I19-dual-skyrim-runtime.md) and [current review](reviews/2026-11-03-dual-skyrim-runtime.md). Mantella, SkyUI, UIExtensions and a Mantella ESP are not dependencies of this connector.
+A pinned modern CommonLibSSE-NG supplies version-aware native layouts and both Address Library readers. Metadata uses an exact version list rather than generic version independence: old SKSE rejects the newer `StructsPost629` flag, and this plugin does use native structures. A matching-file/header preflight runs before SKSE initialization; CommonLib validates and resolves the complete library afterward. Merely bypassing a version guard is not compatibility. See [dual-runtime plan](plans/I19-dual-skyrim-runtime.md) and [current review](reviews/2026-11-03-dual-skyrim-runtime.md). Mantella and a Mantella ESP are not dependencies of this connector (checked 2026-11-05: its own DLL, port 8768, audio folder and HTTP client; no Mantella code or `SKSE_HTTP`). Two other mods are required for parts of the UI: the in-game **text box needs UIExtensions** and the **settings menu needs SkyUI**. Both are separate mods that stay needed when Mantella is off. **F8 speech and `--say` need neither.** At start-up the plugin logs whether `MantellaDialogue.dll`, `MantellaSubtitles.dll` and `SKSE_HTTP.dll` are loaded (diagnostics only). Whether another subtitle-hooking mod affects playback is not ruled out until a run with Mantella disabled.
 
 Build with the project Python, CMake, and an x64 MSVC toolchain with C++23 support (Visual Studio 2022 17.14 or newer). The IDE alone does not install its C++/Windows SDK components:
 
@@ -79,7 +104,40 @@ Alternatively return text without `audio_path` and configure `tts_url`. The brid
 
 The command channel stages verified audio under `Data/Sound/Voice/AnimaConnector/<delivery-id>.wav`, attaches it to the NPC using Skyrim's audio engine and adds an NPC-associated subtitle. It waits while vanilla dialogue owns the speaker. Optional amplitude-based mouth movement is controlled by `AnimateMouth` in the INI; it is approximate, not `.lip` or phoneme-aligned animation. Engine playback/subtitle behavior still requires a live smoke test. Terminal delivery removes the staged file. A process crash may leave an orphan file; remove orphan files only while the game/bridge are stopped.
 
+### "Talk with me." dialogue line (Anima.esp, plugin 0.5.1)
+
+`Anima.esp` (light/ESL-flagged, master `Skyrim.esm` only) adds one quest with Start Game Enabled and one top-level player line, "Talk with me.", with no conditions, so it appears for every NPC that opens the dialogue menu, including NPCs with no lines of their own. It is modelled on Mantella's conversation-control line: a Goodbye info that reuses Skyrim's shared "Of course." response and runs the `AnimaStartDialogue` Papyrus fragment, which calls `AnimaNative.OpenConversation()`. The plugin then starts a menu-less session for that speaker and opens the Anima text box once the dialogue menu has closed (it gives up after 8 seconds). No SkyUI or Mantella is needed. `scripts/build_anima_esp.py` generates the file deterministically; `scripts/dump_esp.py` prints its records.
+
+Enable it by installing `AnimaConnector.zip` as a mod in MO2 (it contains `Anima.esp` and `Scripts/AnimaNative.pex`, `Scripts/AnimaStartDialogue.pex`) and ticking `Anima.esp` in the plugins list. Remove it by unticking `Anima.esp` or disabling the mod. Without it, use the chat key (default `@`) while looking at an NPC, or the vanilla dialogue menu plus the menu key, exactly as before.
+
+A malformed plugin can crash the game on load or when opening dialogue. If that happens, disable `Anima.esp` in MO2 first; the DLL does not need it. The line has been checked structurally against `Mantella.esp`, not in a live game.
+
+### Vanilla speech suppression (plugin 0.5.1)
+
+While an Anima delivery is active, the plugin stops the delivering NPC's own vanilla speech (greetings, barks, a topic the player picks in the menu). Each tick it checks `MenuTopicManager::currentTopicInfo` (set only while a menu topic is spoken) and the subtitle list for a subtitle from that NPC that is not Anima's own; if found it calls `Actor::StopCurrentDialogue()`. The player's speech and Anima's sound handle are never touched, and F8, F6 and new input still interrupt the reply through the normal barge-in. One log line (`ANIMA suppressed vanilla speech: ...`) is written per delivery. Set `SuppressVanillaSpeech=0` in `AnimaConnector.ini` to disable (default `1`). Not yet verified in a live game.
+
+The worker polls the bridge every 25 ms while a turn or delivery is pending and every 100 ms otherwise; after bridge errors it backs off from 250 ms up to 2 s.
+
+## Default characters, scene and openings
+
+- NPCs without an authored `profiles_file` entry get a persona derived from `configs/skyrim/role_rules.json` (`role_rules_file`): the first rule matching the NPC name, faction names or IDs, equipment or race sets occupation, role, services and traits; anything else is a plain townsperson. Traits vary deterministically from the NPC reference ID. Authored profiles always win; a missing rules file keeps the old "unknown" persona. Snapshots carry no class field, so class is not matched.
+- The rules also hold broad world knowledge (province, holds, the war, dragons returning, the local Jarl when the hold is known) that goes into `Persona.common_knowledge`, and the snapshot's location or cell name becomes `Persona.location`. No quest facts.
+- Each turn carries a bounded `scene`: place, time of day, weather, the NPC's gear and, when it sees the player, the player's visible gear and whether the weapon is drawn. It is prompt data only, dropped before identity when the byte budget is short. Quest stages and the dialogue list never enter it.
+- `opening_lines` (on in the config, off in the code default) delivers one authored greeting `opening_delay_s` (default 1.2 s) after a conversation opens, through the normal delivery path. It is not a player turn and is not stored in memory. Speaking, typing or F8 first cancels it, and a staged opening is replaced by the player's turn. It is skipped for dead, in-combat or hostile NPCs.
+- Openings (plugin 0.5.3) fire only for sessions Anima started itself: the menu-less direct session or the "Talk with me." line. The plugin's `start` event carries `direct` (optional, default false); vanilla DialogueMenu sessions get no opening, and an opening delivery never calls `StopCurrentDialogue`, so it cannot cut off the NPC's own greeting or quest lines.
+- `memory_scope` (`character` default, or `session`): `character` keys social memory by the player's name instead of the launch epoch, so an NPC remembers you across launches and different player characters stay separate; `session` keeps the old per-launch memory. Existing rows need no migration. See [social state](SOCIAL_STATE.md).
+
+## Audio output (`audio_output`)
+
+`system` (default): the engine sound handle in the plugin loaded our WAV but never reported it playing, so replies were silent subtitles. The bridge now writes the WAV to `<output_directory>/speech/playback/<delivery_id>.wav`, sends the plugin a subtitle-only command (`audio_file` null, `duration_s` = WAV length + 0.4 s, `mouth` kept) and plays the file through Windows (`winsound`) when the native `started` receipt arrives. It stops and deletes the file on `interrupted`/`failed`, barge-in, a new delivery, session end and shutdown; after `completed` the file is deleted once the sound finishes. Playback errors are logged (`AUDIO_OUTPUT_FAILED`) and never fail the turn. Limits: the voice is not positional (same loudness wherever the NPC stands) and lip movement depends on the plugin acting on `mouth`.
+
+`engine`: the previous behaviour; the WAV is staged under the game's `Data/Sound/Voice/AnimaConnector` and played by the plugin.
+
+`say` (plugin 0.5.2, proof check since 0.5.3, optional, unproven until tested in a live game): the route Mantella's `NpcSpeak` uses. To switch, set `"audio_output": "say"` in `configs/skyrim/connector.json` and install the 0.5.3 package (it carries a new `Anima.esp`, which is no longer light/ESL). The bridge writes the WAV and, when `facefx_directory` holds `FaceFXWrapper.exe` and `FonixData.cdf`, a `.lip` file to `Data/Sound/Voice/Anima.esp/<VoiceTypeEditorID>/AnimaDialo_AnimaSpeechLine_<00000805|00000807>_1.wav`, alternating the two topics like Mantella (the engine caches by path). The command carries `topic_index` (1 or 2) and the subtitle text; the plugin has the actor say that `Anima.esp` topic through `ObjectReference.Say` in the Papyrus VM, adds the subtitle itself and ends at the planned duration. Since 0.5.3 the plugin acks `started` (and audio `full`) only once the engine shows the actor speaking within 2 s; otherwise it answers `failed` with reason `audio_failed`. If the plugin cannot find `Anima.esp` or the topic, it answers `failed` with reason `say_unavailable`. Either way the bridge then replays the same line through system audio and stops using `say` until restart. An NPC with no known voice type, or a failed write, also uses system audio. Without FaceFX there is no `.lip` file. Things only a live game can show: that the engine picks the file by that path, that the lip file format is accepted, and what the engine's own `...` subtitle does beside ours.
+
 ## Player speech input
+
+Press **F6** (`ChatKey=64` in `AnimaConnector.ini`, a DirectInput scan code) to open the text box directly while NPC dialogue is open (needs UIExtensions). It acts on key down only, is ignored while another custom menu is open or F8 is held, and outside NPC dialogue shows "ANIMA: talk to an NPC first.". **F7** still opens the options list and **F8** still records.
 
 Hold **F8** while in a conversation, speak, then release. The native plugin sends `listen_start`/`listen_stop`; the bridge records the default Windows microphone as 16 kHz PCM16 mono, with a 15-second cap. Recording starts only from this explicit control. A null/missing `stt_url` selects the built-in Whisper endpoint at connector launch; explicitly configured external URLs are preserved. The STT endpoint receives raw `audio/wav` and returns JSON `{ "text": "...", "confidence": 0.95 }`. Source audio is deleted after reading. Closing the session shuts down recording.
 
@@ -87,7 +145,34 @@ Run `run_skyrim_connector.bat` normally: no STT flags, manual model downloads, f
 
 The fixed decoder uses English, CPU INT8, two CPU threads and one worker, with VAD and a single decoding beam. Each utterance runs in an isolated process with a 20-second limit; cancellation/timeout kills it before temporary WAV/request cleanup. This reloads the model per utterance to keep teardown reliable; measure latency alongside Skyrim before claiming real-time performance. `confidence` is a mean token-probability proxy, not a calibrated accuracy estimate. Silence produces no fabricated player utterance. Only local inference is used; no speech API key is needed.
 
-`GET /v1/speech/health` reports built-in STT readiness. `--local-speech` now adds the existing Windows TTS to Whisper STT; it no longer selects Windows dictation. It still uses the default Windows voice. For NPC-conditioned speech, use the Chatterbox setup below; XTTS is not installed.
+`GET /v1/speech/health` reports built-in STT readiness and the TTS engine. `--local-speech` adds local TTS to Whisper STT: Skyrim voice-type models through `piper.exe` when available, otherwise Windows SAPI's default voice. For NPC-conditioned speech on a GPU, use the Chatterbox setup below; XTTS is not installed.
+
+### Piper voices (`--local-speech`)
+
+Set `piper_directory` in `configs/skyrim/connector.json` to a folder holding `piper.exe` and `models/skyrim/low/<voice>.onnx` plus `<voice>.onnx.json`. The default is `assets/private/npc_lab/piper`, which holds six voices (`maleguard`, `femalenord`, `femaleeventoned`, `femalecommander`, `femalecondescending`, `femaleyoungeager`). A Mantella install has 68 voices in `.../MantellaSoftware/piper`; point `piper_directory` there only if you want them. The bridge reads from the folder, copies nothing, and never runs Mantella. Model files stay out of Git.
+
+Voice choice, in order:
+
+0. **Authored override, then the character table** (both optional, from `connector.json`). `voice_overrides` maps `"plugin:localid"` of the base form (for example `"Skyrim.esm:00013BAA"`) or an exact NPC name to a model name. `voice_table` is the path to a Mantella-format `skyrim_characters.csv` (read in place with `utf-8-sig`; for example `D:/MO2/mods/Mantella/SKSE/Plugins/MantellaSoftware/data/Skyrim/skyrim_characters.csv`). A row matches by reference ID, then base ID (vanilla plugins only), then exact NPC name (only when all rows with that name agree). Rows with an empty `voice_model` are ignored. `voice_model` is lowercased and stripped of spaces to give the Piper model file. A model that has no file in the Piper folder is skipped. Log: `selected_by="override"` or `"voice_table:ref_id"`, `"voice_table:base_id"`, `"voice_table:name"`.
+1. **The NPC's voice type.** The plugin reports only the voice-type form (`plugin` and `local_id`); its in-game name is empty and the engine does not expose editor IDs. The bridge therefore opens `<game_directory>/Data/<plugin>`, reads the top-level `VTYP` group, takes the record's `EDID` (for example `MaleGuard`) and lowercases it. If `<that name>.onnx` exists in the folder, it is used. This is the same file naming Mantella uses.
+2. **A model of the same sex.** The actor's base sex (0 male, 1 female) selects a model whose name starts with `male` or `female`, preferring `...nord`, then `...eventoned`, then the first by name.
+3. **Windows speech.** Used when there is no usable model, the sex is unknown, Piper fails or Piper takes longer than 8 seconds (the process is killed). A timeout goes straight to Windows speech instead of trying another model.
+
+The log shows the result: `TTS_READY engine="Piper" voice="maleguard" selected_by="voice_type"`, or `engine="Windows SAPI" voice="system default"`; `TTS_FALLBACK` gives the reason for each Piper failure, and `TTS_ENGINE` at start-up lists the folder and the number of models found. A voice type defined by a mod resolves only if its plugin is in `<game_directory>/Data`. Up to two models stay loaded between turns (a warm call takes about 0.1 to 0.3 s instead of reloading the model); they are killed on timeout, failure and shutdown. Only one synthesis runs at a time.
+
+### Reply speed and `TURN_TIMING`
+
+Every turn logs one line when it ends: when the game reports the speech started (`outcome="started"`), or when it fails or is cancelled (`outcome="failed"` or `"cancelled"`). Times are milliseconds. A stage the turn did not reach reads `"none"`.
+
+```
+TURN_TIMING session="..." request="..." outcome="started" source="stt" total_ms="3120.4" stt_ms="640.2"
+  context_wait_ms="0.0" retrieval_ms="48.1" prompt_ms="1.2" model_ms="1412.7" validation_ms="0.9"
+  pipeline_ms="1470.5" tts_ms="610.3" staging_ms="12.8" native_start_ms="188.0"
+```
+
+`total_ms` runs from the bridge accepting the input to the outcome. `stt_ms` is the speech-to-text call (typed text: `"none"`). `context_wait_ms` is the wait before the turn starts (previous work and, with a CV service, the screenshot). `retrieval_ms`, `prompt_ms`, `model_ms` and `validation_ms` come from the generation pipeline; `model_ms` includes the delay before a retry. `pipeline_ms` is the whole generation call. `tts_ms` is speech synthesis, `staging_ms` writing and analysing the audio, and `native_start_ms` the time from staging until the plugin reports that playback started (the plugin polls every 100 ms). The transient-failure retry (`retry_transient`) is on for the Skyrim connector only. Typical slow stages: `model_ms` above about 4000 means the first model call was cut off and retried; a large `tts_ms` means a cold Piper model or the fallback to Windows speech.
+
+With no CV service (`cv_url` unset), a turn never waits for a screenshot; the capture taken when a conversation opens still runs in the background. The model client is one long-lived connection, closed on shutdown. `model_cutoff_s` (default 4) abandons a slow model call; one transient failure (a 5xx or timeout) is retried once after 250 ms, so the worst case is about 8 s instead of the old 29 s, then the fallback line is used. Authentication and rate-limit errors are never retried.
 
 To prepare manually for diagnostics (normal users need no extra step):
 
@@ -138,7 +223,16 @@ With normal NPC dialogue open, use another terminal to submit directly to Anima:
 .\.venv\Scripts\python.exe -m npc.adapters.skyrim --say "HELLO"
 ```
 
-`PLAYER_INPUT` records accepted text, `PIPELINE_RESULT` distinguishes authored/model/fallback routes and model call count, and `OUTPUT_STAGED` records the accepted text awaiting the game. Only `NATIVE_ACK` represents the native receiver's started/completed/interrupted/failed status. Completion is not proof of hearing. Session/request/delivery IDs correlate the stages. Rejected/duplicate inputs are not relabelled as new successful turns. Uppercase greetings currently use the same case-insensitive authored greeting policy; no shout-sensitive behavior is claimed.
+`PLAYER_INPUT` records accepted text, `PIPELINE_RESULT` distinguishes authored/model/fallback routes and model call count, and `OUTPUT_STAGED` records the accepted text awaiting the game. Only `NATIVE_ACK` represents the native receiver's started/completed/interrupted/failed status. Completion is not proof of hearing.
+
+### Delivery receipts (plugin 0.5.1)
+
+A `delivery` receipt may carry two optional fields; receipts without them (older plugins) are still accepted and logged as `unreported`. `NATIVE_ACK` logs both.
+
+- `audio`: `full` (audio observed and ran to its planned end), `ended_early` (the engine reported the sound not playing for 300 ms or more before the planned end; brief false readings are ignored), `failed` (audio never started within 2 s, or could not be started), `none` (text-only delivery). Absent on interruptions, where the audio outcome is not meaningful.
+- `reason`: why the delivery stopped: `end` (ran to its planned end), `barge_in` (a new player turn started), `menu_closed`, `combat`, `actor_lost`, `state_changed` (a material change: speaker, combat, dead, hostile, weapon drawn, location or cell), `superseded` (a newer delivery replaced it), `bridge_stop` (the bridge asked it to stop), `audio_failed` (audio file rejected or overlong).
+
+When audio ends early or cannot start, the subtitle stays up for the planned duration and the receipt is `completed` with `audio` set to `ended_early` or `failed`. The player saw the reply, so memory is committed; the bridge cannot tell whether it was heard. `interrupted` and `failed` receipts never commit memory. Non-material snapshot changes (`sees_player`, dialogue list, weather, equipment) are still sent but neither stop playback nor cancel a turn; only a changed `state_revision` does. In the plugin log, `ANIMA stop: reason=... soundID=... elapsed_ms=... planned_ms=...` and `ANIMA IsPlaying -> true/false` lines show exactly what the engine reported. Whether the engine truly plays the 16 kHz SAPI audio is unverified until a live run. Session/request/delivery IDs correlate the stages. Rejected/duplicate inputs are not relabelled as new successful turns. Uppercase greetings currently use the same case-insensitive authored greeting policy; no shout-sensitive behavior is claimed.
 
 The optional local log includes dialogue text; keep it private unless selected for publication. Text fields are escaped to one line and capped at 1024 characters. File output rotates at 1 MiB with two backups. Full prompts, provider keys and raw responses are not logged. No per-frame snapshots or command polls are printed. Close/reopen NPC dialogue after restarting the bridge to establish a fresh session.
 
@@ -163,3 +257,9 @@ One resident worker owns the loaded model and serves one request at a time, with
 Runtime uses only cached model files. `GET /v1/speech/health` reports worker readiness. `output/chatterbox/setup-check.wav` is a diagnostic sample using the model's built-in voice; it is not an NPC voice audition. Run an in-game human and Khajiit test and check matching text/voice, interruption and repeated voice switching. Linux/offline fixture tests do not prove native Windows playback or game-archive compatibility.
 
 Dependencies are pinned to a compatible set because upstream Chatterbox also requires older NumPy, tokenizer, Hugging Face Hub, FastAPI/Starlette and Pillow versions. The unused upstream Gradio UI is not started. Upstream's project status is unmaintained; code/package and model revisions are pinned rather than following moving branches. See [Chatterbox source](https://github.com/resemble-ai/chatterbox) and [model files](https://huggingface.co/ResembleAI/chatterbox-turbo).
+
+## Start automatically with the game
+
+`.\.venv\Scripts\python.exe -m npc.adapters.skyrim.autostart --install` adds a launcher to the current user's Windows Startup folder and runs a background watcher. The watcher starts the bridge when `SkyrimSE.exe` appears and stops that bridge when the game exits. It leaves a bridge you started by hand alone, and stops retrying after three failed starts in one game session. `--uninstall` removes the launcher.
+
+Optional `configs/skyrim/autostart.json` overrides `provider_profile`, `local_speech`, `log_file`, `game_process`, `health_url`, `poll_seconds` and `start_delay_seconds` (default 15: the watcher waits this long after the game appears and checks health again just before spawning, so it does not race the plugin's LaunchConsole). A second bridge that finds the port taken exits cleanly, before loading any speech model. The default is the Gemini profile with local Windows speech. The watcher changes no game files and makes no model calls itself, but a live profile makes API requests when the player speaks to an NPC.

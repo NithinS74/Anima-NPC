@@ -16,8 +16,10 @@ def test_package_preserves_both_targets_and_never_invents_live_verification(tmp_
     for name in ['docs/SKYRIM_CONNECTOR.md','docs/reviews/2026-11-02-skyrim-connector.md','configs/skyrim/native-dependencies.json','configs/skyrim/native-dependencies.legacy-1.6.318.json']:
         p=tmp_path/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text('{}')
     dll=tmp_path/'compiled.dll';dll.write_bytes(b'controlled-compiled-artifact')
+    console=tmp_path/'AnimaConsole.exe';console.write_bytes(b'console-artifact');(native/'anima.ico').write_bytes(b'ico')
     monkeypatch.setattr(b,'ROOT',tmp_path);monkeypatch.setattr(b,'NATIVE',native)
-    path=b.package(dll,{})
+    pex=tmp_path/'AnimaStartDialogue.pex';pex.write_bytes(b'pex')
+    path=b.package(dll,{},console,[pex])
     with zipfile.ZipFile(path) as z:
         manifest=json.loads(z.read('AnimaConnector/build.json'))
         assert manifest['target_runtimes']==['1.6.318.0','1.7.104.0']
@@ -25,6 +27,10 @@ def test_package_preserves_both_targets_and_never_invents_live_verification(tmp_
         assert manifest['live_game_verified'] is False
         assert set(manifest['runtime_verification'].values())=={'not_live_verified'}
         assert z.read('SKSE/Plugins/AnimaConnector.dll')==dll.read_bytes()
+        assert z.read('SKSE/Plugins/AnimaConsole.exe')==console.read_bytes()
+        assert manifest['console_exe_sha256']==hashlib.sha256(console.read_bytes()).hexdigest() and manifest['plugin_version']=='0.5.3'
+        assert 'AnimaConnector/source/native/anima.ico' in z.namelist()
+        assert z.read('Anima.esp')==b.build_esp() and z.read('Scripts/AnimaStartDialogue.pex')==b'pex'
         assert 'AnimaConnector/source/native/runtime_support.h' in z.namelist()
         assert 'AnimaConnector/source/native-dependencies.legacy-1.6.318.json' in z.namelist()
 

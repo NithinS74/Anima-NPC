@@ -20,6 +20,8 @@ constexpr std::uint32_t AddressLibraryFormat(RuntimeVersion version)
     return version == SupportedRuntimes[0] ? 2 : version == SupportedRuntimes[1] ? 5 : 0;
 }
 enum class LibraryCheck { ready, missing, wrong_format, unsupported_runtime };
+// Anima.esp speech topics used by `say` delivery (local form IDs; Line1 then Line2). 0 means no such topic.
+constexpr std::uint32_t SayTopicLocalId(long long index) { return index == 1 ? 0x804 : index == 2 ? 0x806 : 0; }
 inline LibraryCheck CheckAddressLibrary(const std::filesystem::path& path, RuntimeVersion version)
 {
     const auto expected = AddressLibraryFormat(version);

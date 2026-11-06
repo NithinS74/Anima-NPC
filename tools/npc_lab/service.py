@@ -76,7 +76,7 @@ def load_profiles(directory: Path = PROFILE_DIR) -> dict[str, LabProfile]:
     return profiles
 
 
-def make_scenario(profile: LabProfile, turn: LabTurn, revision: int, memory=()) -> ContextScenario:
+def make_scenario(profile: LabProfile, turn: LabTurn, revision: int, memory=(), conversation=None, reading=None) -> ContextScenario:
     now = datetime.now(timezone.utc)
     scope = {"game_id": "manual-lab", "world_id": profile.world, "save_branch_id": "isolated-test"}
     npc = "lab-" + profile.id
@@ -102,9 +102,10 @@ def make_scenario(profile: LabProfile, turn: LabTurn, revision: int, memory=()) 
         player_input={"text": turn.text}, facts=facts,
     ), snapshot=dict(
         scope=scope, npc_id=npc, player_id="lab-player", storage_revision=revision,
-        dialogue_revision=revision, turn_epoch=revision, persona=profile.persona.model_dump(),
+        dialogue_revision=revision, turn_epoch=revision, persona=(profile.persona if profile.persona.location else profile.persona.model_copy(update={"location": profile.location})).model_dump(),
         relationship=turn.relationship.model_dump(), recent_dialogue=[m.model_dump() for m in memory], npc_state=dict(observed_at=now, ttl_ms=60000,
         mood=turn.mood, current_goal=profile.current_goal),
+        **({"conversation": conversation} if conversation is not None else {}), **({"reading": reading} if reading is not None else {}),
     )))
 
 
@@ -194,7 +195,8 @@ class LabService:
             if self.visual_context is None or turn.visual_id != self.visual_context.id:
                 raise ValueError("unknown visual context")
             visual = self.visual_context
-        scenario = make_scenario(self.profiles[turn.persona_id], turn, state["revision"] if state else self.revision, memory)
+        scenario = make_scenario(self.profiles[turn.persona_id], turn, state["revision"] if state else self.revision, memory,
+                                 state["conversation"] if state else None, state["reading"] if state else None)
         cancellation = asyncio.Event()
         self.active = (turn.request_id, cancellation)
         self.active_profile = turn.persona_id

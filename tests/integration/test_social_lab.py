@@ -4,6 +4,7 @@ import threading
 import httpx
 import pytest
 
+from npc.behavior.lines import pools
 from npc.contracts.dialogue import ProviderReply
 from npc.generation.provider import OfflineProvider
 from npc.state.social_store import SocialStore, StoreFailure
@@ -27,8 +28,9 @@ def test_progressive_abuse_is_persistent_and_restart_remembers_displayed_turns(t
             result = await service.turn(turn)
             lines.append(result["result"])
             await service.displayed(DisplayAck(request_id=turn.request_id, persona_id="mira"))
-        assert lines[0]["response"]["text"] == "Mind your tongue."
-        assert "damn" in lines[1]["response"]["text"]
+        # Authored lines now come from per-intent pools chosen by request ID (I24 WP-B).
+        assert lines[0]["response"]["text"] in pools()["set_boundary"]["default"]
+        assert lines[1]["response"]["text"] in pools()["set_boundary"]["swear"]
         assert lines[2]["response"]["mode"] == "end"
         assert all(r["model_calls"] == 0 for r in lines)
         reopened = LabService(OfflineProvider(), state_store=SocialStore(store.path))

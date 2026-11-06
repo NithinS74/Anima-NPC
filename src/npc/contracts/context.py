@@ -37,6 +37,9 @@ class Scope(Contract):
     save_branch_id: Identifier
 
 
+Brief = Annotated[str, StringConstraints(strict=True, strip_whitespace=True, min_length=1, max_length=140)]
+
+
 class Persona(Contract):
     name: ShortText
     occupation: ShortText
@@ -50,6 +53,10 @@ class Persona(Contract):
     patience: Probability = 0.5
     assertiveness: Probability = 0.5
     swearing: Literal["never", "when_provoked"] = "never"
+    # Optional authored world grounding. Generic: games supply the content (fixtures/config), never core code.
+    location: Brief | None = None
+    common_knowledge: Annotated[tuple[Brief, ...], Field(max_length=6)] = ()
+    services: Annotated[tuple[Brief, ...], Field(max_length=6)] = ()
 
 
 class Relationship(Contract):
@@ -86,6 +93,44 @@ class SocialAppraisal(Contract):
     policy_version: Literal["0.1"] = "0.1"
 
 
+TurnType = Literal["new", "repeat", "rephrase", "follow_up", "push_back", "shared_news", "stall", "answered", "return"]
+Move = Literal["answer", "expand", "answer_differently", "challenge", "close_topic", "reconsider", "admit_limit",
+               "hold", "react", "follow_through", "recall", "take_initiative", "opening", "farewell"]
+Snippet = Annotated[str, StringConstraints(strict=True, strip_whitespace=True, min_length=1, max_length=160)]
+
+
+class TopicRecord(Contract):
+    text: Snippet
+    asked: Annotated[StrictInt, Field(ge=1, le=99)] = 1
+    last_turn: Nonnegative = 0
+    exhausted: StrictBool = False
+
+
+class ConversationState(Contract):
+    """Bounded record of what happened in a conversation. Never knowledge, trust or authority."""
+
+    turns: Nonnegative = 0
+    topics: Annotated[tuple[TopicRecord, ...], Field(max_length=16)] = ()
+    told: Annotated[tuple[Identifier, ...], Field(max_length=8)] = ()  # evidence IDs already given
+    replies: Annotated[tuple[Snippet, ...], Field(max_length=4)] = ()  # recent NPC replies
+    claims: Annotated[tuple[Snippet, ...], Field(max_length=8)] = ()  # player claims, never facts
+    phrases: Annotated[tuple[Annotated[str, StringConstraints(strict=True, min_length=1, max_length=48)], ...], Field(max_length=8)] = ()
+    last_type: TurnType | None = None
+    last_move: Move | None = None
+    open_question: StrictBool = False
+    rapport: Level = 0
+
+
+class TurnReading(Contract):
+    """How the current player turn relates to the conversation so far."""
+
+    type: TurnType = "new"
+    topic: Snippet | None = None
+    asked: Nonnegative = 0
+    new_words: Nonnegative = 0
+    similarity: Annotated[StrictFloat, Field(ge=0, le=1)] = 0.0
+
+
 class StateSnapshot(Contract):
     schema_version: Literal["0.1"] = "0.1"
     scope: Scope
@@ -98,6 +143,8 @@ class StateSnapshot(Contract):
     relationship: Relationship = Field(default_factory=Relationship)
     npc_state: NpcState | None = None
     recent_dialogue: Annotated[tuple[DialogueMemory, ...], Field(max_length=8)] = ()
+    conversation: ConversationState = Field(default_factory=ConversationState)
+    reading: TurnReading | None = None
 
 
 class PlayerInput(Contract):
@@ -158,6 +205,13 @@ class ObservedFact(Contract):
         return self
 
 
+class SceneItem(Contract):
+    """One perceivable detail of the scene (adapter-supplied). Data only: it grants no knowledge and changes no policy."""
+
+    label: Annotated[str, StringConstraints(strict=True, strip_whitespace=True, min_length=1, max_length=32)]
+    value: Annotated[str, StringConstraints(strict=True, strip_whitespace=True, min_length=1, max_length=80)]
+
+
 class TurnInput(Contract):
     schema_version: Literal["0.1"] = "0.1"
     scope: Scope
@@ -171,6 +225,7 @@ class TurnInput(Contract):
     simulation_time_s: SimulationTime
     player_input: PlayerInput
     facts: Annotated[tuple[ObservedFact, ...], Field(max_length=100)] = ()
+    scene: Annotated[tuple[SceneItem, ...], Field(max_length=8)] = ()
 
     @model_validator(mode="after")
     def check_payload(self) -> "TurnInput":
@@ -238,6 +293,9 @@ class Situation(Contract):
     social_appraisal: SocialAppraisal = Field(default_factory=SocialAppraisal)
     visual_context: VisualContext | None = None
     recent_dialogue: Annotated[tuple[DialogueMemory, ...], Field(max_length=8)] = ()
+    conversation: ConversationState = Field(default_factory=ConversationState)
+    reading: TurnReading | None = None
+    scene: Annotated[tuple[SceneItem, ...], Field(max_length=8)] = ()
 
     @model_validator(mode="after")
     def check_dependencies(self) -> "Situation":

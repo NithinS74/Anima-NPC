@@ -27,6 +27,8 @@ class RAGConfig(Contract):
     base_url: str = "http://127.0.0.1:8000"
     bindings: Annotated[tuple[SourceBinding, ...], Field(min_length=1, max_length=64)]
     top_k: Annotated[StrictInt, Field(ge=1, le=3)] = 3
+    # Candidates retrieved so passages already told can be removed; at most top_k reach the prompt.
+    candidate_k: Annotated[StrictInt, Field(ge=1, le=8)] = 8
     max_chars: Annotated[StrictInt, Field(ge=256, le=12000)] = 6000
     max_distance: float | None = Field(default=None, ge=0)
 
@@ -37,6 +39,12 @@ class RAGConfig(Contract):
         if url.scheme not in {"http", "https"} or not url.hostname or url.username or url.password or url.query or url.fragment:
             raise ValueError("expected HTTP(S) service URL without credentials/query/fragment")
         return value.rstrip("/")
+
+    @model_validator(mode="after")
+    def candidates_cover_top_k(self):
+        if self.candidate_k < self.top_k:
+            raise ValueError("candidate_k must be at least top_k")
+        return self
 
     @model_validator(mode="after")
     def unambiguous_bindings(self):

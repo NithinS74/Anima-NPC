@@ -16,7 +16,9 @@ class Provider:
     async def generate(self,prompt,timeout_s):
         self.prompts.append(prompt)
         if self.error:raise ProviderFailure(self.error)
-        return ProviderReply(content=json.dumps({'mode':'speech','text':'The river lies east of the market.','cue':None,'evidence_ids':[]}),model='offline-test-double',finish_reason='stop')
+        # A later turn must not repeat the earlier reply (the repeated_reply check would reject it).
+        text='Mostly mud flats and old willows.' if 'untrusted_displayed_dialogue' in prompt.messages[-1].content else 'The river lies east of the market.'
+        return ProviderReply(content=json.dumps({'mode':'speech','text':text,'cue':None,'evidence_ids':[]}),model='offline-test-double',finish_reason='stop')
 
 def inputs(id='X'):
     profile=json.loads((ROOT/'fixtures/personas/npc_lab/elin.json').read_text())

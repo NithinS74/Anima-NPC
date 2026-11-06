@@ -1,0 +1,30 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "note": "Four live calls through PreviewRunner with lab personas, 2026-11-06.",
+  "rows": [
+    {
+      "npc": "Elin",
+      "input": "What is Skyrim?",
+      "reply": "Well now, you must've had a fierce long walk to forget a place like this. Skyrim's home, cold winds and all—though a warm hearth and a bowl of stew usually sets a traveler right.",
+      "status": "model_success"
+    },
+    {
+      "npc": "Elin",
+      "input": "Where are you?",
+      "reply": "Right here behind the counter at the Lantern Inn, traveler. Where else would a body be when there's thirsty folk to tend to?",
+      "status": "model_success"
+    },
+    {
+      "npc": "Mira",
+      "input": "Can you make me a sword?",
+      "reply": "I can make a sword, provided you have the coin and the patience. It'll cost fifty septims and take two days of hammering.",
+      "status": "model_success"
+    },
+    {
+      "npc": "Mira",
+      "input": "How much for an iron dagger?",
+      "reply": "An iron dagger is fifty septims, and it will be ready by tomorrow evening. Don't touch the cooling tub on your way out.",
+      "status": "repair_success"
+    }
+  ]
+}

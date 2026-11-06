@@ -4,6 +4,7 @@ import re
 from pydantic import ValidationError
 
 from npc.contracts.context import Situation
+from npc.context.conversation import content, tokens
 from npc.context.focus import resolve_question
 from npc.contracts.dialogue import CurrentState, InteractionPlan, ProviderReply, ResponseBody, ValidationResult, ViolationCode
 
@@ -24,7 +25,65 @@ def _boundary_topic_words(text):
     return {word[:-1] if len(word) > 3 and word.endswith("s") else word for word in words}
 
 
-def validate_response(reply: ProviderReply, situation: Situation, plan: InteractionPlan, current: CurrentState, *, evidence=(), evidence_aliases=None) -> ValidationResult:
+REPLY_SIMILARITY = 0.7  # token Jaccard (all words) against a recent NPC reply
+OPENING_WORDS = 6  # shared opening words that count as a repeated reply
+MIN_COMPARE_WORDS = 6  # shorter replies (refusals, acknowledgements) skip the similarity check
+COMPARE_LAST = 2
+COMMON_CAPITALS = frozenset("""i aye ah oh well yes no now look listen hmm right fine please sorry thanks welcome greetings hello hey mind keep watch
+gods god by if but and so then perhaps maybe sir madam lord lady friend stranger traveller traveler""".split())
+
+
+def _recent_replies(situation):
+    return [m.npc_text for m in situation.recent_dialogue if m.npc_text] + list(situation.conversation.replies)
+
+
+def repeated_reply(text, situation):
+    words = tokens(text)
+    for old in list(dict.fromkeys(_recent_replies(situation)))[-COMPARE_LAST:]:
+        before = tokens(old)
+        if len(words) >= MIN_COMPARE_WORDS and len(before) >= MIN_COMPARE_WORDS and _jaccard(words, before) >= REPLY_SIMILARITY:
+            return True
+        if len(words) >= OPENING_WORDS and len(before) >= OPENING_WORDS and words[:OPENING_WORDS] == before[:OPENING_WORDS]:
+            return True
+    return False
+
+
+def _jaccard(a, b):
+    x, y = set(a), set(b)
+    return len(x & y) / len(x | y) if x | y else 0.0
+
+
+def _name_pool(situation, evidence):
+    scene = [f"{item.label} {item.value}" for item in situation.scene]
+    persona = situation.persona
+    sources = [situation.player_input.text, persona.name, persona.occupation, persona.social_role, *persona.speech_style,
+               *persona.goals, *persona.boundaries, situation.current_goal or "", persona.location or "", *persona.common_knowledge, *persona.services,
+               *(m.player_text + " " + m.npc_text for m in situation.recent_dialogue), *situation.conversation.claims,
+               *situation.conversation.replies, *(hit.text for hit in evidence),
+               *(str(f.value) for f in situation.perceived_facts), *scene]
+    if situation.visual_context is not None:
+        sources += [str(situation.visual_context.prompt_payload())]
+    return {w for text in sources for w in tokens(text)}
+
+
+def unsupported_names(text, situation, evidence=(), allowlist=()):
+    """Capitalised words in mid-sentence that appear nowhere in the supplied context.
+
+    `allowlist` is game/config vocabulary (world terms the NPC may name freely); core holds none.
+    """
+    allowed = _name_pool(situation, evidence) | COMMON_CAPITALS | {w for term in allowlist for w in tokens(term)}
+    found = []
+    for sentence in re.split(r"(?<=[.!?])\s+", text):
+        words = re.findall(r"[A-Za-z][A-Za-z'’\-]*", sentence)
+        for word in words[1:]:
+            base = re.sub(r"['’]s$", "", word)
+            if base[:1].isupper() and len(base) > 1 and not base.isupper() and base.casefold() not in allowed:
+                found.append(base)
+    return found
+
+
+def validate_response(reply: ProviderReply, situation: Situation, plan: InteractionPlan, current: CurrentState, *, evidence=(), evidence_aliases=None,
+                      check_conversation=True, name_allowlist=()) -> ValidationResult:
     if (current.dialogue_revision, current.turn_epoch) != (situation.dialogue_revision, situation.turn_epoch):
         return ValidationResult(accepted=False, violations=("stale_state",))
     violations: list[ViolationCode] = []
@@ -63,6 +122,15 @@ def validate_response(reply: ProviderReply, situation: Situation, plan: Interact
             if len(topic) >= 2 and topic <= answer_words and not topic.intersection(request_words):
                 violations.append("irrelevant_boundary")
                 break
+    if check_conversation and response.mode == "speech" and plan.route == "generate":
+        if repeated_reply(response.text, situation):
+            violations.append("repeated_reply")
+        if plan.move == "expand":
+            known = set().union(*(content(t) for t in _recent_replies(situation)), content(situation.player_input.text))
+            if len(content(response.text) - known) < 2:
+                violations.append("move_not_made")
+        if unsupported_names(response.text, situation, evidence, name_allowlist):
+            violations.append("unsupported_name")
     allowed_ids = {fact.id for fact in situation.perceived_facts} | {hit.id for hit in evidence}
     aliases = evidence_aliases or {}
     resolved_ids = tuple(aliases.get(evidence_id, evidence_id) for evidence_id in response.evidence_ids)

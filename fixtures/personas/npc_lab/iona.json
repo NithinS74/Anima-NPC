@@ -25,7 +25,17 @@
     "caution": 0.6,
     "patience": 0.6,
     "assertiveness": 0.65,
-    "swearing": "never"
+    "swearing": "never",
+    "location": "Cargo reception on an orbital station",
+    "common_knowledge": [
+      "This is a cargo station in orbit; ships dock to unload freight.",
+      "Cargo is registered at reception before it moves on.",
+      "Station residents know about docking bays, shifts and the cargo queue."
+    ],
+    "services": [
+      "register arriving cargo",
+      "explain the general queue and public rules"
+    ]
   },
   "relationship": {
     "favourability": 0,

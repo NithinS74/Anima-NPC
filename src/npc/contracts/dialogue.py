@@ -4,7 +4,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field, StrictInt, model_validator
 
-from npc.contracts.context import Contract, Identifier, Nonnegative, ShortText
+from npc.contracts.context import Contract, Identifier, Move, Nonnegative, ShortText
 from npc.contracts.knowledge import Evidence, KnowledgeContext
 
 Cue = Literal["look_at", "resume_task", "guarded_stance", "dismissive_gesture"]
@@ -12,6 +12,7 @@ ViolationCode = Literal[
     "invalid_json", "invalid_schema", "wrong_mode", "empty_speech", "unexpected_text",
     "too_many_words", "too_many_sentences", "too_many_characters", "unsupported_cue",
     "unknown_evidence", "irrelevant_boundary", "assistant_scaffolding", "incomplete_generation", "stale_state",
+    "repeated_reply", "move_not_made", "unsupported_name",
 ]
 
 
@@ -34,6 +35,7 @@ class InteractionPlan(Contract):
     authored_text: Annotated[str, Field(strict=True, max_length=400)] = ""
     fallback_text: Annotated[str, Field(strict=True, min_length=1, max_length=200)] = "I cannot say."
     reason_codes: Annotated[tuple[Identifier, ...], Field(max_length=16)]
+    move: Move | None = None
     policy_version: Literal["0.1"] = "0.1"
 
     @model_validator(mode="after")
@@ -66,6 +68,7 @@ class PromptPackage(Contract):
     evidence_aliases: Annotated[dict[Identifier, Identifier], Field(max_length=3)] = Field(default_factory=dict)
     history_count: Nonnegative = 0
     omitted_history_count: Nonnegative = 0
+    sections_dropped: tuple[str, ...] = ()
 
 
 class ProviderReply(Contract):
@@ -109,4 +112,7 @@ class TurnPreview(Contract):
     knowledge: KnowledgeContext | None = None
     evidence_used: Annotated[tuple[Identifier, ...], Field(max_length=3)] = ()
     evidence_omitted: Nonnegative = 0
+    turn_type: Identifier | None = None
+    # Milliseconds spent in retrieval, prompt, model (including any retry delay) and validation.
+    stage_ms: dict[str, float] = Field(default_factory=dict)
     # Response-ready only: not a durable delivery acknowledgement.

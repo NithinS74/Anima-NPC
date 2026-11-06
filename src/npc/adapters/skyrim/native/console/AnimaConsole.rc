@@ -1,0 +1,20 @@
+1 ICON "../anima.ico"
+1 VERSIONINFO
+FILEVERSION 0,5,0,0
+PRODUCTVERSION 0,5,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "FileDescription", "Anima Skyrim Bridge console"
+      VALUE "ProductName", "Anima"
+      VALUE "FileVersion", "0.5.0"
+      VALUE "OriginalFilename", "AnimaConsole.exe"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 1200
+  END
+END

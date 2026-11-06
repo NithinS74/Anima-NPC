@@ -63,6 +63,16 @@ def stage_audio(raw: bytes, game_directory: Path, delivery_id: str):
     return relative, duration
 
 
+def stage_playback(raw: bytes, output_directory: Path, delivery_id: str):
+    """Write a WAV for system playback outside the game folder; returns (path, wav duration)."""
+    if len(delivery_id) != 32 or any(c not in "0123456789abcdef" for c in delivery_id):
+        raise ValueError("invalid delivery ID")
+    duration = wav_duration(raw)
+    path = output_directory / "speech" / "playback" / f"{delivery_id}.wav"
+    atomic_write(path, raw)
+    return path, duration
+
+
 def mouth_envelope(raw: bytes) -> list[float]:
     """50 ms amplitude samples for approximate mouth motion, not phoneme timings."""
     wav_duration(raw)

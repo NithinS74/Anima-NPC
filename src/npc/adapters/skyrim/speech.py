@@ -1,9 +1,12 @@
 """Local Windows speech adapter. No model download, shell interpolation or game logic."""
 
 import asyncio
+from collections import OrderedDict
 import json
 import os
 from pathlib import Path
+import re
+import shutil
 import subprocess
 import tempfile
 import sys
@@ -27,6 +30,8 @@ class SynthesisInput(BaseModel):
     text: str = Field(min_length=1, max_length=600)
     voice: dict | None = None  # Native identity metadata; not a file/process argument.
     npc_base: dict | None = None
+    npc_ref: dict | None = None  # The actor reference form, for the optional character voice table.
+    sex: int | None = None  # Actor base sex: 0 male, 1 female; anything else means unknown.
 
 
 class WindowsSpeech:
@@ -100,7 +105,7 @@ class WindowsSpeech:
         if not request.text.strip():
             raise SpeechFailure("empty_speech")
         raw = await self._run("tts", text=request.text)
-        log_event("TTS_READY", request=request.request_id, engine="Windows SAPI", bytes=len(raw))
+        log_event("TTS_READY", request=request.request_id, engine="Windows SAPI", voice="system default", bytes=len(raw))
         return raw
 
     async def transcribe(self, raw):
@@ -115,6 +120,7 @@ class WhisperSpeech(WindowsSpeech):
     """Reuse bounded worker/cleanup; Windows TTS remains opt-in and unchanged."""
 
     stt_engine = "Whisper base.en CPU INT8"
+    tts_engine = "Windows SAPI"
 
     def __init__(self, directory, root, **kwargs):
         super().__init__(directory, **kwargs)
@@ -125,6 +131,196 @@ class WhisperSpeech(WindowsSpeech):
             return [sys.executable, "-m", "npc.adapters.skyrim.whisper",
                     "--root", str(self.root), "--request", str(request)]
         return super().worker_command(operation, request)
+
+    async def start(self):
+        pass
+
+    async def close(self):
+        pass
+
+
+class _WarmPiper:
+    def __init__(self, process, work):
+        self.process, self.work = process, work
+
+
+class PiperSpeech(WhisperSpeech):
+    """Skyrim voice-type TTS through a local `piper.exe`, falling back to Windows speech.
+
+    Uses piper's line protocol (`load_model <path>`, `synthesize <text>`, `exit`; the file `out.wav` appears in the
+    working directory and `Synthesis complete` is printed). The folder is an explicit setting; nothing is copied.
+    A few models stay loaded so later turns skip the model load. Every process is killed on timeout, failure or close.
+    """
+
+    MODEL_NAME = re.compile(r"^[a-z0-9]{1,64}$")
+    SEX_PREFIX = {0: "male", 1: "female"}
+    SEX_DEFAULTS = ("nord", "eventoned")
+
+    def __init__(self, directory, root, *, piper_directory, voice_types=None, command=None,
+                 voice_table=None, voice_overrides=None, piper_timeout_s=8, max_warm=2, piper_launch=asyncio.create_subprocess_exec, **kwargs):
+        super().__init__(directory, root, **kwargs)
+        self.piper_directory = Path(piper_directory)
+        self.models = self.piper_directory / "models/skyrim/low"
+        self.command = list(command) if command else [str(self.piper_directory / "piper.exe")]
+        self.voice_types = voice_types
+        self.voice_table = voice_table  # VoiceTable or None
+        self.voice_overrides = {" ".join(k.lower().split()): "".join(v.lower().split())
+                                for k, v in (voice_overrides or {}).items()}
+        self.piper_timeout_s, self.max_warm, self.piper_launch = piper_timeout_s, max_warm, piper_launch
+        self._warm: OrderedDict[str, _WarmPiper] = OrderedDict()
+        self._piper_busy = False
+
+    def available_models(self):
+        try:
+            names = {p.name[:-5] for p in self.models.glob("*.onnx")
+                     if self.MODEL_NAME.match(p.name[:-5]) and (self.models / (p.name + ".json")).is_file()}
+        except OSError:
+            return set()
+        return names if Path(self.command[0]).is_file() else set()
+
+    @property
+    def tts_engine(self):
+        return "Piper (fallback Windows SAPI)" if self.available_models() else "Windows SAPI"
+
+    def sex_model(self, sex, available):
+        prefix = self.SEX_PREFIX.get(sex) if isinstance(sex, int) and not isinstance(sex, bool) else None
+        matches = sorted(name for name in available if prefix and name.startswith(prefix))
+        for suffix in self.SEX_DEFAULTS:
+            if prefix and prefix + suffix in matches:
+                return prefix + suffix
+        return matches[0] if matches else None
+
+    async def candidates(self, request, available):
+        """Ordered (model, reason): authored override, voice table, voice type, then a same-sex model."""
+        found = []
+
+        def add(model, reason):
+            if model in available and all(model != existing for existing, _ in found):
+                found.append((model, reason))
+
+        voice = request.voice if isinstance(request.voice, dict) else {}
+        base = request.npc_base if isinstance(request.npc_base, dict) else None
+        ref = request.npc_ref if isinstance(request.npc_ref, dict) else None
+        name = str((base or {}).get("name") or (ref or {}).get("name") or "")
+        for key in ((f"{base['plugin']}:{base['local_id']}" if base and base.get("plugin") and base.get("local_id") else ""),
+                    name):
+            if key and (model := self.voice_overrides.get(" ".join(key.lower().split()))):
+                add(model, "override")
+        if self.voice_table is not None:
+            for model, reason in self.voice_table.lookup(ref=ref, base=base, name=name):
+                add(model, reason)
+        if self.voice_types and voice:
+            add(await asyncio.to_thread(self.voice_types.resolve, voice.get("plugin"), voice.get("local_id")), "voice_type")
+        if fallback := self.sex_model(request.sex, available):
+            add(fallback, "same_sex")
+        return found
+
+    async def synthesize(self, request):
+        if not request.text.strip():
+            raise SpeechFailure("empty_speech")
+        available = self.available_models()
+        candidates = await self.candidates(request, available) if available else []
+        text = " ".join("".join(c if c.isprintable() else " " for c in request.text).split())
+        if candidates and self._piper_busy:
+            raise SpeechFailure("speech_busy")
+        for model, reason in candidates:
+            self._piper_busy = True
+            try:
+                raw = await self._piper(model, text)
+            except SpeechFailure as failure:
+                log_event("TTS_FALLBACK", request=request.request_id, engine="Piper", voice=model,
+                          reason=str(failure))
+                if str(failure) == "speech_timeout":
+                    break  # A hung engine would only hang again; use Windows speech directly.
+            else:
+                log_event("TTS_READY", request=request.request_id, engine="Piper", voice=model,
+                          selected_by=reason, bytes=len(raw))
+                return raw
+            finally:
+                self._piper_busy = False
+        raw = await super().synthesize(request)
+        return raw
+
+    async def _piper(self, model, text):
+        entry = self._warm.pop(model, None)
+        if entry is not None and entry.process.returncode is not None:
+            await self._discard(entry)
+            entry = None
+        try:
+            if entry is None:
+                while len(self._warm) >= self.max_warm:
+                    await self._discard(self._warm.popitem(last=False)[1])
+                entry = await self._start(model)
+            self._warm[model] = entry
+            return await asyncio.wait_for(self._exchange(entry, text), self.piper_timeout_s)
+        except TimeoutError:
+            await self._drop(model)
+            raise SpeechFailure("speech_timeout") from None
+        except (OSError, ValueError):
+            await self._drop(model)
+            raise SpeechFailure("speech_engine_failed") from None
+        except BaseException:
+            await self._drop(model)
+            raise
+
+    async def _start(self, model):
+        base = self.directory / "piper"
+        base.mkdir(parents=True, exist_ok=True)
+        work = Path(tempfile.mkdtemp(dir=base))
+        try:
+            process = await self.piper_launch(
+                *self.command, cwd=str(work), stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.DEVNULL,
+                creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
+                env={**os.environ, "OMP_NUM_THREADS": "1"})
+        except BaseException:
+            shutil.rmtree(work, ignore_errors=True)
+            raise
+        entry = _WarmPiper(process, work)
+        try:
+            path = str(self.models / f"{model}.onnx")
+            process.stdin.write(f"load_model {path}\n".encode("utf-8"))
+        except BaseException:
+            await self._discard(entry)
+            raise
+        return entry
+
+    async def _exchange(self, entry, text):
+        output = entry.work / "out.wav"
+        output.unlink(missing_ok=True)
+        entry.process.stdin.write(f"synthesize {text}\n".encode("utf-8"))
+        await entry.process.stdin.drain()
+        for _ in range(64):  # Bounded: prompt/status lines only.
+            line = await entry.process.stdout.readline()
+            if not line:
+                raise OSError("piper exited")
+            if b"Synthesis complete" in line:
+                with output.open("rb") as stream:
+                    raw = stream.read(MAX_WAV_BYTES + 1)
+                wav_duration(raw)
+                return raw
+        raise ValueError("piper protocol")
+
+    async def _drop(self, model):
+        entry = self._warm.pop(model, None)
+        if entry is not None:
+            await self._discard(entry)
+
+    @staticmethod
+    async def _discard(entry):
+        process = entry.process
+        try:
+            if process.returncode is None:
+                process.kill()
+                await process.wait()
+        except ProcessLookupError:
+            pass
+        finally:
+            shutil.rmtree(entry.work, ignore_errors=True)
+
+    async def close(self):
+        while self._warm:
+            await self._discard(self._warm.popitem()[1])
 
 
 def create_speech_app(engine, *, tts_enabled=True, turbo=None):
@@ -137,6 +333,8 @@ def create_speech_app(engine, *, tts_enabled=True, turbo=None):
         finally:
             if turbo:
                 await turbo.close()
+            if engine is not None and hasattr(engine, "close"):
+                await engine.close()
     app = FastAPI(title="Anima local speech", lifespan=lifespan)
 
     @app.middleware("http")
@@ -167,7 +365,7 @@ def create_speech_app(engine, *, tts_enabled=True, turbo=None):
             model_path(engine.root)
             voices = (await engine._run("probe")).get("voices", []) if tts_enabled else []
             return {"status": "ready" if not tts_enabled or voices else "degraded",
-                    "stt": engine.stt_engine, "tts": "Windows SAPI" if tts_enabled else "disabled"}
+                    "stt": engine.stt_engine, "tts": engine.tts_engine if tts_enabled else "disabled"}
         result = await engine._run("probe")
         return {"status": "ready" if result.get("voices") and result.get("recognizers") else "degraded", **result}
 

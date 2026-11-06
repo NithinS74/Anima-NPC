@@ -26,7 +26,9 @@ class KnowledgeContext(Contract):
     npc_id: Identifier
     status: RetrievalStatus
     source_kind: Literal["reference", "dialogue"] = "reference"
-    evidence: Annotated[tuple[Evidence, ...], Field(max_length=3)] = ()
+    # Candidate pool (up to 8); at most `top_k` reach the prompt.
+    evidence: Annotated[tuple[Evidence, ...], Field(max_length=8)] = ()
+    top_k: Annotated[StrictInt, Field(ge=1, le=3)] = 3
 
 
 class Retriever(Protocol):

@@ -1,0 +1,1475 @@
+{
+  "note": "Real orchestration components with scripted providers; no retrieval, network or language model.",
+  "behaviour": {
+    "turns": 68,
+    "passed": 68,
+    "routes": {
+      "authored": 26,
+      "generate": 37,
+      "end": 5
+    },
+    "zero_model_turns": 31,
+    "failures": [],
+    "rows": [
+      {
+        "case": "greeting",
+        "label": "Plain greeting",
+        "persona": "elin",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Well met; how can I help?"
+      },
+      {
+        "case": "greeting",
+        "label": "Plain greeting",
+        "persona": "mira",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Well, what is it, then?"
+      },
+      {
+        "case": "greeting",
+        "label": "Plain greeting",
+        "persona": "daren",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "State your business."
+      },
+      {
+        "case": "greeting",
+        "label": "Plain greeting",
+        "persona": "iona",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Good day; how may I assist?"
+      },
+      {
+        "case": "question",
+        "label": "Novel question",
+        "persona": "elin",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "question",
+        "label": "Novel question",
+        "persona": "mira",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "question",
+        "label": "Novel question",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "question",
+        "label": "Novel question",
+        "persona": "iona",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "mixed",
+        "label": "Greeting with a question",
+        "persona": "elin",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "mixed",
+        "label": "Greeting with a question",
+        "persona": "mira",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "mixed",
+        "label": "Greeting with a question",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "mixed",
+        "label": "Greeting with a question",
+        "persona": "iona",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "combat",
+        "label": "NPC in combat",
+        "persona": "elin",
+        "expected": "end",
+        "route": "end",
+        "status": "policy_silence",
+        "model_calls": 0,
+        "passed": true,
+        "text": ""
+      },
+      {
+        "case": "combat",
+        "label": "NPC in combat",
+        "persona": "mira",
+        "expected": "end",
+        "route": "end",
+        "status": "policy_silence",
+        "model_calls": 0,
+        "passed": true,
+        "text": ""
+      },
+      {
+        "case": "combat",
+        "label": "NPC in combat",
+        "persona": "daren",
+        "expected": "end",
+        "route": "end",
+        "status": "policy_silence",
+        "model_calls": 0,
+        "passed": true,
+        "text": ""
+      },
+      {
+        "case": "combat",
+        "label": "NPC in combat",
+        "persona": "iona",
+        "expected": "end",
+        "route": "end",
+        "status": "policy_silence",
+        "model_calls": 0,
+        "passed": true,
+        "text": ""
+      },
+      {
+        "case": "busy",
+        "label": "NPC busy with work",
+        "persona": "elin",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "I'm occupied; try another time."
+      },
+      {
+        "case": "busy",
+        "label": "NPC busy with work",
+        "persona": "mira",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "I'm occupied; try another time."
+      },
+      {
+        "case": "busy",
+        "label": "NPC busy with work",
+        "persona": "daren",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "I'm occupied; try another time."
+      },
+      {
+        "case": "busy",
+        "label": "NPC busy with work",
+        "persona": "iona",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "I regret I am engaged; come back later."
+      },
+      {
+        "case": "weapon",
+        "label": "Player weapon drawn",
+        "persona": "elin",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Stay back; I'm watching you."
+      },
+      {
+        "case": "weapon",
+        "label": "Player weapon drawn",
+        "persona": "mira",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Stay back; I'm watching you."
+      },
+      {
+        "case": "weapon",
+        "label": "Player weapon drawn",
+        "persona": "daren",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Stay back; I'm watching you."
+      },
+      {
+        "case": "weapon",
+        "label": "Player weapon drawn",
+        "persona": "iona",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Not a step closer."
+      },
+      {
+        "case": "insult",
+        "label": "Directed insult",
+        "persona": "elin",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "You can be upset without taking it out on me."
+      },
+      {
+        "case": "insult",
+        "label": "Directed insult",
+        "persona": "mira",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Watch how you speak to me."
+      },
+      {
+        "case": "insult",
+        "label": "Directed insult",
+        "persona": "daren",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Mind your tongue."
+      },
+      {
+        "case": "insult",
+        "label": "Directed insult",
+        "persona": "iona",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "That language is unacceptable; address me respectfully."
+      },
+      {
+        "case": "threat",
+        "label": "Threat",
+        "persona": "elin",
+        "expected": "end",
+        "route": "end",
+        "status": "policy_silence",
+        "model_calls": 0,
+        "passed": true,
+        "text": ""
+      },
+      {
+        "case": "threat",
+        "label": "Threat",
+        "persona": "mira",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Keep back; I won't tolerate threats."
+      },
+      {
+        "case": "threat",
+        "label": "Threat",
+        "persona": "daren",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Keep back; I won't tolerate threats."
+      },
+      {
+        "case": "threat",
+        "label": "Threat",
+        "persona": "iona",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Keep back; I won't tolerate threats."
+      },
+      {
+        "case": "unclear",
+        "label": "Low-confidence speech",
+        "persona": "elin",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Sorry, say that once more?"
+      },
+      {
+        "case": "unclear",
+        "label": "Low-confidence speech",
+        "persona": "mira",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Sorry, say that once more?"
+      },
+      {
+        "case": "unclear",
+        "label": "Low-confidence speech",
+        "persona": "daren",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "I didn't catch that; again?"
+      },
+      {
+        "case": "unclear",
+        "label": "Low-confidence speech",
+        "persona": "iona",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "Could you repeat that?"
+      },
+      {
+        "case": "quoted",
+        "label": "Reported abuse, not directed",
+        "persona": "elin",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "quoted",
+        "label": "Reported abuse, not directed",
+        "persona": "mira",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "quoted",
+        "label": "Reported abuse, not directed",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "quoted",
+        "label": "Reported abuse, not directed",
+        "persona": "iona",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "closed",
+        "label": "Shop closed",
+        "persona": "elin",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "We're closed; come back later."
+      },
+      {
+        "case": "closed",
+        "label": "Shop closed",
+        "persona": "mira",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "The service is closed for now."
+      },
+      {
+        "case": "closed",
+        "label": "Shop closed",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "closed",
+        "label": "Shop closed",
+        "persona": "iona",
+        "expected": "authored",
+        "route": "authored",
+        "status": "authored_success",
+        "model_calls": 0,
+        "passed": true,
+        "text": "The service is closed for now."
+      },
+      {
+        "case": "claim",
+        "label": "Player claims trust",
+        "persona": "elin",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "claim",
+        "label": "Player claims trust",
+        "persona": "mira",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "claim",
+        "label": "Player claims trust",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "claim",
+        "label": "Player claims trust",
+        "persona": "iona",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "claim_war",
+        "label": "Player claims combat",
+        "persona": "elin",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "claim_war",
+        "label": "Player claims combat",
+        "persona": "mira",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "claim_war",
+        "label": "Player claims combat",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "claim_war",
+        "label": "Player claims combat",
+        "persona": "iona",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "expired",
+        "label": "Expired combat report",
+        "persona": "elin",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "expired",
+        "label": "Expired combat report",
+        "persona": "mira",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "expired",
+        "label": "Expired combat report",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "expired",
+        "label": "Expired combat report",
+        "persona": "iona",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "hidden",
+        "label": "Combat the NPC cannot perceive",
+        "persona": "elin",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "hidden",
+        "label": "Combat the NPC cannot perceive",
+        "persona": "mira",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "hidden",
+        "label": "Combat the NPC cannot perceive",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "hidden",
+        "label": "Combat the NPC cannot perceive",
+        "persona": "iona",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "weak",
+        "label": "Low-confidence combat report",
+        "persona": "elin",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "weak",
+        "label": "Low-confidence combat report",
+        "persona": "mira",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "weak",
+        "label": "Low-confidence combat report",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "weak",
+        "label": "Low-confidence combat report",
+        "persona": "iona",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "vision",
+        "label": "Camera shows an enemy",
+        "persona": "elin",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "vision",
+        "label": "Camera shows an enemy",
+        "persona": "mira",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "vision",
+        "label": "Camera shows an enemy",
+        "persona": "daren",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      },
+      {
+        "case": "vision",
+        "label": "Camera shows an enemy",
+        "persona": "iona",
+        "expected": "generate",
+        "route": "generate",
+        "status": "model_success",
+        "model_calls": 1,
+        "passed": true,
+        "text": "Work keeps me occupied, as usual."
+      }
+    ]
+  },
+  "same_input": [
+    {
+      "input": "Hello",
+      "replies": {
+        "elin": {
+          "route": "authored",
+          "text": "Well met; how can I help?",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "warm"
+        },
+        "mira": {
+          "route": "authored",
+          "text": "Yes, what can I do?",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "tired"
+        },
+        "daren": {
+          "route": "authored",
+          "text": "State your business.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "guarded"
+        },
+        "iona": {
+          "route": "authored",
+          "text": "Good day; how may I assist?",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "neutral"
+        }
+      }
+    },
+    {
+      "input": "You idiot.",
+      "replies": {
+        "elin": {
+          "route": "authored",
+          "text": "You can be upset without taking it out on me.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "guarded"
+        },
+        "mira": {
+          "route": "authored",
+          "text": "That's enough of that talk.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "angry"
+        },
+        "daren": {
+          "route": "authored",
+          "text": "Mind your tongue.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "angry"
+        },
+        "iona": {
+          "route": "authored",
+          "text": "I will not be addressed in that manner.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "guarded"
+        }
+      }
+    },
+    {
+      "input": "I will kill you.",
+      "replies": {
+        "elin": {
+          "route": "end",
+          "text": "",
+          "max_words": 0,
+          "max_sentences": 0,
+          "affect": "fearful"
+        },
+        "mira": {
+          "route": "authored",
+          "text": "Lower your tone; I won't be threatened.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "angry"
+        },
+        "daren": {
+          "route": "authored",
+          "text": "Keep back; I won't tolerate threats.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "angry"
+        },
+        "iona": {
+          "route": "authored",
+          "text": "Lower your tone; I won't be threatened.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "angry"
+        }
+      }
+    },
+    {
+      "input": "I'm sorry.",
+      "replies": {
+        "elin": {
+          "route": "authored",
+          "text": "Apology heard; give me a moment.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "warm"
+        },
+        "mira": {
+          "route": "authored",
+          "text": "I'll take that, for now.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "tired"
+        },
+        "daren": {
+          "route": "authored",
+          "text": "Apology heard; give me a moment.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "guarded"
+        },
+        "iona": {
+          "route": "authored",
+          "text": "I'll take that, for now.",
+          "max_words": 12,
+          "max_sentences": 1,
+          "affect": "neutral"
+        }
+      }
+    },
+    {
+      "input": "What keeps you busy these days?",
+      "replies": {
+        "elin": {
+          "route": "generate",
+          "text": null,
+          "max_words": 40,
+          "max_sentences": 2,
+          "affect": "warm"
+        },
+        "mira": {
+          "route": "generate",
+          "text": null,
+          "max_words": 40,
+          "max_sentences": 2,
+          "affect": "tired"
+        },
+        "daren": {
+          "route": "generate",
+          "text": null,
+          "max_words": 18,
+          "max_sentences": 1,
+          "affect": "guarded"
+        },
+        "iona": {
+          "route": "generate",
+          "text": null,
+          "max_words": 40,
+          "max_sentences": 2,
+          "affect": "neutral"
+        }
+      }
+    }
+  ],
+  "escalation": {
+    "elin": {
+      "start_irritation": 0,
+      "patience": 0.85,
+      "turns": [
+        {
+          "turn": 1,
+          "irritation": 14,
+          "trust": -4,
+          "favourability": -7,
+          "route": "authored",
+          "text": "You can be upset without taking it out on me."
+        },
+        {
+          "turn": 2,
+          "irritation": 28,
+          "trust": -8,
+          "favourability": -14,
+          "route": "authored",
+          "text": "Take a breath; there's no need for that."
+        },
+        {
+          "turn": 3,
+          "irritation": 42,
+          "trust": -12,
+          "favourability": -21,
+          "route": "authored",
+          "text": "Take a breath; there's no need for that."
+        },
+        {
+          "turn": 4,
+          "irritation": 56,
+          "trust": -16,
+          "favourability": -28,
+          "route": "authored",
+          "text": "Take a breath; there's no need for that."
+        },
+        {
+          "turn": 5,
+          "irritation": 70,
+          "trust": -20,
+          "favourability": -35,
+          "route": "authored",
+          "text": "I understand you're angry, but speak civilly."
+        },
+        {
+          "turn": 6,
+          "irritation": 84,
+          "trust": -24,
+          "favourability": -42,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 7,
+          "irritation": 98,
+          "trust": -28,
+          "favourability": -49,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 8,
+          "irritation": 100,
+          "trust": -32,
+          "favourability": -56,
+          "route": "end",
+          "text": ""
+        }
+      ],
+      "disengaged_at": 6
+    },
+    "mira": {
+      "start_irritation": 20,
+      "patience": 0.25,
+      "turns": [
+        {
+          "turn": 1,
+          "irritation": 41,
+          "trust": -14,
+          "favourability": 8,
+          "route": "authored",
+          "text": "That's enough of that talk."
+        },
+        {
+          "turn": 2,
+          "irritation": 62,
+          "trust": -18,
+          "favourability": 1,
+          "route": "authored",
+          "text": "Say that again and see what happens."
+        },
+        {
+          "turn": 3,
+          "irritation": 83,
+          "trust": -22,
+          "favourability": -6,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 4,
+          "irritation": 100,
+          "trust": -26,
+          "favourability": -13,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 5,
+          "irritation": 100,
+          "trust": -30,
+          "favourability": -20,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 6,
+          "irritation": 100,
+          "trust": -34,
+          "favourability": -27,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 7,
+          "irritation": 100,
+          "trust": -38,
+          "favourability": -34,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 8,
+          "irritation": 100,
+          "trust": -42,
+          "favourability": -41,
+          "route": "end",
+          "text": ""
+        }
+      ],
+      "disengaged_at": 3
+    },
+    "daren": {
+      "start_irritation": 25,
+      "patience": 0.3,
+      "turns": [
+        {
+          "turn": 1,
+          "irritation": 45,
+          "trust": -34,
+          "favourability": -17,
+          "route": "authored",
+          "text": "Mind your tongue."
+        },
+        {
+          "turn": 2,
+          "irritation": 65,
+          "trust": -38,
+          "favourability": -24,
+          "route": "authored",
+          "text": "Say that again and see what happens."
+        },
+        {
+          "turn": 3,
+          "irritation": 85,
+          "trust": -42,
+          "favourability": -31,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 4,
+          "irritation": 100,
+          "trust": -46,
+          "favourability": -38,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 5,
+          "irritation": 100,
+          "trust": -50,
+          "favourability": -45,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 6,
+          "irritation": 100,
+          "trust": -54,
+          "favourability": -52,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 7,
+          "irritation": 100,
+          "trust": -58,
+          "favourability": -59,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 8,
+          "irritation": 100,
+          "trust": -62,
+          "favourability": -66,
+          "route": "end",
+          "text": ""
+        }
+      ],
+      "disengaged_at": 3
+    },
+    "iona": {
+      "start_irritation": 0,
+      "patience": 0.6,
+      "turns": [
+        {
+          "turn": 1,
+          "irritation": 17,
+          "trust": -4,
+          "favourability": -7,
+          "route": "authored",
+          "text": "I will not be addressed in that manner."
+        },
+        {
+          "turn": 2,
+          "irritation": 34,
+          "trust": -8,
+          "favourability": -14,
+          "route": "authored",
+          "text": "That language is unacceptable; address me respectfully."
+        },
+        {
+          "turn": 3,
+          "irritation": 51,
+          "trust": -12,
+          "favourability": -21,
+          "route": "authored",
+          "text": "That language is unacceptable; address me respectfully."
+        },
+        {
+          "turn": 4,
+          "irritation": 68,
+          "trust": -16,
+          "favourability": -28,
+          "route": "authored",
+          "text": "I will not be addressed in that manner."
+        },
+        {
+          "turn": 5,
+          "irritation": 85,
+          "trust": -20,
+          "favourability": -35,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 6,
+          "irritation": 100,
+          "trust": -24,
+          "favourability": -42,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 7,
+          "irritation": 100,
+          "trust": -28,
+          "favourability": -49,
+          "route": "end",
+          "text": ""
+        },
+        {
+          "turn": 8,
+          "irritation": 100,
+          "trust": -32,
+          "favourability": -56,
+          "route": "end",
+          "text": ""
+        }
+      ],
+      "disengaged_at": 5
+    }
+  },
+  "faults": [
+    {
+      "fault": "control_valid",
+      "expected": "model_success",
+      "statuses": {
+        "model_success": 20
+      },
+      "max_calls": 1,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "malformed_json",
+      "expected": "error_fallback",
+      "statuses": {
+        "error_fallback": 20
+      },
+      "max_calls": 2,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "extra_field",
+      "expected": "error_fallback",
+      "statuses": {
+        "error_fallback": 20
+      },
+      "max_calls": 2,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "too_long",
+      "expected": "error_fallback",
+      "statuses": {
+        "error_fallback": 20
+      },
+      "max_calls": 2,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "out_of_character",
+      "expected": "error_fallback",
+      "statuses": {
+        "error_fallback": 20
+      },
+      "max_calls": 2,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "fake_citation",
+      "expected": "error_fallback",
+      "statuses": {
+        "error_fallback": 20
+      },
+      "max_calls": 2,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "truncated_reply",
+      "expected": "error_fallback",
+      "statuses": {
+        "error_fallback": 20
+      },
+      "max_calls": 2,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "invalid_then_valid",
+      "expected": "repair_success",
+      "statuses": {
+        "repair_success": 20
+      },
+      "max_calls": 2,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "timeout",
+      "expected": "error_fallback",
+      "statuses": {
+        "error_fallback": 20
+      },
+      "max_calls": 1,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "rate_limited",
+      "expected": "error_fallback",
+      "statuses": {
+        "error_fallback": 20
+      },
+      "max_calls": 1,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "auth_failure",
+      "expected": "error_fallback",
+      "statuses": {
+        "error_fallback": 20
+      },
+      "max_calls": 1,
+      "bad_text_delivered": 0,
+      "replies_delivered": 20,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "world_changed",
+      "expected": "cancelled",
+      "statuses": {
+        "cancelled": 20
+      },
+      "max_calls": 1,
+      "bad_text_delivered": 0,
+      "replies_delivered": 0,
+      "passed": true,
+      "repeats": 20
+    },
+    {
+      "fault": "cancelled",
+      "expected": "cancelled",
+      "statuses": {
+        "cancelled": 20
+      },
+      "max_calls": 0,
+      "bad_text_delivered": 0,
+      "replies_delivered": 0,
+      "passed": true,
+      "repeats": 20
+    }
+  ],
+  "model_swap": {
+    "providers": {
+      "offline_stub": {
+        "turns": 68,
+        "model_calls": 37,
+        "statuses": {
+          "authored_success": 26,
+          "model_success": 37,
+          "policy_silence": 5
+        },
+        "route_hash": "52efe74e92873ca786fa724aa5fa8e9d39c704c254e8f5634ccacf0060364dd9",
+        "prompt_hash": "aa24447970eb62a0c7efa371ae106462c8a1328f63d4731e0938ddf86bc8f167"
+      },
+      "chat_completions_json": {
+        "turns": 68,
+        "model_calls": 37,
+        "statuses": {
+          "authored_success": 26,
+          "model_success": 37,
+          "policy_silence": 5
+        },
+        "route_hash": "52efe74e92873ca786fa724aa5fa8e9d39c704c254e8f5634ccacf0060364dd9",
+        "prompt_hash": "aa24447970eb62a0c7efa371ae106462c8a1328f63d4731e0938ddf86bc8f167"
+      },
+      "chat_completions_plain": {
+        "turns": 68,
+        "model_calls": 37,
+        "statuses": {
+          "authored_success": 26,
+          "model_success": 37,
+          "policy_silence": 5
+        },
+        "route_hash": "52efe74e92873ca786fa724aa5fa8e9d39c704c254e8f5634ccacf0060364dd9",
+        "prompt_hash": "aa24447970eb62a0c7efa371ae106462c8a1328f63d4731e0938ddf86bc8f167"
+      },
+      "native_protocol": {
+        "turns": 68,
+        "model_calls": 37,
+        "statuses": {
+          "authored_success": 26,
+          "model_success": 37,
+          "policy_silence": 5
+        },
+        "route_hash": "52efe74e92873ca786fa724aa5fa8e9d39c704c254e8f5634ccacf0060364dd9",
+        "prompt_hash": "aa24447970eb62a0c7efa371ae106462c8a1328f63d4731e0938ddf86bc8f167"
+      }
+    },
+    "identical_routes": true,
+    "identical_prompts": true
+  },
+  "overhead": {
+    "authored": {
+      "n": 1000,
+      "mean_ms": 1.160660199997892,
+      "median_ms": 0.9860500001650507,
+      "p95_ms": 2.2137999999358726,
+      "max_ms": 10.498900000129652
+    },
+    "generate": {
+      "n": 1000,
+      "mean_ms": 1.4319823999949222,
+      "median_ms": 1.3108999999076332,
+      "p95_ms": 1.888400000098045,
+      "max_ms": 21.37220000031448
+    }
+  },
+  "hostility": {
+    "hostile": 25,
+    "benign": 25,
+    "true_positive": 8,
+    "false_positive": 0,
+    "precision": 1.0,
+    "recall": 0.32,
+    "missed": [
+      "You are a worthless fool.",
+      "Nobody likes you, you clown.",
+      "You're dumb.",
+      "What a pathetic excuse for a guard.",
+      "Shut your mouth.",
+      "Go to hell.",
+      "I hate you.",
+      "You stink.",
+      "You are so stupid.",
+      "Your cooking is garbage and so are you.",
+      "You are nothing but a coward.",
+      "I'll cut your throat.",
+      "You're dead.",
+      "Touch me and I'll end you.",
+      "Watch your back tonight.",
+      "I'm going to hurt you.",
+      "Draw your sword, coward."
+    ],
+    "false_alarms": []
+  },
+  "pressure": {
+    "turns": 40,
+    "trust_or_favour_changed": 0,
+    "player_text_in_system_message": 0,
+    "reached_model_route": 40
+  }
+}

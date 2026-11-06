@@ -1,0 +1,34 @@
+\documentclass[border=3pt]{standalone}
+\input{styles.tex}
+\begin{document}
+\begin{tikzpicture}[x=1mm,y=1mm]
+\def\tw{21mm}
+% Column centres 12, 40, 68, 96, 124, 152
+\node[gamebox,text width=\tw,minimum height=13mm] (in) at (12,40) {Player turn and game state};
+\node[corebox,text width=\tw,minimum height=13mm] (ctx) at (40,40) {Situation from persona and eligible facts};
+\node[decision,text width=14mm] (route) at (68,40) {Model needed?};
+\node[knowbox,text width=\tw,minimum height=13mm] (rag) at (96,40) {Top 3 passages from bound source};
+\node[corebox,text width=\tw,minimum height=13mm] (prompt) at (124,40) {Pack evidence and history};
+\node[modelbox,text width=\tw,minimum height=13mm] (llm) at (152,40) {Model proposes JSON reply};
+\node[decision,text width=9mm] (ok) at (152,24) {Valid?};
+\node[corebox,text width=\tw,minimum height=10mm] (repair) at (124,24) {One repair, same deadline};
+\node[corebox,text width=\tw,minimum height=10mm] (auth) at (124,8) {Authored line, end or fallback};
+\node[corebox,text width=\tw,minimum height=13mm] (stage) at (152,8) {Stage with revision, ID, expiry};
+\node[gamebox,text width=\tw,minimum height=13mm] (deliver) at (152,-10) {Connector delivers to game};
+\node[plainbox,text width=\tw,minimum height=13mm] (mem) at (124,-10) {Receipt: completed turn enters memory};
+\draw[flow] (in) -- (ctx);
+\draw[flow] (ctx) -- (route);
+\draw[flow] (route) -- node[lab,above,yshift=2.5mm] {yes} (rag);
+\draw[flow] (rag) -- (prompt);
+\draw[flow] (prompt) -- (llm);
+\draw[flow] (llm) -- (ok);
+\draw[flow] (ok) -- node[lab,above] {no} (repair);
+\draw[flow] (repair.north) |- (146,31.5) -- (146,33.5);
+\draw[flow] (ok) -- node[lab,right] {yes} (stage);
+\draw[flow] (repair) -- node[lab,right] {invalid or timeout} (auth);
+\draw[flow] (route.south) |- node[lab,pos=.75,above,text width=40mm] {no: zero model calls} (auth.west);
+\draw[flow] (auth) -- (stage);
+\draw[flow] (stage) -- (deliver);
+\draw[flow] (deliver) -- (mem);
+\end{tikzpicture}
+\end{document}

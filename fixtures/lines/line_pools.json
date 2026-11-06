@@ -1,0 +1,53 @@
+{
+  "note": "Authored and fallback lines by intent and style key. Each line is one sentence of at most 12 words (fallback: 20). A pool may hold a single line.",
+  "clarify": {"default": ["Could you repeat that?", "Sorry, say that once more?", "I didn't catch that; again?"]},
+  "warn": {"default": ["Keep your distance.", "Stay back; I'm watching you.", "Not a step closer."]},
+  "reject_threat": {"default": ["Keep back; I won't tolerate threats.", "Threaten me again and you'll regret it.", "Lower your tone; I won't be threatened."]},
+  "set_boundary": {
+    "default": ["Mind your tongue.", "Watch how you speak to me.", "That's enough of that talk."],
+    "swear": ["Watch your damn mouth.", "Say that again and see what happens.", "Mind your bloody tongue."],
+    "patient": ["You can be upset without taking it out on me.", "I understand you're angry, but speak civilly.", "Take a breath; there's no need for that."],
+    "formal": ["That language is unacceptable; address me respectfully.", "I will not be addressed in that manner."]
+  },
+  "familiar_banter": {
+    "default": ["You haven't changed, have you?", "Same as ever, I see.", "Still at it, are you?"],
+    "swear": ["Still a cheeky bastard, aren't you?", "Same old troublemaker, then."]
+  },
+  "acknowledge_apology": {
+    "default": ["Apology heard; give me a moment.", "Fair enough; let's leave it there.", "I'll take that, for now."],
+    "irritated": ["An apology doesn't settle everything.", "Words are easy; we'll see about the rest."]
+  },
+  "busy": {
+    "default": ["I'm occupied; try another time.", "Not now; I've work to do.", "Can't talk, I'm in the middle of something."],
+    "formal": ["I am occupied; please return later.", "I regret I am engaged; come back later."],
+    "friend": ["Not now, friend; I've got work to finish.", "Give me a bit, friend; I'm busy."]
+  },
+  "service_closed": {"default": ["The service is closed for now.", "We're closed; come back later."]},
+  "greet": {
+    "default": ["What do you need?", "Well, what is it, then?", "Yes, what can I do?"],
+    "formal": ["Welcome; how may I help?", "Good day; how may I assist?"],
+    "friend": ["Good to see you; what do you need?", "Ah, you're back; what can I do?"],
+    "warm": ["Welcome in; what can I do for you?", "Well met; how can I help?"],
+    "guarded": ["State your business.", "What do you want here?"]
+  },
+  "farewell": {
+    "default": ["Safe travels.", "Mind how you go.", "Until next time."],
+    "formal": ["Farewell; may your road be safe.", "Good day to you."],
+    "warm": ["Take care of yourself; come back soon.", "Safe journey, friend; come back soon."],
+    "guarded": ["Off you go, then.", "Don't let me keep you."]
+  },
+  "opening": {
+    "default": ["Hm, can I help you?", "Yes, you wanted something?", "Something I can do for you?"],
+    "formal": ["Good day; may I be of assistance?", "Welcome; how may I help?"],
+    "warm": ["Well, hello there; what brings you by?", "Ah, a visitor; how can I help?"],
+    "guarded": ["Yes, state your business.", "You there; what do you want?"]
+  },
+  "fallback": {
+    "default": ["I cannot say.", "I'd rather not say.", "That's not something I can tell you."],
+    "formal": ["I cannot speak to that matter.", "I regret I cannot say."],
+    "admit_limit": ["That's all I know about it.", "I've told you what I can.", "I can't tell you more than that."],
+    "close_topic": ["Let's leave it there.", "We're done on that subject.", "I've nothing more to say on it."],
+    "challenge": ["You keep asking; why does it matter so much?", "Why are you pressing me on this?"],
+    "hold": ["I won't speak of that.", "That I will not discuss.", "Ask me anything else."]
+  }
+}

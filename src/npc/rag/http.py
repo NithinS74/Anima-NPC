@@ -22,7 +22,7 @@ class HTTPRetriever:
         try:
             async with httpx.AsyncClient(transport=self.transport, timeout=timeout_s, trust_env=False) as client:
                 async with client.stream("POST", self.config.base_url + "/query", json=dict(
-                    query=query, top_k=self.config.top_k, max_chars=self.config.max_chars, source=binding.source,
+                    query=query, top_k=self.config.candidate_k, max_chars=self.config.max_chars, source=binding.source,
                 )) as response:
                     response.raise_for_status()
                     payload = bytearray()

@@ -13,12 +13,17 @@ import httpx
 import pytest
 from pydantic import ValidationError
 
+from npc.behavior.lines import pools
 from npc.adapters.skyrim.assets import Artifacts, mouth_envelope, png_from_bgra, read_audio, stage_audio, wav_duration
 from npc.adapters.skyrim.bridge import Bridge, ConnectionError
 from npc.adapters.skyrim.protocol import (
     ActorData, Form, GameEvent, GameSnapshot, PipelineResult, Settings, SpeechInput,
     canonical_scenario, profile_for,
 )
+
+
+# Authored greetings are drawn from a pool by request ID (I24 WP-B), so tests accept any line from it.
+GREETING = pools()['greet']['default']
 
 
 def form(identifier="00013478", name="Test NPC", plugin="Skyrim.esm"):
@@ -290,7 +295,7 @@ def test_expired_delivery_stops_instead_of_replaying(tmp_path):
 
 def test_end_rejects_future_callback_and_removes_staged_audio(tmp_path):
     async def run():
-        bridge = Bridge(settings(tmp_path), root=tmp_path)
+        bridge = Bridge(settings(tmp_path, audio_output="engine"), root=tmp_path)
         bridge.audio_root.mkdir()
         (bridge.audio_root / "response.wav").write_bytes(wav())
         try:
@@ -638,7 +643,7 @@ def test_anima_logs_correlated_input_staging_and_native_receipts(tmp_path, caplo
             await bridge.session.turn_task
             await bridge.player_input(turn)  # Idempotent input is not logged twice.
             command = bridge.command("session-a")
-            assert command["text"] == "What do you need?"
+            assert command["text"] in GREETING
             staged = [r.getMessage() for r in caplog.records if r.getMessage().startswith("OUTPUT_STAGED")]
             assert len(staged) == 1 and 'delivered="False"' in staged[0]
             assert not any(r.getMessage().startswith("NATIVE_ACK") for r in caplog.records)
@@ -708,7 +713,7 @@ def test_native_text_entry_is_correlated_and_deduplicated(tmp_path):
             e=event("player_text",2,text="HELLO")
             await b.game_event(e);await b.session.turn_task
             command=b.command("session-a")
-            assert command['request_id']==e.event_id and command['text']=='What do you need?'
+            assert command['request_id']==e.event_id and command['text'] in GREETING
             assert (await b.game_event(e))['status']=='duplicate'
             assert len(b.session.inputs)==1
             with pytest.raises(ConnectionError):await b.game_event(event("player_text",3,text=" "))
@@ -752,7 +757,7 @@ def test_game_memory_commits_only_completed_and_survives_menu_close(tmp_path):
             await b.game_event(event('delivery',2,delivery_id=command['delivery_id'],status='completed'))
             history=b.state_store.load(key)['history']
             assert len(history)==1 and history[0].source=='game_completed'
-            assert history[0].npc_text=='What do you need?'
+            assert history[0].npc_text in GREETING
             await b.game_event(event('end',3))
             await b.game_event(event('start',1,event_id='reopen',session_id='session-b'))
             await b.session.context_task
@@ -799,7 +804,7 @@ def test_native_text_barge_in_cancels_generation_without_session_loss(tmp_path):
             await b.session.turn_task
             assert b.session.event.session_id=='session-a'
             assert b.session.inputs['input-a']=='cancelled'
-            assert b.command('session-a')['text']=='What do you need?'
+            assert b.command('session-a')['text'] in GREETING
             assert b.command('session-a')['request_id']=='event-2'
             assert b.state_store.load(b.session.social_key)['history']==()
         finally:await b.close()
@@ -865,11 +870,46 @@ def test_store_stage_failure_never_exposes_game_command(tmp_path,monkeypatch):
         b=Bridge(settings(tmp_path,pipeline_mode='preview'),root=tmp_path,runner=PreviewRunner(OfflineProvider()))
         try:
             await ready(b)
-            def fail(*args):raise StoreFailure('test_storage_failure')
+            def fail(*args,**kw):raise StoreFailure('test_storage_failure')
             monkeypatch.setattr(b.state_store,'stage_preview',fail)
             await b.player_input(speech().model_copy(update={'text':'Hello'}));await b.session.turn_task
             assert b.command('session-a')=={'kind':'idle'}
             assert b.state_store.load(b.session.social_key)['history']==()
             assert b.session.inputs['input-a']=='failed'
         finally:await b.close()
+    asyncio.run(run())
+
+
+def test_memory_branch_is_stable_per_player_name_and_session_scope_keeps_the_epoch():
+    from npc.adapters.skyrim.protocol import memory_branch
+    def named(name, epoch):
+        e = event(game_epoch=epoch)
+        player = e.snapshot.player.model_copy(update={"reference": form("00000014", name), "base": form("00000007", name)})
+        return e.model_copy(update={"snapshot": e.snapshot.model_copy(update={"player": player})})
+    first, again, other = named("Lydia Test", "g1"), named("lydia  test", "g2"), named("Bran", "g1")
+    assert memory_branch("character", first) == memory_branch("character", again)  # same character, new launch
+    assert memory_branch("character", first) != memory_branch("character", other)
+    assert memory_branch("session", first) == "g1" and memory_branch("session", again) == "g2"
+    assert memory_branch("character", named("", "g9")) == "g9"  # unknown name is never merged
+
+
+def test_social_memory_key_survives_a_new_game_epoch_by_default(tmp_path):
+    async def run():
+        keys = []
+        for scope, epochs in (("character", ("g1", "g2")), ("session", ("g1", "g2"))):
+            run_keys = []
+            bridge = Bridge(settings(tmp_path / scope, state_db=str(tmp_path / scope / "s.sqlite3"), memory_scope=scope), root=tmp_path / scope)
+            try:
+                for index, epoch in enumerate(epochs):
+                    sid = f"session-{index}"
+                    await bridge.game_event(event(session_id=sid, game_epoch=epoch))
+                    await bridge.session.context_task
+                    await bridge.player_input(SpeechInput(session_id=sid, input_id=f"in-{index}", text="Hello there."))
+                    run_keys.append(bridge.session.social_key)
+                    await bridge.session.turn_task
+                    await bridge.end(bridge.session)
+            finally:
+                await bridge.close()
+            keys.append(run_keys)
+        assert keys[0][0] == keys[0][1] and keys[1][0] != keys[1][1]
     asyncio.run(run())

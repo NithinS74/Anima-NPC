@@ -42,7 +42,7 @@ def test_existing_api_contract_source_filter_and_followup_context(scenario):
     result, calls = retrieve(situation, [hit()])
     assert result.status == "ok" and result.evidence[0].id == "chunk-1"
     assert result.scope == situation.scope and result.npc_id == situation.npc_id
-    assert calls[0]["source"] == "lore/dialogue.txt" and calls[0]["top_k"] == 3
+    assert calls[0]["source"] == "lore/dialogue.txt" and calls[0]["top_k"] == 8  # candidate_k, not top_k
     assert calls[0]["query"] == "Where can I find the healer?"
     assert situation.player_input.text == "Where can I find them?"
     assert "healer" in calls[0]["query"]
@@ -62,7 +62,7 @@ def test_unbound_identity_is_denied_before_network(scenario, change):
 @pytest.mark.parametrize("response,expected", [
     ([], "empty"), ([hit(truncated=True)], "empty"), ([hit(source="secret.txt")], "unavailable"),
     ([hit(distance=float("nan"))], "unavailable"), ([hit(text="")], "unavailable"),
-    ([hit(), hit()], "ok"), ([hit()] * 4, "unavailable"),
+    ([hit(), hit()], "ok"), ([hit()] * 9, "unavailable"),
 ])
 def test_bad_empty_partial_and_duplicate_matches(scenario, response, expected):
     situation = build_situation(scenario.turn, scenario.snapshot, scenario.now)

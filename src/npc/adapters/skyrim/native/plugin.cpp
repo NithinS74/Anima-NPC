@@ -22,6 +22,10 @@
 #include "version_metadata.h"
 #include "ui_state.h"
 #include "audio_state.h"
+#include "speech_policy.h"
+#include "launch_policy.h"
+#include "direct_session.h"
+#include "conversation_request.h"
 
 using json = nlohmann::json;
 using Clock = std::chrono::steady_clock;
@@ -99,23 +103,77 @@ void BuildVoice(RE::BSSoundHandle& sound, const char* path)
 class Connector final : public RE::BSTEventSink<RE::MenuOpenCloseEvent>, public RE::BSTEventSink<RE::InputEvent*>, public RE::BSTEventSink<SKSE::ModCallbackEvent> {
 public:
     static Connector& Get() { static auto* instance = new Connector; return *instance; }
+    void OnConversationLine() { RequestConversation(); }
     void Initialize()
     {
         auto path = std::filesystem::absolute("Data/SKSE/Plugins/AnimaConnector.ini").wstring();
         port = static_cast<INTERNET_PORT>(GetPrivateProfileIntW(L"Connection", L"Port", 8768, path.c_str()));
         pttKey = GetPrivateProfileIntW(L"Connection", L"PushToTalkKey", 66, path.c_str());
         menuKey = GetPrivateProfileIntW(L"Connection", L"ConversationMenuKey", 65, path.c_str());
+        chatKey = GetPrivateProfileIntW(L"Connection", L"ChatKey", 64, path.c_str());
         SKSE::GetModCallbackEventSource()->AddEventSink(this);
         animateMouth = GetPrivateProfileIntW(L"Connection", L"AnimateMouth", 1, path.c_str()) != 0;
+        suppressVanilla = GetPrivateProfileIntW(L"Connection", L"SuppressVanillaSpeech", 1, path.c_str()) != 0;
         ResetEpoch();
+        StartConsole(path);
         RE::UI::GetSingleton()->AddEventSink<RE::MenuOpenCloseEvent>(this);
         if (auto input = RE::BSInputDeviceManager::GetSingleton()) input->AddEventSink(this);
         std::thread([this] { Worker(); }).detach();
-        SKSE::log::info("AnimaConnector initialized on port {}", port);
+        SKSE::log::info("AnimaConnector initialized on port {}; SuppressVanillaSpeech={}", port, suppressVanilla);
+        // Diagnostics only, no dependency: other dialogue mods hooking subtitles/audio may explain odd playback.
+        for (const char* module : {"MantellaDialogue.dll", "MantellaSubtitles.dll", "SKSE_HTTP.dll"})
+            SKSE::log::info("ANIMA other dialogue module {}: {}", module, GetModuleHandleA(module) ? "loaded" : "not loaded");
+    }
+    // Opens AnimaConsole.exe (visible console showing all Anima logs) unless disabled or the bridge already runs.
+    // Runs on a detached thread so a slow probe or CreateProcess never delays game load.
+    void StartConsole(const std::wstring& iniPath)
+    {
+        const bool enabled = GetPrivateProfileIntW(L"Console", L"LaunchConsole", 0, iniPath.c_str()) != 0;
+        if (!enabled) return;
+        std::array<wchar_t, 4096> exe{};
+        GetPrivateProfileStringW(L"Console", L"ConsoleExe", L"", exe.data(), static_cast<DWORD>(exe.size()), iniPath.c_str());
+        const auto exePath = std::wstring(exe.data());
+        const auto portValue = port;
+        std::thread([exePath, portValue] {
+            static std::atomic<bool> launched{false};
+            std::error_code error;
+            const bool configured = !exePath.empty(), exists = configured && std::filesystem::is_regular_file(exePath, error);
+            const bool answering = configured && exists && BridgeAnswering(portValue);
+            const auto decision = anima::DecideLaunch(true, configured, exists, launched.load(), answering);
+            if (decision != anima::LaunchDecision::launch) {
+                if (decision == anima::LaunchDecision::missing_exe || decision == anima::LaunchDecision::no_exe_configured)
+                    SKSE::log::warn("ANIMA console: {}", anima::DescribeLaunch(decision));
+                else SKSE::log::info("ANIMA console: {}", anima::DescribeLaunch(decision));
+                return;
+            }
+            launched = true;
+            auto commandLine = anima::ConsoleCommandLine(exePath, GetCurrentProcessId());
+            STARTUPINFOW startup{}; startup.cb = sizeof(startup);
+            PROCESS_INFORMATION process{};
+            const auto directory = std::filesystem::path(exePath).parent_path().wstring();
+            if (CreateProcessW(exePath.c_str(), commandLine.data(), nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr,
+                               directory.c_str(), &startup, &process)) {
+                CloseHandle(process.hThread); CloseHandle(process.hProcess);
+                SKSE::log::info("ANIMA console: launched (pid {})", process.dwProcessId);
+            } else SKSE::log::warn("ANIMA console: CreateProcess failed, error {}", GetLastError());
+        }).detach();
+    }
+    static bool BridgeAnswering(INTERNET_PORT bridgePort)
+    {
+        HttpHandle http(WinHttpOpen(L"AnimaConnector/console", WINHTTP_ACCESS_TYPE_NO_PROXY, nullptr, nullptr, 0));
+        if (!http.handle) return false;
+        WinHttpSetTimeouts(http.handle, 250, 250, 250, 250);
+        HttpHandle connection(WinHttpConnect(http.handle, L"127.0.0.1", bridgePort, 0));
+        if (!connection.handle) return false;
+        HttpHandle request(WinHttpOpenRequest(connection.handle, L"GET", L"/v1/health", nullptr, nullptr, nullptr, 0));
+        if (!request.handle || !WinHttpSendRequest(request.handle, nullptr, 0, nullptr, 0, 0, 0) ||
+            !WinHttpReceiveResponse(request.handle, nullptr)) return false;
+        DWORD status = 0, size = sizeof(status);
+        return WinHttpQueryHeaders(request.handle, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER, nullptr, &status, &size, nullptr) && status == 200;
     }
     void ResetEpoch()
     {
-        End();
+        End(true, "state_changed");
         epoch = std::format("{}-{}-{}", GetCurrentProcessId(), UtcMs(), ++serial);
         open = false;
     }
@@ -123,17 +181,34 @@ public:
     {
         if (event && event->menuName == RE::DialogueMenu::MENU_NAME) {
             open = event->opening;
+            if (open) direct = false;  // a vanilla menu session takes over; menu_closed ends it as before
             openedAt = Clock::now();
-            if (!open) End();
+            if (!open) End(true, "menu_closed");
         }
         return RE::BSEventNotifyControl::kContinue;
     }
     RE::BSEventNotifyControl ProcessEvent(RE::InputEvent* const* events, RE::BSTEventSource<RE::InputEvent*>*) override
     {
-        if (!events || session.empty()) return RE::BSEventNotifyControl::kContinue;
+        if (!events) return RE::BSEventNotifyControl::kContinue;
         for (auto event = *events; event; event = event->next) {
             auto button = event->AsButtonEvent();
             if (!button || event->GetDevice() != RE::INPUT_DEVICE::kKeyboard) continue;
+            if (button->idCode == chatKey) {
+                const bool canStart = session.empty() && button->IsDown() && !MenuBlocksDirect() && DirectTarget() != nullptr;
+                switch (anima::DecideChatKey(button->IsDown(), !session.empty(), RE::UI::GetSingleton()->IsMenuOpen("CustomMenu"), listening, canStart)) {
+                case anima::ChatKeyAction::open_text: OpenUi(anima::Panel::text); break;
+                case anima::ChatKeyAction::start_direct:
+                    if (auto target = DirectTarget(); target && StartDirect(target)) OpenUi(anima::Panel::text);
+                    break;
+                case anima::ChatKeyAction::no_npc: Notify("ANIMA: talk to an NPC first."); break;
+                default: break;
+                }
+                continue;
+            }
+            if (session.empty()) {
+                if (button->idCode != pttKey || !anima::PttStartsDirect(button->IsDown(), false, MenuBlocksDirect(), DirectTarget() != nullptr)) continue;
+                if (!StartDirect(DirectTarget())) continue;
+            }
             if (button->idCode == menuKey && button->IsDown()) { OpenUi(anima::Panel::options); continue; }
             if (button->idCode != pttKey || RE::UI::GetSingleton()->IsMenuOpen("CustomMenu")) continue;
             if (button->IsDown()) {
@@ -168,11 +243,23 @@ private:
     RE::ActorHandle speaker;
     RE::BSSoundHandle sound;
     anima::AudioState audioState;
-    std::int64_t audioStartExpiry = 0;
+    std::string audioResult = "none", lastMaterial;
+    std::int64_t plannedMs = 0;
+    bool lastPlaying = false, startAcked = false, suppressVanilla = true, sayActive = false, sayPending = false, openingDelivery = false;
+    Clock::time_point sayStart;
+    anima::SpeechSuppressor suppressor;
+    std::atomic_bool fastPoll{false};
+    std::atomic<std::int64_t> fastUntilMs{0};
+    Clock::time_point deliveryStart;
     std::unordered_set<std::string> seen;
     std::uint64_t serial = 0, sequence = 0, snapshotSequence = 0;
     INTERNET_PORT port = 8768;
-    std::uint32_t pttKey = 66, menuKey = 65;
+    std::uint32_t pttKey = 66, menuKey = 65, chatKey = 64;
+    bool direct = false, requestPending = false;
+    RE::ActorHandle requestActor;
+    Clock::time_point requestAt;
+    std::uint32_t directCell = 0;
+    Clock::time_point lastActivity;
     bool open = false, listening = false, animateMouth = true, audioStarted = false, endAfter = false, mouthOwned = false;
     float originalMouth = 0;
     std::vector<float> mouth;
@@ -184,6 +271,108 @@ private:
         RE::BSTSmartPointer<RE::BSScript::IStackCallbackFunctor> callback;
         if (vm) vm->DispatchStaticCall("Debug", "Notification", RE::MakeFunctionArguments(RE::BSFixedString(text)), callback);
     }
+    bool Active() const { return anima::SessionActive(open, direct); }
+    bool MenuBlocksDirect()
+    {
+        auto ui = RE::UI::GetSingleton();
+        return open || !ui || ui->GameIsPaused() || ui->IsMenuOpen("CustomMenu");
+    }
+    // Living, non-hostile actor under the crosshair, or null.
+    RE::Actor* DirectTarget()
+    {
+        auto pick = RE::CrosshairPickData::GetSingleton();
+        auto player = RE::PlayerCharacter::GetSingleton();
+        if (!pick || !player) return nullptr;
+        auto reference = pick->target.get();
+        auto actor = reference ? reference->As<RE::Actor>() : nullptr;
+        return IsDirectTarget(actor) ? actor : nullptr;
+    }
+    bool IsDirectTarget(RE::Actor* actor)
+    {
+        auto player = RE::PlayerCharacter::GetSingleton();
+        if (!actor || !player) return false;
+        const bool valid = anima::ValidDirectTarget(true, actor == player, actor->GetActorBase() != nullptr, actor->IsDead(),
+                                                    actor->IsHostileToActor(player), actor->IsInCombat());
+        return valid && actor->GetPosition().GetDistance(player->GetPosition()) <= anima::kDirectMaxDistance;
+    }
+    // Called on the game thread from the Papyrus fragment of the Anima.esp "Talk with me." line.
+    void RequestConversation()
+    {
+        auto manager = RE::MenuTopicManager::GetSingleton();
+        auto reference = manager ? manager->speaker.get() : RE::NiPointer<RE::TESObjectREFR>();
+        auto actor = reference ? reference->As<RE::Actor>() : nullptr;
+        if (!actor || actor == RE::PlayerCharacter::GetSingleton()) actor = DirectTarget();
+        if (!actor) { SKSE::log::warn("ANIMA conversation request ignored: no speaker"); Notify("ANIMA: talk to an NPC first."); return; }
+        requestActor = actor->GetHandle(); requestPending = true; requestAt = Clock::now();
+        SKSE::log::info("ANIMA conversation requested from dialogue line; actor={:08X}", actor->GetFormID());
+    }
+    void ProcessRequest(Clock::time_point now)
+    {
+        auto actor = requestActor.get();
+        const auto age = std::chrono::duration_cast<std::chrono::milliseconds>(now - requestAt).count();
+        const bool sameSpeaker = !session.empty() && speaker.get().get() == actor.get();
+        const auto action = anima::DecideOpenRequest(requestPending && actor, age, MenuBlocksDirect(), sameSpeaker && direct,
+                                                     IsDirectTarget(actor.get()), uiState.panel != anima::Panel::none);
+        switch (action) {
+        case anima::OpenRequestAction::start_direct:
+            requestPending = false;
+            if (StartDirect(actor.get())) OpenUi(anima::Panel::text);
+            break;
+        case anima::OpenRequestAction::open_text: requestPending = false; OpenUi(anima::Panel::text); break;
+        case anima::OpenRequestAction::expire:
+            requestPending = false; SKSE::log::info("ANIMA conversation request ended without opening the text box"); break;
+        default:
+            if (requestPending && !actor) requestPending = false;
+            break;
+        }
+    }
+    void BeginSession(RE::Actor* actor, Clock::time_point now, bool directStart = false)
+    {
+        End(true, "state_changed"); session = std::format("{}-{}", epoch, ++serial); sequence = 0;
+        speaker = actor->GetHandle();
+        snapshotSequence = 1;
+        auto data = Snapshot(actor); auto event = Event("start");
+        event["direct"] = directStart;  // Anima started this session: the bridge may open it with a greeting
+        event["snapshot"] = data; lastSnapshot = Fingerprint(data); lastMaterial = MaterialFingerprint(data); Queue(std::move(event));
+        lastCapture = now; lastActivity = now;
+        std::scoped_lock lock(mutex); workerSession = session;
+    }
+    bool StartDirect(RE::Actor* actor)
+    {
+        auto player = RE::PlayerCharacter::GetSingleton();
+        if (!actor || !player) return false;
+        BeginSession(actor, Clock::now(), true);
+        direct = true;
+        auto cell = player->GetParentCell(); directCell = cell ? cell->GetFormID() : 0;
+        SKSE::log::info("ANIMA direct session started without dialogue menu; session={} actor={:08X}", session, actor->GetFormID());
+        return true;
+    }
+    void TickDirect(Clock::time_point now)
+    {
+        auto actor = speaker.get(); auto player = RE::PlayerCharacter::GetSingleton();
+        if (!actor || !player) { End(true, "actor_lost"); return; }
+        auto cell = player->GetParentCell();
+        const bool pending = !delivery.empty() || uiState.panel != anima::Panel::none;
+        const std::int64_t idle = pending ? 0 : std::chrono::duration_cast<std::chrono::milliseconds>(now - lastActivity).count();
+        const auto reason = anima::DecideDirectEnd(actor->GetPosition().GetDistance(player->GetPosition()), actor->IsInCombat(), actor->IsDead(),
+                                                   (cell ? cell->GetFormID() : 0) == directCell, idle);
+        if (reason != anima::DirectEnd::none) {
+            SKSE::log::info("ANIMA direct session ended: {}", anima::DirectEndName(reason));
+            End(true, anima::DirectEndName(reason)); return;
+        }
+        if (now - lastCapture >= std::chrono::seconds(1)) RefreshSnapshot(actor.get(), now);
+    }
+    void RefreshSnapshot(RE::Actor* actor, Clock::time_point now)
+    {
+        lastCapture = now;
+        auto data = Snapshot(actor); auto fingerprint = Fingerprint(data);
+        if (fingerprint != lastSnapshot) {
+            auto material = MaterialFingerprint(data);
+            if (material != lastMaterial) { Stop("state_changed", "interrupted"); ++snapshotSequence; lastMaterial = std::move(material); }
+        }
+        auto event = Event("snapshot"); event["snapshot"] = data;
+        lastSnapshot = std::move(fingerprint); Queue(std::move(event));
+    }
     bool CallUi(const char* function, const char* movie = nullptr)
     {
         auto vm = RE::BSScript::Internal::VirtualMachine::GetSingleton();
@@ -193,7 +382,7 @@ private:
     }
     void OpenUi(anima::Panel panel)
     {
-        if (!open || session.empty() || RE::UI::GetSingleton()->IsMenuOpen("CustomMenu")) return;
+        if (!Active() || session.empty() || RE::UI::GetSingleton()->IsMenuOpen("CustomMenu")) return;
         if (!uiState.Open(session, panel)) return;
         uiOpenedAt = Clock::now();
         uiRenderPanel = panel; uiRenderGeneration = uiState.generation; uiFilled = false;
@@ -253,8 +442,12 @@ private:
                     SKSE::log::info("ANIMA UIExtensions text load callback received");
                 } else if (name == "UITextEntryMenu_TextChanged") {
                     if (uiState.CanSubmit(session, text) && BargeIn()) { Notify("ANIMA: sending your message..."); auto event = Event("player_text"); event["text"] = text; Queue(std::move(event)); }
+                    else if (direct) { End(true, "nothing_typed"); break; }
                     CancelUi();
-                } else if (name == "UITextEntryMenu_CloseMenu") { CancelUi(); }
+                } else if (name == "UITextEntryMenu_CloseMenu") {
+                    if (direct) { End(true, "nothing_typed"); break; }
+                    CancelUi();
+                }
             }
         }
         if (!RE::UI::GetSingleton()->IsMenuOpen("CustomMenu")) {
@@ -269,12 +462,13 @@ private:
     bool BargeIn()
     {
         auto actor = speaker.get();
-        if (session.empty() || !open || !actor || actor->IsInCombat() || actor->IsDead()) return false;
-        Stop("interrupted"); actor->StopCurrentDialogue();
-        if (session.empty() || !open) return false;
+        if (session.empty() || !Active() || !actor || actor->IsInCombat() || actor->IsDead()) return false;
+        lastActivity = Clock::now();
+        Stop("barge_in", "interrupted"); actor->StopCurrentDialogue();
+        if (session.empty() || !Active()) return false;
         // Invalidate both downloaded and in-flight commands before admitting new input.
         ++snapshotSequence;
-        auto data = Snapshot(actor.get()); lastSnapshot = Fingerprint(data);
+        auto data = Snapshot(actor.get()); lastSnapshot = Fingerprint(data); lastMaterial = MaterialFingerprint(data);
         auto event = Event("snapshot"); event["snapshot"] = data; Queue(std::move(event));
         lastCapture = Clock::now();
         return true;
@@ -290,6 +484,8 @@ private:
     }
     void Queue(json event)
     {
+        if (event["kind"] == "player_text" || event["kind"] == "listen_stop")  // a turn is now pending: poll fast for up to 60 s
+            fastUntilMs = std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now().time_since_epoch()).count() + 60000;
         std::scoped_lock lock(mutex);
         if (event["kind"] == "snapshot")
             std::erase_if(outgoing, [](const json& item) { return item["kind"] == "snapshot"; });
@@ -302,7 +498,7 @@ private:
         auto manager = RE::MenuTopicManager::GetSingleton();
         json dialogue = json::array();
         bool complete = true;
-        {
+        if (manager) {
         DialogueLock lock(manager);
         if (manager->dialogueList) {
             for (auto choice : *manager->dialogueList) {
@@ -319,7 +515,7 @@ private:
                     {"quest_stage", quest ? json(quest->GetCurrentStageID()) : json(nullptr)}, {"provenance", "engine_dialogue_menu"}});
             }
         } else complete = false;
-        }
+        } else complete = false;
         auto cell = actor->GetParentCell();
         bool interior = cell && cell->IsInteriorCell();
         auto sky = RE::Sky::GetSingleton();
@@ -336,10 +532,31 @@ private:
         value.erase("game_days"); value.erase("hour");
         return value.dump();
     }
+    // Only these changes interrupt playback and invalidate in-flight work. Everything else
+    // (sees_player, dialogue list, weather, equipment) still updates the bridge's snapshot.
+    static std::string MaterialFingerprint(const json& data)
+    {
+        json material = json::object();
+        for (const char* who : {"npc", "player"}) {
+            const auto& actor = data[who];
+            material[who] = {{"in_combat", actor["in_combat"]}, {"dead", actor["dead"]}, {"weapon_drawn", actor["weapon_drawn"]},
+                             {"hostile_to_player", actor["hostile_to_player"]}};
+        }
+        const auto id = [&](const char* key) { return data[key].is_object() ? data[key]["form_id"] : json(nullptr); };
+        material["speaker"] = data["npc"]["reference"].is_object() ? data["npc"]["reference"]["form_id"] : json(nullptr);
+        material["location"] = id("location");
+        material["cell"] = id("cell");
+        material["interior"] = data["interior"];
+        return material.dump();
+    }
+    std::int64_t ElapsedMs(Clock::time_point now) const
+    {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(now - deliveryStart).count();
+    }
     void Tick()
     {
         if (resync.exchange(false)) {
-            End(false);
+            End(false, "bridge_stop");
             std::scoped_lock lock(mutex); outgoing.clear();
         }
         auto now = Clock::now();
@@ -349,54 +566,61 @@ private:
             auto reference = manager ? manager->speaker.get() : RE::NiPointer<RE::TESObjectREFR>();
             auto actor = reference ? reference->As<RE::Actor>() : nullptr;
             if (actor && actor != RE::PlayerCharacter::GetSingleton() && actor->GetActorBase()) {
-                if (actor->IsInCombat() || actor->IsDead()) { End(); return; }
-                if (session.empty() || speaker.get().get() != actor) {
-                    End(); session = std::format("{}-{}", epoch, ++serial); sequence = 0;
-                    speaker = actor->GetHandle();
-                    snapshotSequence = 1;
-                    auto data = Snapshot(actor); auto event = Event("start");
-                    event["snapshot"] = data; lastSnapshot = Fingerprint(data); Queue(std::move(event));
-                    lastCapture = now;
-                    std::scoped_lock lock(mutex); workerSession = session;
-                } else if (now - lastCapture >= std::chrono::seconds(1)) {
-                    lastCapture = now;
-                    auto data = Snapshot(actor); auto fingerprint = Fingerprint(data);
-                    if (fingerprint != lastSnapshot) { Stop("interrupted"); ++snapshotSequence; }
-                    auto event = Event("snapshot"); event["snapshot"] = data;
-                    lastSnapshot = std::move(fingerprint); Queue(std::move(event));
-                }
-            } else if (!session.empty()) End();
-        }
+                if (actor->IsInCombat() || actor->IsDead()) { End(true, "combat"); return; }
+                if (session.empty() || speaker.get().get() != actor) BeginSession(actor, now);
+                else if (now - lastCapture >= std::chrono::seconds(1)) RefreshSnapshot(actor, now);
+            } else if (!session.empty()) End(true, "actor_lost");
+        } else if (direct && !open && !session.empty()) TickDirect(now);
+        if (requestPending) ProcessRequest(now);
         std::deque<json> ready;
         { std::scoped_lock lock(mutex); ready.swap(commands); }
         for (const auto& command : ready) {
             try { Apply(command); }
             catch (const std::exception& e) { SKSE::log::error("Rejected command: {}", e.what()); }
         }
+        fastPoll = !delivery.empty() || std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() < fastUntilMs.load();
         if (delivery.empty()) return;
         auto actor = speaker.get();
-        if (!actor || !open || actor->IsInCombat() || actor->IsDead()) Stop("interrupted");
+        if (actor && !sayActive && !openingDelivery) SuppressVanillaSpeech(actor.get(), now);  // the engine's own Say line is not vanilla speech
+        if (!actor || !Active() || actor->IsInCombat() || actor->IsDead())
+            Stop(!actor ? "actor_lost" : !Active() ? "menu_closed" : "combat", "interrupted");
+        else if (sayPending) {
+            // Say gives no receipt: only an engine signal that this actor is speaking proves the line started.
+            const auto waited = std::chrono::duration_cast<std::chrono::milliseconds>(now - sayStart).count();
+            const auto proof = anima::DecideSayProof(VanillaSpeaking(actor.get()), waited);
+            if (proof == anima::SayProof::started) {
+                sayPending = false; audioResult = "full"; startAcked = true;
+                playbackStart = now; playbackEnd = now + std::chrono::milliseconds(plannedMs);
+                SKSE::log::info("ANIMA say: actor speaking after {} ms; delivery={}", waited, delivery);
+                Ack(delivery, "started");
+            } else if (proof == anima::SayProof::failed) {
+                sayPending = false;
+                SKSE::log::error("ANIMA say: actor not speaking within {} ms; delivery={}", anima::kSayProofMs, delivery);
+                Stop("audio_failed", "failed", "failed");
+            }
+        }
         else if (audioStarted) {
             const auto current = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-            if (!audioState.observed && UtcMs() >= audioStartExpiry) { Stop("failed"); return; }
-            const auto decision = audioState.Update(current, sound.IsPlaying());
+            const bool playing = sound.IsPlaying();
+            if (playing != lastPlaying) {
+                lastPlaying = playing;
+                SKSE::log::info("ANIMA IsPlaying -> {}; delivery={} soundID={} elapsed_ms={}", playing, delivery, sound.soundID, ElapsedMs(now));
+            }
+            const auto decision = audioState.Update(current, playing);
             if (decision == anima::AudioDecision::started) {
                 playbackStart = now;
                 SKSE::log::info("ANIMA observed native audio playing; delivery={} soundID={}", delivery, sound.soundID);
-                Ack(delivery, "started");
+                startAcked = true; Ack(delivery, "started");
             } else if (decision == anima::AudioDecision::failed) {
                 SKSE::log::error("ANIMA audio failed: observedPlaying={} soundID={}", audioState.observed, sound.soundID);
-                Stop("failed");
-            } else if (decision == anima::AudioDecision::interrupted) Stop("interrupted");
-            else if (decision == anima::AudioDecision::completed) {
-                const auto closeMenu = endAfter; Stop("completed");
-                if (closeMenu) RE::UIMessageQueue::GetSingleton()->AddMessage(RE::DialogueMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kHide, nullptr);
-            }
+                if (audioState.observed) FinishDelivery("audio_failed", "full");  // heard, but ran far past its plan
+                else DowngradeToSubtitle("failed");
+            } else if (decision == anima::AudioDecision::ended_early) {
+                SKSE::log::warn("ANIMA audio ended early; delivery={} soundID={} elapsed_ms={} planned_ms={}", delivery, sound.soundID, ElapsedMs(now), plannedMs);
+                DowngradeToSubtitle("ended_early");
+            } else if (decision == anima::AudioDecision::completed) FinishDelivery("end", "full");
         }
-        else if (now >= playbackEnd) {
-            auto closeMenu = endAfter; Stop("completed");
-            if (closeMenu) RE::UIMessageQueue::GetSingleton()->AddMessage(RE::DialogueMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kHide, nullptr);
-        }
+        else if (now >= playbackEnd) FinishDelivery("end", audioResult.c_str());
         if (!delivery.empty() && mouthOwned && (!audioStarted || audioState.observed) && !mouth.empty()) {
             auto face = actor->GetFaceGenAnimationData();
             auto index = static_cast<std::size_t>(std::chrono::duration<float>(now - playbackStart).count() * 20);
@@ -405,6 +629,50 @@ private:
                 face->phenomeKeyFrame.SetValue(0, index < mouth.size() ? mouth[index] : 0.0F);
             }
         }
+    }
+    // Cheap engine signals of vanilla speech from this NPC, none of which is Anima's sound handle:
+    // MenuTopicManager::currentTopicInfo (set only while a menu-selected topic or greeting is being spoken)
+    // and a subtitle from the speaker that is not our own text (barks, greetings, scripted Say).
+    bool VanillaSpeaking(RE::Actor* actor)
+    {
+        if (auto topics = RE::MenuTopicManager::GetSingleton(); topics && topics->currentTopicInfo && topics->speaker == speaker) return true;
+        if (auto manager = RE::SubtitleManager::GetSingleton()) {
+            RE::BSSpinLockGuard lock(manager->lock);
+            const auto handle = actor->GetHandle();
+            for (const auto& info : manager->subtitles)
+                if (info.speaker == handle && subtitleText != info.subtitle.c_str()) return true;
+        }
+        return false;
+    }
+    void SuppressVanillaSpeech(RE::Actor* actor, Clock::time_point now)
+    {
+        const auto action = suppressor.Decide(suppressVanilla, !delivery.empty(), suppressVanilla && VanillaSpeaking(actor));
+        if (action == anima::SuppressAction::none) return;
+        actor->StopCurrentDialogue();
+        if (action == anima::SuppressAction::stop_and_log)
+            SKSE::log::info("ANIMA suppressed vanilla speech: reason=vanilla_dialogue_during_reply delivery={} elapsed_ms={}", delivery, ElapsedMs(now));
+    }
+    // Mantella's NpcSpeak route: the actor says an Anima.esp topic whose voice and lip files the bridge wrote.
+    // Dispatched as ObjectReference.Say through the Papyrus VM. False (with the reason logged) when Anima.esp or
+    // the topic is not loaded or the call cannot be queued, so the bridge can fall back to system audio.
+    bool SayTopic(RE::Actor* actor, long long index)
+    {
+        const auto local = anima::SayTopicLocalId(index);
+        auto data = RE::TESDataHandler::GetSingleton();
+        auto topic = local && data ? data->LookupForm<RE::TESTopic>(local, "Anima.esp") : nullptr;
+        if (!topic) { SKSE::log::error("ANIMA say: Anima.esp topic {} not found (is Anima.esp enabled?); falling back", index); return false; }
+        auto vm = RE::BSScript::Internal::VirtualMachine::GetSingleton();
+        auto policy = vm ? vm->GetObjectHandlePolicy() : nullptr;
+        const auto handle = policy ? policy->GetHandleForObject(actor->GetFormType(), actor) : RE::VMHandle{};
+        RE::BSTSmartPointer<RE::BSScript::IStackCallbackFunctor> callback;
+        if (!handle || !vm->DispatchMethodCall(handle, "ObjectReference", "Say",
+                RE::MakeFunctionArguments(static_cast<RE::TESTopic*>(topic), static_cast<RE::Actor*>(nullptr), false), callback)) {
+            SKSE::log::error("ANIMA say: ObjectReference.Say could not be dispatched for actor={:08X}", actor->GetFormID());
+            return false;
+        }
+        sayActive = true;
+        SKSE::log::info("ANIMA say: topic {} dispatched for actor={:08X}", index, actor->GetFormID());
+        return true;
     }
     void AddSubtitle(RE::Actor* actor, const std::string& text)
     {
@@ -422,7 +690,7 @@ private:
         if (kind == "idle" || command.value("session_id", "") != session || session.empty()) return;
         auto id = command.value("delivery_id", "");
         if (kind == "stop") {
-            if (delivery == id) Stop("interrupted");
+            if (delivery == id) Stop("bridge_stop", "interrupted");
             else if (!seen.contains(id)) Ack(id, "interrupted");
             seen.insert(id); return;
         }
@@ -431,7 +699,7 @@ private:
         const auto target = command.value("npc_id", "");
         const auto expected = actor ? std::format("ref:{:08x}", actor->GetFormID()) : "";
         const auto requestSession = command.value("session_id", "");
-        const bool ready = actor && open && !actor->IsInCombat() && !actor->IsDead() && seen.size() < 128;
+        const bool ready = actor && Active() && !actor->IsInCombat() && !actor->IsDead() && seen.size() < 128;
         const auto decision = anima::Evaluate(
             {requestSession, target, id, command.value("snapshot_sequence", 0ULL), command.value("expires_at_ms", 0LL), command.value("text", "").size()},
             {session, expected, snapshotSequence, UtcMs(), ready, false, seen.contains(id)});
@@ -439,74 +707,118 @@ private:
         if (decision == anima::Decision::reject) {
             Ack(id, "failed"); seen.insert(id); return;
         }
-        if (command.value("mode", "speech") == "silence") { seen.insert(id); Ack(id, "completed"); return; }
-        actor->StopCurrentDialogue();
-        Stop("interrupted"); delivery = id; seen.insert(id); audioStarted = false;
+        if (command.value("mode", "speech") == "silence") { seen.insert(id); Ack(id, "completed", "end", "none"); return; }
+        const auto topicIndex = command.contains("topic_index") && command["topic_index"].is_number_integer() ? command["topic_index"].get<long long>() : 0LL;
+        const bool opening = id.starts_with("opening-");
+        if (anima::MayStopCurrentDialogue(opening)) actor->StopCurrentDialogue();  // an opening must never cut off the NPC's own greeting or quest lines
+        Stop("superseded", "interrupted"); openingDelivery = opening; delivery = id; seen.insert(id); audioStarted = false;
+        audioResult = "none"; startAcked = false; lastPlaying = false; deliveryStart = Clock::now(); suppressor.Begin();
         if (command.contains("audio_file") && !command["audio_file"].is_null()) {
             auto path = command["audio_file"].get<std::string>();
             if (path != std::format("Sound/Voice/AnimaConnector/{}.wav", id) || !std::filesystem::exists(std::filesystem::path("Data") / path)) {
-                Stop("failed"); return;
+                Stop("audio_failed", "failed", "failed"); return;
             }
             std::replace(path.begin(), path.end(), '/', '\\');
             RE::BSResourceNiBinaryStream resource(path);
             SKSE::log::info("ANIMA audio resource: delivery={} good={} error={} priority=128", id, resource.good(), static_cast<int>(resource.lastError));
-            if (!resource.good()) { Stop("failed"); return; }
             sound = RE::BSSoundHandle{};
-            BuildVoice(sound, path.c_str());
-            sound.SetPosition(actor->GetPosition());
-            if (auto node = actor->Get3D()) sound.SetObjectToFollow(node);
-            if (!sound.IsValid() || !sound.Play()) { Stop("failed"); return; }
-            audioStarted = true;
+            if (resource.good()) {
+                BuildVoice(sound, path.c_str());
+                sound.SetPosition(actor->GetPosition());
+                if (auto node = actor->Get3D()) sound.SetObjectToFollow(node);
+                if (sound.IsValid() && sound.Play()) audioStarted = true;
+            }
+            // Audio that cannot start still leaves the player a subtitle to read.
+            audioResult = audioStarted ? "full" : "failed";
+            if (!audioStarted) SKSE::log::error("ANIMA audio could not start; subtitle only. delivery={}", id);
         }
+        if (topicIndex && !SayTopic(actor.get(), topicIndex)) { Stop("say_unavailable", "failed", "none"); return; }
         AddSubtitle(actor.get(), command.value("text", "")); mouth.clear();
-        if (animateMouth && audioStarted && command.contains("mouth") && command["mouth"].is_array() && command["mouth"].size() <= 600) {
+        if (animateMouth && !sayActive && command.contains("mouth") && command["mouth"].is_array() && command["mouth"].size() <= 600) {
             for (const auto& value : command["mouth"]) mouth.push_back(std::clamp(value.get<float>(), 0.0F, 1.0F));
             if (auto face = actor->GetFaceGenAnimationData(); face && face->phenomeKeyFrame.count && face->phenomeKeyFrame.values) {
                 RE::BSSpinLockGuard lock(face->lock); originalMouth = face->phenomeKeyFrame.values[0]; mouthOwned = true;
             }
         }
         auto duration = std::clamp(command.value("duration_s", 3.0), 0.05, 30.0);
+        lastActivity = Clock::now();
         playbackStart = Clock::now(); playbackEnd = playbackStart + std::chrono::milliseconds(static_cast<int>(duration * 1000));
         endAfter = command.value("mode", "speech") == "end";
-        if (audioStarted) {
-            audioStartExpiry = command.value("expires_at_ms", 0LL);
-            audioState.Begin(std::chrono::duration_cast<std::chrono::milliseconds>(playbackStart.time_since_epoch()).count(),
-                             static_cast<std::int64_t>(duration * 1000));
-        } else Ack(id, "started");
+        plannedMs = static_cast<std::int64_t>(duration * 1000);
+        if (sayActive) { audioResult = "none"; sayPending = true; sayStart = Clock::now(); }  // started/full only once the actor is seen speaking
+        else if (audioStarted) {
+            audioState.Begin(std::chrono::duration_cast<std::chrono::milliseconds>(playbackStart.time_since_epoch()).count(), plannedMs);
+        } else { startAcked = true; Ack(id, "started"); }
     }
-    void Ack(const std::string& id, const char* status)
+    void Ack(const std::string& id, const char* status, const char* reason = nullptr, const char* audio = nullptr)
     {
         if (session.empty() || id.empty()) return;
-        auto event = Event("delivery"); event["delivery_id"] = id; event["status"] = status; Queue(std::move(event));
+        auto event = Event("delivery"); event["delivery_id"] = id; event["status"] = status;
+        if (reason) event["reason"] = reason;
+        if (audio) event["audio"] = audio;
+        Queue(std::move(event));
     }
-    void Stop(const char* status)
+    // Audio stopped being the clock (ended early or never started): drop mouth animation, keep the subtitle
+    // up to the planned duration, then report completed. Never waits for expires_at_ms.
+    void DowngradeToSubtitle(const char* audio)
     {
-        if (delivery.empty()) return;
+        SKSE::log::info("ANIMA subtitle-only continuation; delivery={} audio={} soundID={} elapsed_ms={} planned_ms={}",
+                        delivery, audio, sound.soundID, ElapsedMs(Clock::now()), plannedMs);
         if (audioStarted) sound.Stop();
+        ReleaseMouth();
+        audioStarted = false; audioResult = audio;
+        if (!startAcked) { startAcked = true; Ack(delivery, "started"); }
+    }
+    void FinishDelivery(const char* reason, const char* audio)
+    {
+        const auto closeMenu = endAfter;
+        Stop(reason, "completed", audio); lastActivity = Clock::now();
+        if (closeMenu) RE::UIMessageQueue::GetSingleton()->AddMessage(RE::DialogueMenu::MENU_NAME, RE::UI_MESSAGE_TYPE::kHide, nullptr);
+    }
+    void ReleaseMouth()
+    {
         auto actor = speaker.get();
         if (mouthOwned && actor) {
             if (auto face = actor->GetFaceGenAnimationData(); face && face->phenomeKeyFrame.count && face->phenomeKeyFrame.values) {
                 RE::BSSpinLockGuard lock(face->lock); face->phenomeKeyFrame.SetValue(0, originalMouth);
             }
         }
-        if (!subtitleText.empty()) {
-            if (auto manager = RE::SubtitleManager::GetSingleton()) {
-                RE::BSSpinLockGuard lock(manager->lock);
-                for (auto it = manager->subtitles.begin(); it != manager->subtitles.end();) {
-                    if (it->speaker == speaker && subtitleText == it->subtitle.c_str()) it = manager->subtitles.erase(it);
-                    else ++it;
-                }
+        mouthOwned = false;
+    }
+    void RemoveSubtitle()
+    {
+        if (subtitleText.empty()) return;
+        if (auto manager = RE::SubtitleManager::GetSingleton()) {
+            RE::BSSpinLockGuard lock(manager->lock);
+            for (auto it = manager->subtitles.begin(); it != manager->subtitles.end();) {
+                if (it->speaker == speaker && subtitleText == it->subtitle.c_str()) it = manager->subtitles.erase(it);
+                else ++it;
             }
         }
-        subtitleText.clear(); mouthOwned = false; audioStarted = false; Ack(delivery, status); delivery.clear();
+        subtitleText.clear();
     }
-    void End(bool notify = true)
+    // Every stop names its reason and logs the context needed to diagnose it from the plugin log.
+    // `audio` is reported to the bridge only when the outcome of the audio is known.
+    void Stop(const char* reason, const char* status, const char* audio = nullptr)
+    {
+        if (delivery.empty()) return;
+        SKSE::log::info("ANIMA stop: reason={} status={} audio={} delivery={} soundID={} elapsed_ms={} planned_ms={}",
+                        reason, status, audio ? audio : "-", delivery, audioStarted ? sound.soundID : 0u,
+                        ElapsedMs(Clock::now()), plannedMs);
+        if (audioStarted) sound.Stop();
+        if (sayActive && !openingDelivery) { if (auto actor = speaker.get()) actor->StopCurrentDialogue(); }
+        sayActive = false; sayPending = false;
+        ReleaseMouth();
+        RemoveSubtitle();  // the subtitle lives exactly as long as the delivery
+        subtitleText.clear(); audioStarted = false; Ack(delivery, status, reason, audio); delivery.clear();
+    }
+    void End(bool notify = true, const char* reason = "state_changed")
     {
         if (uiState.panel != anima::Panel::none) CallUi("CloseCustomMenu");
         CancelUi(); nextUi = -1;
-        Stop("interrupted");
+        Stop(reason, "interrupted");
         if (notify && !session.empty()) Queue(Event("end"));
-        session.clear(); seen.clear(); listening = false;
+        session.clear(); seen.clear(); listening = false; direct = false;
         std::scoped_lock lock(mutex); workerSession.clear(); commands.clear();
     }
     json Request(const wchar_t* method, const std::wstring& path, const std::string& body = "")
@@ -536,6 +848,7 @@ private:
     void Worker()
     {
         auto lastWarning = Clock::now() - std::chrono::seconds(30);
+        unsigned failures = 0;
         while (true) {
             if (uiRenderPanel != anima::Panel::none && !uiFilled && !uiTaskPending.exchange(true)) {
                 auto generation = uiRenderGeneration.load();
@@ -560,7 +873,9 @@ private:
                     auto result = Request(L"GET", L"/v1/game/command?session_id=" + std::wstring(current.begin(), current.end()));
                     if (result.value("kind", "idle") != "idle") { std::scoped_lock lock(mutex); if (commands.size() < 4) commands.push_back(std::move(result)); }
                 }
+                failures = 0;
             } catch (const HttpError& e) {
+                failures = std::min(failures + 1, 16u);
                 SKSE::log::warn("Bridge rejected request: {}", e.what());
                 if (e.status >= 400 && e.status < 500) {
                     std::scoped_lock lock(mutex);
@@ -568,12 +883,24 @@ private:
                     if (e.resync) resync = true;
                 }
             } catch (const std::exception& e) {
+                failures = std::min(failures + 1, 16u);
                 if (Clock::now() - lastWarning > std::chrono::seconds(10)) { SKSE::log::warn("Bridge: {}", e.what()); lastWarning = Clock::now(); }
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(anima::PollDelayMs(fastPoll.load(), failures)));
         }
     }
 };
+}
+namespace {
+void OpenConversationNative(RE::StaticFunctionTag*)
+{
+    SKSE::GetTaskInterface()->AddTask([] { Connector::Get().OnConversationLine(); });
+}
+bool RegisterPapyrus(RE::BSScript::IVirtualMachine* vm)
+{
+    vm->RegisterFunction("OpenConversation", "AnimaNative", OpenConversationNative);
+    return true;
+}
 }
 extern "C" __declspec(dllexport) constinit SKSE::PluginVersionData SKSEPlugin_Version = anima::VersionMetadata();
 extern "C" __declspec(dllexport) bool SKSEPlugin_Load(const SKSE::LoadInterface* skse)
@@ -602,7 +929,8 @@ extern "C" __declspec(dllexport) bool SKSEPlugin_Load(const SKSE::LoadInterface*
         return false;
     }
     SKSE::Init(skse);
-    SKSE::log::info("AnimaConnector 0.3.0 loading on Skyrim {}; Address Library format {}", version.string(),
+    SKSE::GetPapyrusInterface()->Register(RegisterPapyrus);
+    SKSE::log::info("AnimaConnector 0.5.3 loading on Skyrim {}; Address Library format {}", version.string(),
                    anima::AddressLibraryFormat({version.major(),version.minor(),version.patch(),version.build()}));
     return SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message* message) {
         if (message->type == SKSE::MessagingInterface::kDataLoaded) Connector::Get().Initialize();

@@ -6,11 +6,18 @@ import json
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_anima_esp import build_esp  # noqa: E402
+
 SUPPORTED_RUNTIMES = ("1.6.318.0", "1.7.104.0")
 NATIVE = ROOT / "src/npc/adapters/skyrim/native"
+PAPYRUS = ROOT / "src/npc/adapters/skyrim/papyrus"
+# AnimaMCM.psc needs SkyUI and has no quest attached, so it is not part of this package.
+PAPYRUS_SCRIPTS = ("AnimaNative.psc", "AnimaStartDialogue.psc")
 
 
 def command(arguments, cwd=ROOT):
@@ -48,24 +55,44 @@ def find_cmake():
     raise ValueError("Install CMake >=3.25, or install cmake==3.31.6 into output/build-tools with pip --target")
 
 
-def package(dll: Path, pins):
+def compile_papyrus(output: Path):
+    """Compile the dialogue-start scripts with Caprica against the pinned interface stubs; returns the .pex files."""
+    caprica = ROOT / ".tools/Caprica/Caprica.exe"
+    sdk = ROOT / ".tools/papyrus-sdk/interfaces"
+    if not caprica.is_file() or not sdk.is_dir():
+        raise ValueError("Missing .tools/Caprica or .tools/papyrus-sdk; cannot compile the Papyrus scripts")
+    output.mkdir(parents=True, exist_ok=True)
+    # Run inside the script folder: Caprica derives script namespaces from the path relative to the working directory.
+    command([caprica, "--game", "skyrim", "--import", sdk, "--flags", sdk / "TESV_Papyrus_Flags.flg",
+             "--output", output, *PAPYRUS_SCRIPTS], cwd=PAPYRUS)
+    return [output / Path(name).with_suffix(".pex") for name in PAPYRUS_SCRIPTS]
+
+
+def package(dll: Path, pins, console: Path, scripts=()):
     output = ROOT / "output/skyrim-mod"
     output.mkdir(parents=True, exist_ok=True)
     path = output / "AnimaConnector.zip"
-    manifest = {"plugin_version": "0.3.0", "target_runtimes": list(SUPPORTED_RUNTIMES),
-                "dll_sha256": hashlib.sha256(dll.read_bytes()).hexdigest(), "dependencies": pins,
+    manifest = {"plugin_version": "0.5.3", "target_runtimes": list(SUPPORTED_RUNTIMES),
+                "dll_sha256": hashlib.sha256(dll.read_bytes()).hexdigest(),
+                "console_exe_sha256": hashlib.sha256(console.read_bytes()).hexdigest(), "dependencies": pins,
                 "live_game_verified": False,
                 "runtime_verification": {runtime: "not_live_verified" for runtime in SUPPORTED_RUNTIMES}}
     with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         archive.write(dll, "SKSE/Plugins/AnimaConnector.dll")
+        archive.write(console, "SKSE/Plugins/AnimaConsole.exe")
+        archive.write(NATIVE / "anima.ico", "AnimaConnector/source/native/anima.ico")
         archive.write(NATIVE / "AnimaConnector.ini", "SKSE/Plugins/AnimaConnector.ini")
+        # Fixed timestamp keeps the archive entry reproducible; the plugin is generated, not copied.
+        archive.writestr(zipfile.ZipInfo("Anima.esp", (2026, 1, 1, 0, 0, 0)), build_esp())
+        for script in scripts:
+            archive.write(script, f"Scripts/{Path(script).name}")
         archive.writestr("AnimaConnector/build.json", json.dumps(manifest, indent=2))
         archive.write(ROOT / "docs/SKYRIM_CONNECTOR.md", "AnimaConnector/README.md")
         archive.write(ROOT / "docs/reviews/2026-11-02-skyrim-connector.md", "AnimaConnector/reviews/2026-11-02-skyrim-connector.md")
         archive.write(ROOT / "configs/skyrim/native-dependencies.json", "AnimaConnector/source/native-dependencies.json")
         archive.write(ROOT / "configs/skyrim/native-dependencies.legacy-1.6.318.json", "AnimaConnector/source/native-dependencies.legacy-1.6.318.json")
         for source_file in NATIVE.rglob("*"):
-            if source_file.is_file() and source_file.suffix in {".h", ".cpp", ".txt", ".cmake", ".ini"}:
+            if source_file.is_file() and source_file.suffix in {".h", ".cpp", ".txt", ".cmake", ".ini", ".rc"}:
                 archive.write(source_file, "AnimaConnector/source/native/" + source_file.relative_to(NATIVE).as_posix())
         # Retain source licenses for statically linked/include-only dependencies.
         for name in pins:
@@ -75,6 +102,7 @@ def package(dll: Path, pins):
                     archive.write(source / filename, f"AnimaConnector/licenses/{name}-{filename}")
             if name == "spdlog":
                 archive.write(source / "include/spdlog/fmt/bundled/fmt.license.rst", "AnimaConnector/licenses/fmt-LICENSE.rst")
+    (output / "Anima.esp").write_bytes(build_esp())  # keep the unpacked copy in step with the packaged plugin
     (output / "build.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return path
 
@@ -100,10 +128,13 @@ def main():
         build = args.build_dir.resolve()
         configure = configure_arguments(cmake, build, args.generator)
         command(configure)
-        command([cmake, "--build", build, "--config", "Release", "--target", "AnimaConnector", "AnimaDeliveryTests", "AnimaRuntimeTests", "--parallel", "2"])
+        command([cmake, "--build", build, "--config", "Release", "--target", "AnimaConnector", "AnimaConsole", "AnimaDeliveryTests", "AnimaRuntimeTests", "--parallel", "2"])
         command([cmake.parent / "ctest.exe", "--test-dir", build, "-C", "Release", "--output-on-failure"])
         dll = build / "Release/AnimaConnector.dll" if args.generator.startswith("Visual Studio") else build / "AnimaConnector.dll"
-        print(package(dll, pins))
+        console = build / "Release/AnimaConsole.exe" if args.generator.startswith("Visual Studio") else build / "AnimaConsole.exe"
+        scripts = compile_papyrus(ROOT / "output/skyrim-mod/papyrus")
+        print(package(dll, pins, console, scripts))
+        shutil.copyfile(console, ROOT / "output/skyrim-mod/AnimaConsole.exe")  # where install_skyrim_console.py writes its INI
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"Connector build failed: {error}\n")
 

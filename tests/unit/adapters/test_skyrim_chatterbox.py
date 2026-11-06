@@ -38,7 +38,7 @@ def test_connector_auto_enables_prepared_turbo_and_owns_worker_lifecycle(tmp_pat
             if not external:
                 assert client.get('/v1/speech/health').json()['tts']=='Chatterbox Turbo'
                 assert workers[0].started==1
-    monkeypatch.setattr('uvicorn.run',serve)
+    monkeypatch.setattr('uvicorn.run',serve); monkeypatch.setattr(entry,'port_taken',lambda port: False)  # a live bridge may hold the port
     entry.main()
     assert settings[0].tts_url==('http://localhost:9999/tts' if external else 'http://127.0.0.1:8768/v1/speech/tts')
     assert len(workers)==(0 if external else 1)
@@ -56,7 +56,7 @@ def test_bridge_adds_npc_identity_only_to_builtin_tts(tmp_path, external):
         requests.append(json.loads(request.content))
         return httpx.Response(200,content=audio(),headers={'content-type':'audio/wav'})
     async def run():
-        bridge=Bridge(settings(tmp_path,tts_url='http://localhost/tts' if external else 'http://127.0.0.1:8768/v1/speech/tts'),
+        bridge=Bridge(settings(tmp_path,audio_output='engine',tts_url='http://localhost/tts' if external else 'http://127.0.0.1:8768/v1/speech/tts'),
             root=tmp_path,client=httpx.AsyncClient(transport=httpx.MockTransport(respond)))
         try:
             await pending(bridge)

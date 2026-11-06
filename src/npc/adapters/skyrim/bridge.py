@@ -11,12 +11,17 @@ from collections import deque
 
 import httpx
 
-from .assets import Artifacts, MAX_WAV_BYTES, mouth_envelope, read_audio, stage_audio, wav_duration
-from .protocol import GameEvent, NpcProfile, PipelineResult, Settings, SpeechInput, canonical_scenario, npc_id, profile_for
+from .assets import Artifacts, MAX_WAV_BYTES, mouth_envelope, read_audio, stage_audio, stage_playback, wav_duration
+from .audio_output import SystemAudio
+from .say_output import next_topic, stage_say
+from .voice_types import VoiceTypeResolver
+from .protocol import GameEvent, NpcProfile, memory_branch, PipelineResult, Settings, SpeechInput, canonical_scenario, npc_id, profile_for
+from .personas import load_rules
 from .windows import Microphone, capture_client
 from .diagnostics import event as log_event
 from npc.vision import CVSceneClient, CVFailure, VisualContext
 from npc.state.social_store import SocialStore, StoreFailure
+from npc.behavior.moves import opening_plan
 from npc.contracts.context import Relationship, Scope, PlayerInput
 
 
@@ -41,17 +46,24 @@ class Session:
     events: set = field(default_factory=set)
     screenshot: dict | None = None
     context_task: asyncio.Task | None = None
+    opening_task: asyncio.Task | None = None
     turn_task: asyncio.Task | None = None
     cancelled_tasks: set = field(default_factory=set)
     visual: VisualContext | None = None
     visual_revision: int = -1
     visual_time: float = 0
     visual_status: str = "disabled"
+    timings: dict = field(default_factory=dict)  # request_id -> stage record for TURN_TIMING, until emitted
+
+
+PLAYBACK_PAD_S = 0.4
+TIMING_STAGES = ("stt_ms", "context_wait_ms", "retrieval_ms", "prompt_ms", "model_ms", "validation_ms",
+                 "pipeline_ms", "tts_ms", "staging_ms", "native_start_ms")
 
 
 class Bridge:
     def __init__(self, settings: Settings, *, root: Path, capture=capture_client,
-                 client: httpx.AsyncClient | None = None, runner=None, microphone=None, clock=time.time, cv_client=None):
+                 client: httpx.AsyncClient | None = None, runner=None, microphone=None, clock=time.time, cv_client=None, audio=None):
         self.settings, self.root = settings, root.resolve()
         self.output = self.resolve(settings.output_directory)
         self.game = self.resolve(settings.game_directory)
@@ -67,6 +79,9 @@ class Bridge:
             if len(raw) > 256:
                 raise ValueError("too many NPC profiles")
             self.profiles = {key.lower(): NpcProfile.model_validate(value) for key, value in raw.items()}
+        self.rules = None
+        if settings.role_rules_file:
+            self.rules = load_rules(self.resolve(settings.role_rules_file))
         if settings.pipeline_mode == "http" and not settings.pipeline_url:
             raise ValueError("pipeline_url is required in HTTP mode")
         self.client = client or httpx.AsyncClient(timeout=settings.timeout_s, trust_env=False,
@@ -82,6 +97,13 @@ class Bridge:
         self._background: set[asyncio.Task] = set()
         self._microphone_task: asyncio.Task | None = None
         self._mic_gate = asyncio.Lock()
+        self.audio = audio or SystemAudio()
+        self._playback: dict[str, dict] = {}  # delivery_id -> {path, duration, ends_at}; system audio only
+        self._playing: str | None = None
+        self._say_topic, self._say_off = 0, False  # last Anima.esp topic used; True after the plugin reported no Anima.esp
+        self.voice_types = VoiceTypeResolver(self.game / "Data")
+        self._cleanups: set[asyncio.Task] = set()
+        self._sweep_playback()
 
     def resolve(self, value):
         path = Path(value)
@@ -103,11 +125,32 @@ class Bridge:
         return task
 
     async def close(self):
-        for task in tuple(self._background):
+        for task in tuple(self._background | self._cleanups):
             task.cancel()
-        await asyncio.gather(*self._background, return_exceptions=True)
+        await asyncio.gather(*self._background, *self._cleanups, return_exceptions=True)
+        self._drop_playback()
         await asyncio.to_thread(self.microphone.discard)
-        await self.client.aclose()
+        try:
+            runner_close = getattr(self.runner, "aclose", None)
+            if runner_close is not None:
+                await runner_close()  # The model provider keeps one connection open between turns.
+        finally:
+            await self.client.aclose()
+
+    def _stage(self, session, request_id, name, since):
+        record = session.timings.get(request_id)
+        if record is not None:
+            record[name] = round((self.clock() - since) * 1000, 1)
+
+    def _timing_done(self, session, request_id, outcome):
+        """Emit one TURN_TIMING line per turn, with every stage reached; unreached stages read `none`."""
+        record = session.timings.pop(request_id, None)
+        if record is None:
+            return
+        stages = {name: record.get(name, "none") for name in TIMING_STAGES}
+        log_event("TURN_TIMING", session=session.event.session_id, request=request_id, outcome=outcome,
+                  source=record.get("source", "text"), turn_type=record.get("turn_type", "none"), move=record.get("move", "none"),
+                  total_ms=round((self.clock() - record["t0"]) * 1000, 1), **stages)
 
     def current(self, session_id):
         if self.session is None or self.session.event.session_id != session_id:
@@ -115,6 +158,8 @@ class Bridge:
         return self.session
 
     def invalidate(self, session):
+        for request_id in tuple(session.timings):
+            self._timing_done(session, request_id, "cancelled")
         if session.turn_task and not session.turn_task.done():
             session.cancelled_tasks.add(session.turn_task)
             session.turn_task.cancel()
@@ -127,6 +172,7 @@ class Bridge:
         session.request_id = None
         if session.delivery and session.delivery_status not in {"completed", "interrupted", "failed"}:
             session.cancelled_deliveries[session.delivery["delivery_id"]] = dict(session.delivery)
+            self._drop_playback(session.delivery["delivery_id"])
             session.delivery = {**session.delivery, "kind": "stop"}
 
     async def game_event(self, event: GameEvent):
@@ -149,6 +195,8 @@ class Bridge:
             log_event("SESSION_OPEN", session=event.session_id, npc=npc_id(event.snapshot),
                       name=event.snapshot.npc.base.name if event.snapshot.npc.base else "unknown")
             session.context_task = self.spawn(self.publish_context(session, "context_ready"))
+            if self.settings.opening_lines and event.direct:  # vanilla menu sessions already have the NPC's own greeting
+                session.opening_task = self.spawn(self.open_conversation(session))
             return {"status": "ready", "npc_id": npc_id(event.snapshot)}
         session = self.current(event.session_id)
         if event.game_epoch != session.event.game_epoch:
@@ -185,18 +233,35 @@ class Bridge:
                 session.events.add(event.event_id)
                 session.last_sequence = event.sequence
                 return {"status": session.delivery_status}
+            if current and event.status == "failed" and event.reason in {"say_unavailable", "audio_failed"} and command.get("topic_index"):
+                self._say_fallback(session, command, event.reason)
+                session.events.add(event.event_id)
+                session.last_sequence = event.sequence
+                return {"status": "fallback_system"}
             if self.state_store and session.social_key and not retired:
                 if event.status == "completed":
                     self.state_store.displayed(session.social_key, command["request_id"])
                 elif event.status in {"interrupted", "failed"}:
                     self.state_store.cancel(session.social_key, command["request_id"])
             if current:
+                first_start = event.status == "started" and session.delivery_status != "started"
                 session.delivery_status = event.status
+                if first_start:
+                    self._start_playback(event.delivery_id)
+                record = session.timings.get(command["request_id"])
+                if record is not None and "staged_at" in record:
+                    self._stage(session, command["request_id"], "native_start_ms", record["staged_at"])
+                    self._timing_done(session, command["request_id"], event.status)
             log_event("NATIVE_ACK", session=event.session_id, request=command["request_id"],
-                      delivery=event.delivery_id, status=event.status, heard="unverified",
+                      delivery=event.delivery_id, status=event.status, reason=event.reason or "unreported",
+                      audio=event.audio or "unreported", heard="unverified",
                       memory_committed=event.status == "completed" and not retired and bool(self.state_store))
             if event.status in {"completed", "interrupted", "failed"}:
                 self._remove_staged_audio(session, command)
+                if event.status == "completed":
+                    self._finish_playback(event.delivery_id)
+                else:
+                    self._drop_playback(event.delivery_id)
                 session.cancelled_deliveries.pop(event.delivery_id, None)
             self.spawn(self.publish({"kind": "delivery", "session_id": event.session_id,
                                 "delivery_id": event.delivery_id, "request_id": command["request_id"],
@@ -206,6 +271,7 @@ class Bridge:
                 raise ConnectionError("text entry requires nonempty text")
             await self.player_input(SpeechInput(session_id=event.session_id, input_id=event.event_id, text=event.text), interrupt=True)
         elif event.kind == "listen_start":
+            self._cancel_opening(session)
             if not self.settings.stt_url:
                 self.error = "stt_not_configured"
             elif self._microphone_task and not self._microphone_task.done():
@@ -217,6 +283,128 @@ class Bridge:
         session.events.add(event.event_id)
         session.last_sequence = event.sequence
         return {"status": "accepted"}
+
+    def _cancel_opening(self, session):
+        task = session.opening_task
+        if task and not task.done() and task is not asyncio.current_task():
+            task.cancel()
+        session.opening_task = None
+
+    async def open_conversation(self, session):
+        """Authored greeting at session start. Not a player turn: nothing is recorded in memory for it.
+
+        Waits briefly so the NPC's own vanilla greeting is not talked over; any player input cancels it.
+        """
+        await asyncio.sleep(self.settings.opening_delay_s)
+        if (self.session is not session or session.inputs or session.request_id or session.delivery
+                or session.opening_task is not asyncio.current_task()):
+            return
+        data = session.event.snapshot
+        if data.npc.dead or data.npc.in_combat or data.npc.hostile_to_player:
+            return
+        profile = profile_for(data, self.profiles, self.rules)
+        request_id = "opening-" + uuid.uuid4().hex
+        plan = opening_plan(profile.persona, request_id)
+        session.request_id = request_id
+        session.deadline = self.clock() + self.settings.timeout_s
+        session.inputs[request_id] = "pending"
+        log_event("OPENING", session=session.event.session_id, request=request_id, npc=npc_id(data), text=plan.authored_text)
+        try:
+            await self.result(PipelineResult(session_id=session.event.session_id, request_id=request_id,
+                                             npc_id=npc_id(data), mode="speech", text=plan.authored_text, move="opening"))
+        except asyncio.CancelledError:
+            if session.request_id == request_id:
+                session.request_id = None
+            session.inputs[request_id] = "cancelled"
+            raise
+        except (ConnectionError, ValueError, OSError):
+            if session.request_id == request_id:
+                session.request_id = None
+            session.inputs[request_id] = "failed"
+
+    def _sweep_playback(self):
+        try:
+            for stale in (self.output / "speech" / "playback").glob("*.wav"):
+                stale.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+    def _start_playback(self, delivery_id):
+        item = self._playback.get(delivery_id)
+        if item is None or item.get("standby"):  # standby: engine `say` is the voice; this copy is only the fallback
+            return
+        try:
+            self.audio.play(item["path"])
+            self._playing = delivery_id
+            item["ends_at"] = time.monotonic() + item["seconds"]
+            log_event("AUDIO_OUTPUT", mode="system", delivery=delivery_id, duration_ms=round(item["seconds"] * 1000))
+        except Exception as error:  # The subtitle keeps running; audio never fails the turn.
+            log_event("AUDIO_OUTPUT_FAILED", delivery=delivery_id, error=type(error).__name__)
+
+    async def _stage_say(self, session, raw, text):
+        """Write the Anima.esp voice (+ lip) files; None means use system audio instead."""
+        voice = session.event.snapshot.npc.voice
+        folder = await asyncio.to_thread(self.voice_types.resolve, voice.plugin, voice.local_id) if voice else None
+        if not folder:
+            log_event("SAY_UNAVAILABLE", reason="voice_type_unknown", fallback="system")
+            return None
+        topic = next_topic(self._say_topic)
+        try:
+            path, lip, seconds = await asyncio.to_thread(stage_say, raw, self.game, folder, topic, text, self.settings.facefx_directory)
+        except (OSError, ValueError) as error:
+            log_event("SAY_UNAVAILABLE", reason=type(error).__name__, fallback="system")
+            return None
+        self._say_topic = topic
+        log_event("SAY_STAGED", voice_type=folder, topic_index=topic, lip=lip, file=path.name)
+        return {"topic_index": topic, "seconds": seconds}
+
+    def _say_fallback(self, session, command, reason="say_unavailable"):
+        """The plugin has no Anima.esp (or its topic): replay the same line through system audio, and stop using say."""
+        self._say_off = True
+        new_id = uuid.uuid4().hex
+        old_id = command["delivery_id"]
+        session.delivery = {key: value for key, value in command.items() if key != "topic_index"} | {"delivery_id": new_id}
+        session.delivery_status = "pending"
+        item = self._playback.pop(old_id, None)
+        if item is not None:
+            item.pop("standby", None)
+            self._playback[new_id] = item
+        log_event("SAY_FALLBACK", old_delivery=old_id, delivery=new_id, reason=reason, fallback="system")
+
+    def _drop_playback(self, delivery_id=None):
+        """Stop and delete one staged playback file (or all when no ID is given)."""
+        for key in (delivery_id,) if delivery_id else tuple(self._playback):
+            item = self._playback.pop(key, None)
+            if item is None:
+                continue
+            if self._playing == key:
+                self._playing = None
+                try:
+                    self.audio.stop()
+                except Exception as error:
+                    log_event("AUDIO_OUTPUT_FAILED", delivery=key, error=type(error).__name__)
+            try:
+                item["path"].unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    def _finish_playback(self, delivery_id):
+        """After `completed`: let the sound reach its natural end, then delete the file."""
+        item = self._playback.get(delivery_id)
+        if item is None:
+            return
+        wait = max(0.0, item.get("ends_at", 0) - time.monotonic()) + 0.2
+        if wait <= 0.2:
+            self._drop_playback(delivery_id)
+            return
+
+        async def later():
+            await asyncio.sleep(wait)
+            self._drop_playback(delivery_id)
+
+        task = asyncio.create_task(later())
+        self._cleanups.add(task)
+        task.add_done_callback(self._cleanups.discard)
 
     def _remove_staged_audio(self, session, delivery=None):
         delivery = delivery or session.delivery
@@ -237,6 +425,7 @@ class Bridge:
         await asyncio.to_thread(self.microphone.discard)
         # Native side stops sound before emitting end; no success ack is fabricated.
         self._remove_staged_audio(session)
+        self._drop_playback()
         for old in session.cancelled_deliveries.values():
             self._remove_staged_audio(session, old)
         session.cancelled_deliveries.clear()
@@ -302,7 +491,7 @@ class Bridge:
             return
         # Use latest coalesced snapshot after capture, while preserving frame provenance.
         event = session.event
-        profile = profile_for(event.snapshot, self.profiles)
+        profile = profile_for(event.snapshot, self.profiles, self.rules)
         await self.publish({"kind": kind, "session_id": event.session_id,
                             "game_epoch": event.game_epoch, "npc_id": npc_id(event.snapshot),
                             "revision": session.revision, "game": event.snapshot.model_dump(mode="json"),
@@ -320,13 +509,16 @@ class Bridge:
         visual = self.visual_reference(session)
         return visual.model_dump(mode="json") if visual else None
 
-    async def player_input(self, speech: SpeechInput, *, interrupt=False):
+    async def player_input(self, speech: SpeechInput, *, interrupt=False, stt_ms=None):
         session = self.current(speech.session_id)
         fingerprint = speech.model_dump(exclude={"session_id", "input_id"})
         if speech.input_id in session.inputs:
             if session.input_payloads.get(speech.input_id) != fingerprint:
                 raise ConnectionError("input ID reused with different content")
             return {"request_id": speech.input_id, "status": session.inputs[speech.input_id]}
+        self._cancel_opening(session)
+        if session.delivery and str(session.delivery.get("request_id", "")).startswith("opening-"):
+            interrupt = True  # the player speaking over the greeting simply replaces it
         if interrupt:
             self.invalidate(session)
         if len(session.inputs) >= 128:
@@ -334,11 +526,11 @@ class Bridge:
         if session.request_id is not None or (not interrupt and session.delivery and session.delivery_status not in {"completed", "interrupted", "failed"}):
             raise ConnectionError("turn or playback busy; interrupt playback before speaking again")
         if self.state_store:
-            scope = Scope(game_id="skyrim", world_id=self.settings.world_id, save_branch_id=session.event.game_epoch)
+            scope = Scope(game_id="skyrim", world_id=self.settings.world_id, save_branch_id=memory_branch(self.settings.memory_scope, session.event))
             session.social_key = self.state_store.key(scope, npc_id(session.event.snapshot), "ref:" + session.event.snapshot.player.reference.form_id.lower())
             try:
                 initial = self.state_store.ensure(session.social_key, Relationship(), "neutral")
-                profile = profile_for(session.event.snapshot, self.profiles)
+                profile = profile_for(session.event.snapshot, self.profiles, self.rules)
                 state, audit, cached = self.state_store.begin_turn(session.social_key, speech.input_id,
                     PlayerInput(text=speech.text, source=speech.source, confidence=speech.confidence), profile.persona, initial["revision"])
             except StoreFailure:
@@ -353,6 +545,8 @@ class Bridge:
         session.request_id = speech.input_id
         session.deadline = self.clock() + self.settings.timeout_s
         session.inputs[speech.input_id] = "pending"
+        session.timings[speech.input_id] = {"t0": self.clock(), "source": speech.source,
+                                            **({"stt_ms": stt_ms} if stt_ms is not None else {})}
         log_event("PLAYER_INPUT", session=speech.session_id, request=speech.input_id,
                   npc=npc_id(session.event.snapshot), source=speech.source, text=speech.text)
         if (self.cv_client and self.visual_reference(session) is None
@@ -362,18 +556,21 @@ class Bridge:
         return {"request_id": speech.input_id, "status": "pending"}
 
     async def run_turn(self, session, speech):
+        waited = self.clock()
         try:
             previous = tuple(task for task in session.cancelled_tasks if not task.done() and task is not asyncio.current_task())
             if previous:
                 async with asyncio.timeout(max(0.001, session.deadline - self.clock())):
                     await asyncio.shield(asyncio.gather(*previous, return_exceptions=True))
             session.cancelled_tasks = {task for task in session.cancelled_tasks if not task.done()}
-            if session.context_task:
+            # Screenshots only feed the CV service: without one, a turn never waits for a capture.
+            if session.context_task and self.cv_client is not None:
                 async with asyncio.timeout(max(0.001, session.deadline - self.clock())):
                     await asyncio.shield(session.context_task)
+            self._stage(session, speech.input_id, "context_wait_ms", waited)
             if self.session is not session or session.request_id != speech.input_id:
                 return
-            profile = profile_for(session.event.snapshot, self.profiles)
+            profile = profile_for(session.event.snapshot, self.profiles, self.rules)
             scenario = canonical_scenario(
                 session.event, speech, profile, self.settings.world_id, session.revision,
                 social_state=session.social_state, screenshot=session.screenshot,
@@ -391,25 +588,40 @@ class Bridge:
                 raise ConnectionError("turn expired")
             async with asyncio.timeout(remaining):
                 await self.publish(payload)
+                record = session.timings.get(speech.input_id)
+                if record is not None:
+                    record["published_at"] = self.clock()
                 if self.settings.pipeline_mode == "preview":
                     if self.runner is None:
                         raise ConnectionError("preview runner not configured")
-                    preview = await self.runner.run(
-                        scenario, visual_context=self.visual_reference(session)
-                        if self.settings.attach_visual_reference else None)
+                    began = self.clock()
+                    try:
+                        preview = await self.runner.run(
+                            scenario, visual_context=self.visual_reference(session)
+                            if self.settings.attach_visual_reference else None)
+                    finally:
+                        self._stage(session, speech.input_id, "pipeline_ms", began)
+                    if record is not None:
+                        for name, value in (getattr(preview, "stage_ms", None) or {}).items():
+                            record[name + "_ms"] = value
+                        record["turn_type"] = getattr(preview, "turn_type", None) or "none"
+                        record["move"] = getattr(getattr(preview, "plan", None), "move", None) or "none"
                     log_event("PIPELINE_RESULT", session=speech.session_id, request=speech.input_id,
                               route=getattr(getattr(preview, "plan", None), "route", "unknown"),
                               status=getattr(preview, "status", "unknown"),
+                              turn_type=getattr(preview, "turn_type", None), move=getattr(getattr(preview, "plan", None), "move", None),
                               model=getattr(preview, "model", None), calls=getattr(preview, "model_calls", 0))
                     if preview.response:
                         await self.result(PipelineResult(session_id=speech.session_id, request_id=speech.input_id,
                                                         npc_id=scenario.turn.npc_id, mode=preview.response.mode,
-                                                        text=preview.response.text))
+                                                        text=preview.response.text, move=preview.plan.move,
+                                                        evidence_ids=tuple(preview.response.evidence_ids or preview.evidence_used)))
                     else:
                         raise ConnectionError("pipeline returned no deliverable response")
         except asyncio.CancelledError:
             session.inputs[speech.input_id] = "cancelled"
             log_event("TURN_CANCELLED", session=speech.session_id, request=speech.input_id)
+            self._timing_done(session, speech.input_id, "cancelled")
             raise
         except (ValueError, OSError, httpx.HTTPError, TimeoutError):
             session.inputs[speech.input_id] = "failed"
@@ -417,6 +629,10 @@ class Bridge:
                 session.request_id = None
             self.error = "pipeline_turn_failed"
             log_event("TURN_FAILED", session=speech.session_id, request=speech.input_id, error=self.error)
+            self._timing_done(session, speech.input_id, "failed")
+        except Exception:
+            self._timing_done(session, speech.input_id, "failed")
+            raise
 
     async def result(self, result: PipelineResult):
         session = self.current(result.session_id)
@@ -434,6 +650,10 @@ class Bridge:
         session.inputs[result.request_id] = "staging"
         revision = session.revision
         raw = None
+        record = session.timings.get(result.request_id)
+        if record is not None and "pipeline_ms" not in record and "published_at" in record:
+            self._stage(session, result.request_id, "pipeline_ms", record["published_at"])
+        tts_began = self.clock()
         try:
             if result.audio_path:
                 raw = await asyncio.to_thread(read_audio, result.audio_path, self.audio_root)
@@ -444,9 +664,11 @@ class Bridge:
                         speech_request = {
                             "request_id": result.request_id, "text": result.text,
                             "voice": session.event.snapshot.npc.voice.model_dump() if session.event.snapshot.npc.voice else None,
+                            "sex": session.event.snapshot.npc.sex,
                         }
                         if self.settings.tts_url == f"http://127.0.0.1:{self.settings.port}/v1/speech/tts":
                             speech_request["npc_base"] = session.event.snapshot.npc.base.model_dump()
+                            speech_request["npc_ref"] = session.event.snapshot.npc.reference.model_dump()
                         async with self.client.stream("POST", self.settings.tts_url, json=speech_request) as response:
                             response.raise_for_status()
                             data = bytearray()
@@ -460,6 +682,8 @@ class Bridge:
                     raw = None
                     self.error = "tts_unavailable_text_only"
                     log_event("TTS_FAILED", request=result.request_id, fallback="text_only")
+            self._stage(session, result.request_id, "tts_ms", tts_began)
+            staging_began = self.clock()
             if (self.session is not session or session.request_id != result.request_id
                     or session.revision != revision or self.clock() >= session.deadline):
                 raise ConnectionError("result became stale during audio preparation")
@@ -468,14 +692,27 @@ class Bridge:
             if (self.session is not session or session.request_id != result.request_id
                     or session.revision != revision or self.clock() >= session.deadline):
                 raise ConnectionError("result became stale during audio analysis")
-            relative, duration = stage_audio(raw, self.game, delivery_id) if raw else (None, min(15, max(2, len(result.text) / 15)))
+            playback, say = None, None
+            if raw and self.settings.audio_output == "say" and not self._say_off:
+                say = await self._stage_say(session, raw, result.text)
+            if say:
+                playback, wav_seconds = stage_playback(raw, self.output, delivery_id)  # standby copy for the fallback
+                relative, duration = None, say["seconds"] + PLAYBACK_PAD_S
+            elif raw and self.settings.audio_output in {"system", "say"}:
+                playback, wav_seconds = stage_playback(raw, self.output, delivery_id)
+                relative, duration = None, wav_seconds + PLAYBACK_PAD_S
+            else:
+                relative, duration = stage_audio(raw, self.game, delivery_id) if raw else (None, min(15, max(2, len(result.text) / 15)))
             if self.state_store and session.social_key and session.social_state:
                 try:
                     self.state_store.stage_preview(session.social_key, result.request_id,
-                        {"result": {"response": {"mode": result.mode, "text": result.text}}}, session.social_state["revision"])
+                        {"result": {"response": {"mode": result.mode, "text": result.text}}}, session.social_state["revision"],
+                        move=result.move, evidence_ids=result.evidence_ids)
                 except StoreFailure:
                     if relative:
                         (self.game / "Data" / relative).unlink(missing_ok=True)
+                    if playback:
+                        playback.unlink(missing_ok=True)
                     self.error = "social_state_unavailable"
                     raise ConnectionError("social state unavailable") from None
             session.delivery = {"kind": "speak", "delivery_id": delivery_id, "session_id": result.session_id,
@@ -483,12 +720,20 @@ class Bridge:
                                 "snapshot_sequence": session.revision, "mode": result.mode,
                                 "text": result.text, "audio_file": relative, "duration_s": duration, "mouth": envelope,
                                 "expires_at_ms": int(session.deadline * 1000)}
+            if say:
+                session.delivery["topic_index"] = say["topic_index"]
             session.delivery_status = "pending"
+            if playback:
+                self._drop_playback()  # a new delivery replaces whatever was still playing
+                self._playback[delivery_id] = {"path": playback, "seconds": duration - PLAYBACK_PAD_S, **({"standby": True} if say else {})}
             log_event("OUTPUT_STAGED", session=result.session_id, request=result.request_id,
                       delivery=delivery_id, npc=result.npc_id, mode=result.mode, text=result.text,
                       audio=bool(raw), delivered=False)
             session.inputs[result.request_id] = "staged"
             session.request_id = None
+            self._stage(session, result.request_id, "staging_ms", staging_began)
+            if record is not None:
+                record["staged_at"] = self.clock()
             return {"delivery_id": delivery_id, "status": "pending", "audio": bool(raw)}
         except BaseException:
             if session.request_id == result.request_id:
@@ -515,6 +760,7 @@ class Bridge:
             if self.session is not session:
                 return
             # F8 is an explicit interruption: game-side already stops current audio.
+            self._cancel_opening(session)
             self.invalidate(session)
             await asyncio.to_thread(self.microphone.start)
         await asyncio.sleep(15)
@@ -530,6 +776,7 @@ class Bridge:
         if self.session is not session:
             return
         wav_duration(raw)
+        stt_began = self.clock()
         async with self.client.stream("POST", self.settings.stt_url, content=raw,
                                       headers={"Content-Type": "audio/wav"}) as response:
             response.raise_for_status()
@@ -540,4 +787,5 @@ class Bridge:
                     raise ConnectionError("STT response too large")
             parsed = json.loads(body)
         await self.player_input(SpeechInput(session_id=session.event.session_id, input_id=uuid.uuid4().hex,
-                                            text=parsed["text"], confidence=parsed.get("confidence", 1), source="stt"), interrupt=True)
+                                            text=parsed["text"], confidence=parsed.get("confidence", 1), source="stt"),
+                                 interrupt=True, stt_ms=round((self.clock() - stt_began) * 1000, 1))

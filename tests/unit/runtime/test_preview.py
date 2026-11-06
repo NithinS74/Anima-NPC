@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 
 import pytest
 
@@ -58,7 +59,8 @@ def test_two_invalid_outputs_then_validated_fallback(scenario_data):
     assert result.response.text == result.plan.fallback_text
 
 
-@pytest.mark.parametrize("code", ["provider_timeout", "provider_rate_limited", "provider_auth", "provider_transport", "provider_output_limit"])
+@pytest.mark.parametrize("code", ["provider_rate_limited", "provider_auth", "provider_transport", "provider_output_limit",
+                                  "provider_bad_request", "provider_protocol", "provider_unavailable", "provider_timeout"])
 def test_provider_failures_fall_back_without_retry(scenario_data, code):
     provider = ScriptedProvider(ProviderFailure(code))
     result = asyncio.run(PreviewRunner(provider).run(generating(scenario_data)))
@@ -222,3 +224,97 @@ def test_slow_provider_cleanup_does_not_delay_caller_or_release_admission(scenar
             await task
             await asyncio.sleep(0)
     asyncio.run(run())
+
+
+# Transient failures (provider_unavailable, provider_timeout) get exactly one retry: the second of the two
+# allowed calls, after a delay, inside the model cutoff. provider_timeout used to fall back immediately.
+def retrying(**changes):
+    return PreviewLimits(**{**dict(response_timeout_ms=3000, model_cutoff_ms=2000, retry_delay_ms=20, retry_transient=True), **changes})
+
+
+@pytest.mark.parametrize("code", ["provider_unavailable", "provider_timeout"])
+def test_transient_failure_is_retried_once_with_second_call(scenario_data, code):
+    provider = ScriptedProvider(ProviderFailure(code), VALID)
+    result = asyncio.run(PreviewRunner(provider, retrying(retry_delay_ms=100)).run(generating(scenario_data)))
+    assert result.status == "model_success" and result.response.text == "Work is tiring."
+    assert result.model_calls == 2 and len(provider.calls) == 2
+    # The retry delay is counted as model wait (margin allows for Windows' ~16 ms timer granularity).
+    assert result.stage_ms["model"] >= 90
+
+
+@pytest.mark.parametrize("code", ["provider_unavailable", "provider_timeout"])
+def test_second_transient_failure_falls_back_without_third_call(scenario_data, code):
+    provider = ScriptedProvider(ProviderFailure(code), ProviderFailure(code), VALID)
+    result = asyncio.run(PreviewRunner(provider, retrying()).run(generating(scenario_data)))
+    assert result.status == "error_fallback" and result.error_code == code
+    assert result.model_calls == 2 and len(provider.calls) == 2
+    assert result.response.text == result.plan.fallback_text
+
+
+def test_retried_call_with_invalid_reply_gets_no_repair(scenario_data):
+    provider = ScriptedProvider(ProviderFailure("provider_unavailable"), "not json", VALID)
+    result = asyncio.run(PreviewRunner(provider, retrying()).run(generating(scenario_data)))
+    assert result.status == "error_fallback" and result.model_calls == 2 and len(provider.calls) == 2
+    assert result.response.text == result.plan.fallback_text
+    assert "invalid_json" in result.violations
+
+
+def test_repair_call_failure_is_not_retried(scenario_data):
+    provider = ScriptedProvider("not json", ProviderFailure("provider_unavailable"), VALID)
+    result = asyncio.run(PreviewRunner(provider, retrying()).run(generating(scenario_data)))
+    assert result.status == "error_fallback" and result.model_calls == 2 and len(provider.calls) == 2
+
+
+@pytest.mark.parametrize("code", ["provider_auth", "provider_rate_limited"])
+def test_auth_and_rate_limit_never_retry_even_with_budget(scenario_data, code):
+    provider = ScriptedProvider(ProviderFailure(code), VALID)
+    result = asyncio.run(PreviewRunner(provider, retrying(provider_attempt_ms=500)).run(generating(scenario_data)))
+    assert result.error_code == code and result.model_calls == 1 and len(provider.calls) == 1
+
+
+def test_retry_delay_that_does_not_fit_the_cutoff_skips_the_retry(scenario_data):
+    provider = ScriptedProvider(ProviderFailure("provider_unavailable"), VALID)
+    limits = retrying(model_cutoff_ms=100, retry_delay_ms=500)
+    result = asyncio.run(PreviewRunner(provider, limits).run(generating(scenario_data)))
+    assert result.status == "error_fallback" and result.error_code == "provider_unavailable"
+    assert result.model_calls == 1 and len(provider.calls) == 1
+
+
+class HangingProvider:
+    def __init__(self, *, then=None):
+        self.limits, self.then = [], then
+
+    async def generate(self, prompt, timeout_s):
+        self.limits.append(timeout_s)
+        if len(self.limits) == 1 or self.then is None:
+            await asyncio.sleep(30)
+        return ProviderReply(content=self.then, model="fake", finish_reason="stop", input_tokens=1, output_tokens=1)
+
+
+def test_slow_call_is_abandoned_at_attempt_limit_then_retried_within_cutoff(scenario_data):
+    provider = HangingProvider(then=VALID)
+    limits = retrying(provider_attempt_ms=150, model_cutoff_ms=1000, retry_delay_ms=30)
+    started = time.monotonic()
+    result = asyncio.run(PreviewRunner(provider, limits).run(generating(scenario_data)))
+    assert result.status == "model_success" and result.model_calls == 2
+    assert provider.limits[0] == pytest.approx(0.15, abs=0.01)
+    assert time.monotonic() - started < 1.0
+
+
+def test_two_slow_calls_stay_inside_the_cutoff_and_use_fallback(scenario_data):
+    provider = HangingProvider()
+    limits = retrying(provider_attempt_ms=200, model_cutoff_ms=350, retry_delay_ms=20)
+    started = time.monotonic()
+    result = asyncio.run(PreviewRunner(provider, limits).run(generating(scenario_data)))
+    elapsed = time.monotonic() - started
+    assert result.status == "error_fallback" and result.error_code == "provider_timeout"
+    assert result.model_calls == 2 and len(provider.limits) == 2
+    assert provider.limits[1] < 0.16  # clipped to what the 0.35 s cutoff has left, not the full 0.2 s attempt limit
+    assert elapsed < 0.55
+    assert result.response.text == result.plan.fallback_text
+
+
+def test_stage_timings_cover_prompt_model_and_validation(scenario_data):
+    result = asyncio.run(PreviewRunner(ScriptedProvider(VALID)).run(generating(scenario_data)))
+    assert {"prompt", "model", "validation"} <= set(result.stage_ms)
+    assert all(value >= 0 for value in result.stage_ms.values())

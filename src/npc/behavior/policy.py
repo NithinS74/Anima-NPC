@@ -3,12 +3,34 @@
 import re
 
 from npc.contracts.context import Situation
+from npc.behavior.lines import pick_line, recent_lines, style_keys
 from npc.contracts.dialogue import InteractionPlan
+
+FAREWELL = re.compile(
+    r"^(?:(?:ok|okay|well|alright|right|thanks|thank you|then)[ ,.!]+)*(?:goodbye|good bye|bye|bye bye|farewell|see you(?: later| around| soon)?|"
+    r"good night|take care|until next time|(?:i (?:must|have to|need to|should) (?:go|leave|be going))|(?:i(?:'m| am) (?:off|leaving))|gotta go)"
+    r"(?:[ ,.!]+(?:then|now|for now|everyone|friend|stranger|thanks|thank you))*$")
+NEGATION = re.compile(r"(?:not|no|never|won't|don't|dont|cannot|can't|without|before|until i)|n't", re.I)
+
+
+def is_farewell(text: str) -> bool:
+    """A plain goodbye only: a negation or a quoted goodbye keeps the conversation going."""
+    raw = text.strip()
+    if any(q in raw for q in ('"', "“", "”", "‘")) or len(raw.split()) > 7:
+        return False
+    if NEGATION.search(raw) and not re.match(r"^(?:i (?:must|have to|need to|should) go)", raw, re.I):
+        return False
+    return bool(FAREWELL.match(raw.casefold().strip(" .!?,")))
 
 
 def choose_plan(situation: Situation) -> InteractionPlan:
     formal = "formal" in {style.casefold() for style in situation.persona.speech_style}
-    fallback = "I cannot speak to that matter." if formal else "I cannot say."
+    keys, recent, rid = style_keys(situation.persona), recent_lines(situation), situation.request_id
+
+    def line(intent, *variant):
+        return pick_line(intent, (*variant, *keys), rid, recent)
+
+    fallback = pick_line("fallback", keys, rid, recent) or "I cannot say."
     social = situation.social_appraisal
     has_question = bool(re.search(r"\?|\b(?:where|who|when|what|how|why|can|could|would)\b", situation.player_input.text.casefold()))
     affect = social.tone if social.tone != "neutral" else "guarded" if situation.trust_stance == "guarded" else situation.mood
@@ -24,42 +46,45 @@ def choose_plan(situation: Situation) -> InteractionPlan:
                                knowledge_need="none", max_words=0, max_sentences=0,
                                allowed_modes=("end",), reason_codes=("combat",))
     if any(item.rule == "uncertain_transcript" for item in situation.influences):
-        return authored("clarify", "Could you repeat that?")
+        return authored("clarify", line("clarify"))
     if situation.threat == "high":
-        return authored("warn", "Keep your distance.")
+        return authored("warn", line("warn"))
     if social.willingness in {"disengage", "withdraw"}:
         return InteractionPlan(route="end", intent=social.willingness, affect=social.tone,
                                knowledge_need="none", max_words=0, max_sentences=0,
                                allowed_modes=("end",), reason_codes=social.reasons)
     if social.stimulus == "threat":
-        return authored("reject_threat", "Keep back; I won't tolerate threats.")
+        return authored("reject_threat", line("reject_threat"))
     if social.stimulus == "directed_insult":
-        line = "Watch your damn mouth." if social.allow_swearing and situation.relationship.irritation >= 55 else "Mind your tongue."
+        variant = "swear" if social.allow_swearing and situation.relationship.irritation >= 55 else "default"
         if situation.persona.patience >= 0.6:
-            line = "You can be upset without taking it out on me."
+            variant = "patient"
         if formal:
-            line = "That language is unacceptable; address me respectfully."
-        return authored("set_boundary", line)
+            variant = "formal"
+        return authored("set_boundary", line("set_boundary", variant))
     if social.stimulus == "rough_banter" and not has_question:
-        return authored("familiar_banter", "Still a cheeky bastard, aren't you?" if social.allow_swearing else "You haven't changed, have you?")
+        return authored("familiar_banter", line("familiar_banter", "swear" if social.allow_swearing else "default"))
     if social.stimulus == "apology" and not has_question:
-        return authored("acknowledge_apology", "An apology doesn't settle everything." if situation.relationship.irritation >= 60 else "Apology heard; give me a moment.")
+        return authored("acknowledge_apology", line("acknowledge_apology", "irritated" if situation.relationship.irritation >= 60 else "default"))
     if situation.availability == "busy":
         if situation.relationship.familiarity >= 40 and situation.relationship.trust >= 40:
-            return authored("busy", "Not now, friend; I've got work to finish.")
-        return authored("busy", "I am occupied; please return later." if formal else "I'm occupied; try another time.")
+            return authored("busy", line("busy", "friend"))
+        return authored("busy", line("busy", "formal") if formal else line("busy", "default"))
     if any(item.rule == "service_closed" for item in situation.influences):
-        return authored("service_closed", "The service is closed for now.")
+        return authored("service_closed", line("service_closed"))
     # Full-string recognition avoids swallowing 'Hello, where is the ...?'.
     text = situation.player_input.text.casefold().strip(" .!?,")
+    if is_farewell(situation.player_input.text):
+        plan = authored("farewell", line("farewell"))
+        return plan.model_copy(update={"move": "farewell"})
     if text in {"hi", "hello", "hey", "good morning", "good evening"}:
         if situation.relationship.familiarity >= 40 and situation.relationship.favourability >= 25 and situation.relationship.trust >= 40:
-            return authored("greet", "Good to see you; what do you need?")
+            return authored("greet", line("greet", "friend"))
         if situation.persona.warmth >= 0.7 and situation.persona.service_role:
-            return authored("greet", "Welcome in; what can I do for you?")
+            return authored("greet", line("greet", "warm"))
         if social.willingness == "brief" and situation.trust_stance == "guarded":
-            return authored("greet", "State your business.")
-        return authored("greet", "Welcome; how may I help?" if formal else "What do you need?")
+            return authored("greet", line("greet", "guarded"))
+        return authored("greet", line("greet", "formal") if formal else line("greet", "default"))
     detail = bool(re.search(r"\b(in detail|explain fully)\b", text)) and situation.availability == "available" and situation.trust_stance != "guarded"
     factual = bool(re.search(r"\b(where|who|when)\b", text))
     brief = social.willingness == "brief"

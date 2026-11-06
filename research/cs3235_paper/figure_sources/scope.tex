@@ -1,0 +1,19 @@
+\documentclass[border=3pt]{standalone}
+\input{styles.tex}
+\begin{document}
+\begin{tikzpicture}
+\node[gamebox,text width=25mm] (q) {Same player question: ``What is the king's plan for the war?''};
+\node[corebox,text width=21mm,above right=1mm and 9mm of q.east,anchor=south west] (p) {NPC: peasant\\binding: peasant.md};
+\node[corebox,text width=21mm,below right=1mm and 9mm of q.east,anchor=north west] (a) {NPC: adviser\\binding: adviser.md};
+\node[knowbox,text width=31mm,right=7mm of p] (pd) {Public lore + mill rumours\\\emph{``march east before the harvest''}};
+\node[knowbox,text width=31mm,right=7mm of a] (ad) {Public lore + war council record\\\emph{``Operation Greywater''}};
+\node[plainbox,text width=31mm,right=7mm of pd,minimum height=13mm] (pr) {Prompt holds only rumour; reply may be opinion or ignorance};
+\node[plainbox,text width=31mm,right=7mm of ad,minimum height=13mm] (ar) {Prompt holds the plan; role may answer or refuse};
+\draw[flow] (q.east) -- ++(4mm,0) |- (p.west);
+\draw[flow] (q.east) -- ++(4mm,0) |- (a.west);
+\draw[flow] (p) -- node[lab,above] {filter} (pd);
+\draw[flow] (a) -- node[lab,above] {filter} (ad);
+\draw[flow] (pd) -- node[lab,above] {top 3} (pr);
+\draw[flow] (ad) -- node[lab,above] {top 3} (ar);
+\end{tikzpicture}
+\end{document}
