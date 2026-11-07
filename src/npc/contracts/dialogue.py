@@ -98,6 +98,7 @@ class TurnPreview(Contract):
     error_code: Identifier | None = None
     model: Identifier | None = None
     elapsed_ms: float = Field(ge=0)
+    stage_ms: Annotated[dict[str, Annotated[float, Field(ge=0, allow_inf_nan=False)]], Field(max_length=12)] = Field(default_factory=dict)
     input_tokens: Nonnegative = 0
     output_tokens: Nonnegative = 0
     usage_complete: bool = True

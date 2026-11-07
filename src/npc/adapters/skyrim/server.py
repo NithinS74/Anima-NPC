@@ -13,7 +13,10 @@ def create_app(bridge: Bridge):
     @asynccontextmanager
     async def lifespan(app):
         worker = getattr(app.state, "tts_worker", None)
+        speech = getattr(app.state, "stt_worker", None)
         try:
+            if speech:
+                await speech.start()
             if worker:
                 await worker.start()
             yield
@@ -23,6 +26,8 @@ def create_app(bridge: Bridge):
             finally:
                 if worker:
                     await worker.close()
+                if speech:
+                    await speech.close()
 
     app = FastAPI(title="Anima Skyrim connector", lifespan=lifespan)
 

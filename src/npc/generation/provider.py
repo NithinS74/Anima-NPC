@@ -10,7 +10,7 @@ import httpx
 from pydantic import Field, SecretStr, StrictBool, ValidationError, model_validator
 
 from npc.contracts.context import Contract, Identifier
-from npc.contracts.dialogue import PromptPackage, ProviderReply
+from npc.contracts.dialogue import PromptPackage, ProviderReply, ResponseBody
 
 
 class ProviderFailure(Exception):
@@ -27,7 +27,7 @@ class ProviderConfig(Contract):
     base_url: str = Field(min_length=1, max_length=2048, repr=False)
     model: Identifier
     api_key: SecretStr = Field(repr=False)
-    response_format: Literal["json_object", "none"] = "json_object"
+    response_format: Literal["json_object", "json_schema", "none"] = "json_object"
     reasoning_effort: Literal["none", "minimal", "low", "medium", "high"] | None = None
     reasoning_enabled: StrictBool | None = None
 
@@ -53,6 +53,12 @@ class ChatCompletionsProvider:
     def __init__(self, config: ProviderConfig, *, transport: httpx.AsyncBaseTransport | None = None):
         self.config = config
         self._transport = transport
+        self._client = None
+
+    async def aclose(self):
+        if self._client is not None:
+            await self._client.aclose()
+            self._client = None
 
     async def generate(self, prompt: PromptPackage, timeout_s: float) -> ProviderReply:
         if timeout_s <= 0:
@@ -61,6 +67,13 @@ class ChatCompletionsProvider:
                    "max_tokens": prompt.max_output_tokens, "stream": False}
         if self.config.response_format == "json_object":
             payload["response_format"] = {"type": "json_object"}
+        if self.config.response_format == "json_schema":
+            schema = ResponseBody.model_json_schema()
+            schema["required"] = list(schema["properties"])
+            for field in schema["properties"].values():
+                field.pop("default", None)
+            payload["response_format"] = {"type": "json_schema", "json_schema": {
+                "name": "npc_response", "strict": True, "schema": schema}}
         if self.config.reasoning_enabled is not None:
             payload["reasoning"] = {"enabled": self.config.reasoning_enabled}
         if self.config.reasoning_effort is not None:
@@ -68,33 +81,32 @@ class ChatCompletionsProvider:
         try:
             # Absolute timeout additionally bounds trickle/drip responses.
             async with asyncio.timeout(timeout_s):
-                async with httpx.AsyncClient(
-                    transport=self._transport, timeout=httpx.Timeout(timeout_s),
-                    follow_redirects=False, trust_env=False,
-                    limits=httpx.Limits(max_connections=1, max_keepalive_connections=1),
-                ) as client:
-                    async with client.stream(
-                        "POST", self.config.base_url.rstrip("/") + "/chat/completions",
-                        headers={"Authorization": "Bearer " + self.config.api_key.get_secret_value()}, json=payload,
-                    ) as response:
-                        if response.status_code == 429:
-                            raise ProviderFailure("provider_rate_limited")
-                        if response.status_code in {401, 403}:
-                            raise ProviderFailure("provider_auth")
-                        if response.status_code == 400:
-                            raise ProviderFailure("provider_bad_request")
-                        if response.status_code == 404:
-                            raise ProviderFailure("provider_not_found")
-                        if response.status_code >= 500:
-                            raise ProviderFailure("provider_unavailable")
-                        if response.status_code != 200:
-                            raise ProviderFailure("provider_http_error")
-                        chunks, size = [], 0
-                        async for chunk in response.aiter_bytes():
-                            size += len(chunk)
-                            if size > 65536:
-                                raise ProviderFailure("provider_response_too_large")
-                            chunks.append(chunk)
+                if self._client is None:
+                    self._client = httpx.AsyncClient(transport=self._transport,
+                        follow_redirects=False, trust_env=False,
+                        limits=httpx.Limits(max_connections=1, max_keepalive_connections=1))
+                async with self._client.stream(
+                    "POST", self.config.base_url.rstrip("/") + "/chat/completions",
+                    timeout=httpx.Timeout(timeout_s), headers={"Authorization": "Bearer " + self.config.api_key.get_secret_value()}, json=payload,
+                ) as response:
+                    if response.status_code == 429:
+                        raise ProviderFailure("provider_rate_limited")
+                    if response.status_code in {401, 403}:
+                        raise ProviderFailure("provider_auth")
+                    if response.status_code == 400:
+                        raise ProviderFailure("provider_bad_request")
+                    if response.status_code == 404:
+                        raise ProviderFailure("provider_not_found")
+                    if response.status_code >= 500:
+                        raise ProviderFailure("provider_unavailable")
+                    if response.status_code != 200:
+                        raise ProviderFailure("provider_http_error")
+                    chunks, size = [], 0
+                    async for chunk in response.aiter_bytes():
+                        size += len(chunk)
+                        if size > 65536:
+                            raise ProviderFailure("provider_response_too_large")
+                        chunks.append(chunk)
             body = json.loads(b"".join(chunks))
             choice = body["choices"][0]
             message = choice["message"]

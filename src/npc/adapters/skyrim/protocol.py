@@ -124,6 +124,7 @@ class Settings(Contract):
     state_db: str | None = "output/skyrim/social.sqlite3"
     port: int = Field(default=8768, ge=1024, le=65535)
     timeout_s: float = Field(default=30, ge=1, le=60)
+    tts_timeout_s: float = Field(default=4, ge=0.1, le=20)
     capture_screenshots: bool = True
     max_screenshots: int = Field(default=100, ge=1, le=1000)
     max_output_bytes: int = Field(default=250 * 1024 * 1024, ge=1024, le=2 * 1024**3)

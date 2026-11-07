@@ -115,8 +115,18 @@ class PreviewRunner:
     async def _run(self, scenario: ContextScenario, *, cancellation: asyncio.Event | None = None,
                    current_state: Callable[[], CurrentState] | None = None, visual_context: VisualContext | None = None) -> TurnPreview:
         start = self.clock()
+        stage_ms = {key: 0.0 for key in ("context_policy", "retrieval", "prompt", "generation", "repair", "validation")}
         situation = build_situation(scenario.turn, scenario.snapshot, scenario.now, visual_context=visual_context)
         plan = choose_plan(situation)
+        stage_ms["context_policy"] = max(0, (self.clock() - start) * 1000)
+
+        @asynccontextmanager
+        async def timed(stage):
+            began = self.clock()
+            try:
+                yield
+            finally:
+                stage_ms[stage] += max(0, (self.clock() - began) * 1000)
         current_state = current_state or (lambda: CurrentState(dialogue_revision=situation.dialogue_revision, turn_epoch=situation.turn_epoch))
         calls, violations, model = 0, (), None
         input_tokens, output_tokens, usage_complete = 0, 0, True
@@ -138,7 +148,7 @@ class PreviewRunner:
                 status, response, error = "cancelled", None, "cancelled_or_stale"
             return TurnPreview(request_id=situation.request_id, npc_id=situation.npc_id, status=status,
                                plan=plan, response=response, model_calls=calls, violations=violations,
-                               error_code=error, model=model, elapsed_ms=max(0, (self.clock()-start)*1000),
+                               error_code=error, model=model, stage_ms=stage_ms, elapsed_ms=max(0, (self.clock()-start)*1000),
                                input_tokens=input_tokens, output_tokens=output_tokens, usage_complete=usage_complete,
                                response_deadline_ms=self.limits.response_timeout_ms, model_cutoff_ms=self.limits.model_cutoff_ms,
                                timing_profile=self._timing_profile(), history_used=history_used, history_omitted=history_omitted,
@@ -146,7 +156,11 @@ class PreviewRunner:
 
         def checked(body):
             reply = ProviderReply(content=body.model_dump_json(), model="authored", finish_reason="stop")
-            return validate_response(reply, situation, plan, current_state())
+            began = self.clock()
+            try:
+                return validate_response(reply, situation, plan, current_state())
+            finally:
+                stage_ms["validation"] += max(0, (self.clock() - began) * 1000)
 
         def fallback(code):
             if (self.clock()-start)*1000 >= self.limits.response_timeout_ms:
@@ -172,9 +186,10 @@ class PreviewRunner:
                 if remaining <= 0:
                     return fallback("model_cutoff")
                 try:
-                    retrieved = await _await_work(self.retriever.retrieve(situation, timeout_s=remaining),
-                                                 remaining, cancellation, self._retain_cleanup)
-                    knowledge = assemble_knowledge(situation, retrieved)
+                    async with timed("retrieval"):
+                        retrieved = await _await_work(self.retriever.retrieve(situation, timeout_s=remaining),
+                                                     remaining, cancellation, self._retain_cleanup)
+                        knowledge = assemble_knowledge(situation, retrieved)
                 except ProviderFailure as error:
                     if error.code == "cancelled":
                         return finish("cancelled", error="cancelled")
@@ -189,11 +204,12 @@ class PreviewRunner:
                 if remaining <= 0:
                     return fallback("model_cutoff")
                 try:
-                    prompt = build_prompt(situation, plan, knowledge=knowledge if self.retriever else None, max_input_bytes=self.limits.max_input_bytes,
-                                          max_output_tokens=self.limits.max_output_tokens, repair_codes=violations if attempt else ())
-                    history_used, history_omitted = prompt.history_count, prompt.omitted_history_count
-                    evidence_used = tuple(hit.id for hit in prompt.evidence)
-                    evidence_omitted = prompt.evidence_omitted
+                    async with timed("prompt"):
+                        prompt = build_prompt(situation, plan, knowledge=knowledge if self.retriever else None, max_input_bytes=self.limits.max_input_bytes,
+                                              max_output_tokens=self.limits.max_output_tokens, repair_codes=violations if attempt else ())
+                        history_used, history_omitted = prompt.history_count, prompt.omitted_history_count
+                        evidence_used = tuple(hit.id for hit in prompt.evidence)
+                        evidence_omitted = prompt.evidence_omitted
                 except PromptTooLarge:
                     return fallback("prompt_budget")
                 remaining = self.limits.model_cutoff_ms/1000 - (self.clock()-start)
@@ -201,7 +217,8 @@ class PreviewRunner:
                     return fallback("model_cutoff")
                 calls += 1
                 try:
-                    reply = await _await_work(self.provider.generate(prompt, remaining), remaining, cancellation, self._retain_cleanup)
+                    async with timed("repair" if attempt else "generation"):
+                        reply = await _await_work(self.provider.generate(prompt, remaining), remaining, cancellation, self._retain_cleanup)
                 except ProviderFailure as error:
                     usage_complete = False
                     if error.code == "cancelled":
@@ -215,8 +232,9 @@ class PreviewRunner:
                     return finish("cancelled", error="cancelled_or_stale")
                 if (self.clock()-start)*1000 >= self.limits.model_cutoff_ms:
                     return fallback("late_completion")
-                validation = validate_response(reply, situation, plan, current_state(), evidence=prompt.evidence,
-                                               evidence_aliases=prompt.evidence_aliases)
+                async with timed("validation"):
+                    validation = validate_response(reply, situation, plan, current_state(), evidence=prompt.evidence,
+                                                   evidence_aliases=prompt.evidence_aliases)
                 violations = tuple(dict.fromkeys(violations + validation.violations))
                 if validation.accepted:
                     return finish("repair_success" if attempt else "model_success", validation.response)
